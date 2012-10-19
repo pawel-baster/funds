@@ -1,6 +1,5 @@
-package funds
-
 import java.util.Date
+import currencies.Currency
 
 /**
  * User: pawel

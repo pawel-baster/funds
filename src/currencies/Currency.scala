@@ -1,4 +1,4 @@
-package funds
+package currencies
 
 import java.util.Date
 

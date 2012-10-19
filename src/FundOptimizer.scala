@@ -1,7 +1,4 @@
-package funds
-
 import java.util.Date
-import collection.immutable.Range.Double
 
 /**
  * Created with IntelliJ IDEA.
