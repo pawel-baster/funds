@@ -16,8 +16,8 @@ from.setTime(0)
 to.setTime(10 * 24 * 3600 * 1000)
 val window = 3
 val funds = Array(
-        new MockFund("const", 0),
-        new MockFund("linear", 1),
+        new MockIncrementFund("const", 0),
+        new MockIncrementFund("linear", 1),
         new FixedDepositFund(new CurrencyDKK, "test fund2", 0.01)
 )
 
@@ -42,3 +42,5 @@ val result = ma.calculate(funds, from, to, window)
 result.foreach(row => {row.foreach(el => print(el + " ")); println})
 
 assert(expected.deep == result.deep, "returned array does not match expected result")
+
+println("OK")

@@ -7,7 +7,7 @@
  */
 class Params (
   val window: Int,
-  val coef: Array[Double]
+  val coefs: Array[Double]
 ) {
   def createRandom(count: Int) = 0
   def createRandom(p: Params) = 1

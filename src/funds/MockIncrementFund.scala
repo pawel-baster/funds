@@ -8,7 +8,7 @@ import currencies.CurrencyDKK
  * Time: 4:31 PM
  * To change this template use File | Settings | File Templates.
  */
-class MockFund(
+class MockIncrementFund(
   override val shortName: String,
   val increment: Double
 ) extends Fund(new CurrencyDKK, shortName) {
