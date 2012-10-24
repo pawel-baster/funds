@@ -10,6 +10,12 @@ class Params (
   val smoothFactor: Double,
   val coefs: Array[Double]
 ) {
-  def createRandom(count: Int) = 0
-  def createRandom(p: Params) = 1
+ /* def createRandom(count: Int) = 0
+  def createRandom(p: Params) = 1*/
+  def createRandomFromNormal(): Params = {
+    val newWindow = window // +
+    val newSmoothFactor = smoothFactor // +
+    val newCoefs = coefs// coefs.map(x => x + )
+    return new Params(newWindow, newSmoothFactor, newCoefs)
+  }
 }

@@ -7,31 +7,26 @@ import java.util.Date
  * Time: 21:50
  * To change this template use File | Settings | File Templates.
  */
-class FundOptimizer {
-  def optimize(funds: Array[Fund], from: Date, to: Date) = {
-    iteration(funds, from, to)
-  }
-
-  def iteration(funds: Array[Fund], from: Date, to: Date) = {
-    val params = Array[Double](3)
-    val result = calculateCost(funds, from, to)
-  }
-
-  def calculateCost(funds: Array[Fund], from: Date, to: Date, params: Array[Double] = null): Double = {
-    //val active = 1
-    //val value = 1
-    // todo statics in scala?
-    //val params = new Params(2, (0.0, 0.0))
-    /*
-      foreach row in ma(funds, window, from, to)
-        value = value * funds[date] / funds[date - 1]
-        decisionVars = max(row * params)
-        new = argmax(row * params)
-        if new != active:
-          value = value * fee(funds[active], funds[new])
-          active = new
-
-     */
-    return 3.0
+class FundOptimizer(
+  val costCalculator: CostCalculator,
+  val funds: Array[Fund],
+  val from: Date,
+  val to: Date,
+  val initialParams: Params,
+  val initialFund: Int,
+  val initialValue: Double
+) {
+  def optimize(count: Int): Double = {
+    var bestResult = -9999.0 // @todo -Inf in scala?
+    var bestParams = initialParams
+    for (i <- 1 to count) {
+      val params = bestParams.createRandomFromNormal()
+      val result = costCalculator.calculate(funds, from, to, initialValue, initialFund, params)
+      if (result > bestResult) {
+        bestParams = params
+        bestResult = result
+      }
+    }
+    return bestResult
   }
 }
