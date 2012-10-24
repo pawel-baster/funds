@@ -14,4 +14,6 @@ class FixedDepositFund(
   val rate: Double
 ) extends Fund(currency, shortName) {
   def getQuoteForDate(date: Date): Double = 100 * math.pow(1 + rate, date.getTime() / 365.0 / 24 / 3600 / 1000)
+  def calculateBuyFee(value: Double) : Double = value * 0.99
+  def calculateSellFee(value: Double) : Double = value * 0.98
 }

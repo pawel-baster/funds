@@ -44,11 +44,10 @@ class CostCalculator(
       println("because share value changed from " + funds(fund).getQuoteForDate(lastDate) + " to " + funds(fund).getQuoteForDate(curDate))
       value = newValue
 
-      if (maxarg != fund) {
+      if (maxarg != fund && (decisionVars(maxarg) - decisionVars(fund) > p.smoothFactor)) {
         println("changing fund: " + fund + " to " + maxarg)
+        value = funds(fund).calculateManipulationFee(value, funds(maxarg))
         fund = maxarg
-
-        // incur fees?
       } else {
         println("(Do not change the fund " + fund + ")")
       }

@@ -12,6 +12,8 @@ class MockFixedFund(
   override val shortName: String,
   val values: Array[Double]
 ) extends Fund(new CurrencyDKK, shortName) {
+  def calculateBuyFee(value: Double) : Double = 0.95 * value
+  def calculateSellFee(value: Double) : Double = 0.90 * value
   def getQuoteForDate(date: Date): Double = {
     val idx = (date.getTime() / 24.0 / 3600 / 1000).toInt
     return values(idx)

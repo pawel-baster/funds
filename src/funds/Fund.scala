@@ -1,5 +1,6 @@
 import java.util.Date
 import currencies.Currency
+import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
 /**
  * User: pawel
@@ -11,4 +12,13 @@ abstract class Fund(
   val shortName: String
 ) {
   def getQuoteForDate(date: Date) : Double
+  def calculateBuyFee(value: Double) : Double
+  def calculateSellFee(value: Double) : Double
+  def calculateManipulationFee(value: Double, fund: Fund) : Double = {
+    if (fund.currency.getIsoName() == this.currency.getIsoName()) {
+      return fund.calculateBuyFee(this.calculateSellFee(value))
+    } else {
+      throw new NotImplementedException();
+    }
+  }
 }

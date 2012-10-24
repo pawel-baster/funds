@@ -24,20 +24,35 @@ val cc = new CostCalculator(new MovingAverage)
 
 println("--- test 1")
 
-val good = new Params(window, Array(1.0, 0, 0))
+val good = new Params(window, 0, Array(1.0, 0, 0))
 val result1 = cc.calculate(funds, from, to, 1.0, 0, good)
 assert(result1 == 8.0, "expected 16 as a result, got: " + result1)
 
 println("--- test 2")
 
-val bad = new Params(window, Array(0, 1.0, 0))
+val bad = new Params(window, 0, Array(0, 1.0, 0))
 val result2 = cc.calculate(funds, from, to, 8.0, 1, bad)
 assert(result2 == 1.0, "expected 1 as a result, got: " + result2)
 
 println("--- test 3")
 
-val medium = new Params(window, Array(0, 0, 1.0))
+val medium = new Params(window, 0, Array(0, 0, 1.0))
 val result3 = cc.calculate(funds, from, to, 1.0, 2, medium)
 assert(result3 == 1.0, "expected 1 as a result, got: " + result3)
 
-// test fees:
+// fund change and fees
+
+println("--- test 4")
+
+val result4 = cc.calculate(funds, from, to, 1.0, 1, good)
+assert(result4 == 1.71, "expected 1.71 as a result, got: " + result4)
+
+// high smooth factor
+
+println("--- test 5")
+
+val goodWithHighSmoothFactor = new Params(window, 20, Array(1.0, 0, 0))
+val result5 = cc.calculate(funds, from, to, 8.0, 1, goodWithHighSmoothFactor)
+assert(result5 == 1.0, "expected 1 as a result, got: " + result5)
+
+println("OK")

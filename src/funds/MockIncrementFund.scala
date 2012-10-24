@@ -13,4 +13,6 @@ class MockIncrementFund(
   val increment: Double
 ) extends Fund(new CurrencyDKK, shortName) {
   def getQuoteForDate(date: Date): Double = 100 + increment * (date.getTime() / 24.0 / 3600 / 1000)
+  def calculateBuyFee(value: Double) : Double = 0.99
+  def calculateSellFee(value: Double) : Double = 0.99
 }
