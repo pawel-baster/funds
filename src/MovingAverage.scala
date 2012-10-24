@@ -20,8 +20,8 @@ class MovingAverage {
     val fromDate = math.floor(from.getTime()/24.0/3600/1000).toInt
     val toDate = math.floor(to.getTime()/24.0/3600/1000).toInt
 
-    assert (window > 0)
-    assert (window < (toDate - fromDate))
+    require (window > 0)
+    require (window < (toDate - fromDate))
 
     val ma = Array.ofDim[Double](toDate - fromDate - window + 1, funds.length)
 
