@@ -1,3 +1,5 @@
+import util.Random
+
 /**
  * Created with IntelliJ IDEA.
  * User: pb
@@ -12,10 +14,12 @@ class Params (
 ) {
  /* def createRandom(count: Int) = 0
   def createRandom(p: Params) = 1*/
-  def createRandomFromNormal(): Params = {
-    val newWindow = window // +
-    val newSmoothFactor = smoothFactor // +
-    val newCoefs = coefs// coefs.map(x => x + )
+  def createRandomFromNormal(maxWindow: Int): Params = {
+    var newWindow = math.round(window + Random.nextGaussian - 1).toInt
+    if (newWindow < 1) newWindow = 1
+    if (newWindow > maxWindow) newWindow = maxWindow
+    val newSmoothFactor = smoothFactor + Random.nextGaussian/10.0
+    val newCoefs = coefs.map(coef => coef + Random.nextGaussian())
     return new Params(newWindow, newSmoothFactor, newCoefs)
   }
 }

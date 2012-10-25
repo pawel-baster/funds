@@ -20,7 +20,7 @@ class FundOptimizer(
     var bestResult = -9999.0 // @todo -Inf in scala?
     var bestParams = initialParams
     for (i <- 1 to count) {
-      val params = bestParams.createRandomFromNormal()
+      val params = bestParams.createRandomFromNormal(((to.getTime - from.getTime)/24.0/3600/1000).toInt)
       val result = costCalculator.calculate(funds, from, to, initialValue, initialFund, params)
       if (result > bestResult) {
         bestParams = params

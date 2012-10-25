@@ -19,14 +19,40 @@ from.setTime(0)
 val to = new Date()
 to.setTime(5 * 24 * 3600 * 1000)
 
+
+println("--- test 1")
+
 val initialParams = new Params(window, 0, Array(0, 1.0, 0))
 val initialFund = 0
 val initialValue = 1
 val fundOptimizer = new FundOptimizer(new CostCalculator(new MovingAverage), funds, from, to, initialParams, initialFund, initialValue)
 
-println("--- test 1")
 val value = fundOptimizer.optimize(100)
 
-assert(value == 16.0, "Expected 16, got: " + value)
+assert(value == 32.0, "Expected 32, got: " + value)
+
+
+println("--- test 2")
+
+val initialParams2 = new Params(window, 0, Array(0, 1.0, 0))
+val initialFund2 = 1
+val initialValue2 = 1
+val fundOptimizer2 = new FundOptimizer(new CostCalculator(new MovingAverage), funds, from, to, initialParams2, initialFund2, initialValue2)
+
+val value2 = fundOptimizer2.optimize(100)
+
+assert(value2 == 6.84, "Expected 6.84, got: " + value2)
+
+
+println("--- test 3")
+
+val initialParams3 = new Params(window, 0, Array(0, 0, 1.0))
+val initialFund3 = 2
+val initialValue3 = 1
+val fundOptimizer3 = new FundOptimizer(new CostCalculator(new MovingAverage), funds, from, to, initialParams3, initialFund3, initialValue3)
+
+val value3 = fundOptimizer3.optimize(100)
+
+assert(value3 == 13.68, "Expected 13.68, got: " + value3)
 
 println("OK")
