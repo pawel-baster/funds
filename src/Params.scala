@@ -19,7 +19,7 @@ class Params (
     if (newWindow < 1) newWindow = 1
     if (newWindow > maxWindow) newWindow = maxWindow
     val newSmoothFactor = smoothFactor + Random.nextGaussian/10.0
-    val newCoefs = coefs.map(coef => coef + Random.nextGaussian())
+    val newCoefs = coefs.map(coef => coef + Random.nextGaussian()/10.0)
     return new Params(newWindow, newSmoothFactor, newCoefs)
   }
 }

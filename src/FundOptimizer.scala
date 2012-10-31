@@ -17,7 +17,7 @@ class FundOptimizer(
   val initialValue: Double
 ) {
   def optimize(count: Int): Double = {
-    var bestResult = -9999.0 // @todo -Inf in scala?
+    var bestResult = Double.NegativeInfinity
     var bestParams = initialParams
     for (i <- 1 to count) {
       val params = bestParams.createRandomFromNormal(((to.getTime - from.getTime)/24.0/3600/1000).toInt)
