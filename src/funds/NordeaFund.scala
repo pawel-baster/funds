@@ -15,6 +15,8 @@ class NordeaFund(
   override val downloader: Downloader
 ) extends UpdatableFund(shortName, new CurrencyDKK, downloader) {
   var quotes = new HashMap[Date, Double]
+  var dateMin = new SimpleDateFormat("dd-MM-yyy").parse("01-01-2000")
+  var dateMax = dateMin
 
   def update() = {
     val csvFile = downloader.download("someUrl")
@@ -23,6 +25,9 @@ class NordeaFund(
       val date = new SimpleDateFormat("dd-MM-yyy").parse(cols(0))
       if (quotes.get(date) == None) {
         quotes = quotes + ((date, cols(1).replace(',', '.').toDouble))
+        if (date.getTime > dateMax.getTime) {
+          dateMax = date
+        }
       }
     })
     quotes.foreach(item => println(item))
@@ -32,14 +37,19 @@ class NordeaFund(
   def calculateBuyFee(value: Double): Double = value
 
   def getQuoteForDate(date: Date): Double = {
-    var quote = quotes.get(date)
-    if (quote == None) {
+    if (date.getTime > dateMax.getTime) {
       update()
-      quote = quotes.get(date)
     }
-    if (quote == None) {
-      throw new RuntimeException("Missing value for date " + date);
+
+    if (date.getTime > dateMax.getTime || date.getTime < dateMin.getTime) {
+      throw new RuntimeException("value for date not found")
     }
-    return quote.getOrElse(-1.0)
+
+    if (!quotes.contains(date)) {
+      val dayBefore = new Date()
+      dayBefore.setTime(date.getTime - 24 * 3600 * 1000)
+      return getQuoteForDate(dayBefore)
+    }
+    return quotes.getOrElse(date, -1.0)
   }
 }

@@ -24,7 +24,12 @@ try {
   case e: RuntimeException => assert(true, "Exception expected")
 }
 
-val fund2 = new NordeaFund("test2", new MockDownloader("src/tests/fixtures/nordea_export_2.csv")) //mockDownloader
+val fund2 = new NordeaFund("test2", new MockDownloader("src/tests/fixtures/nordea_export_2.csv"))
 assert(fund2.getQuoteForDate(date2) == 99.13)
+
+//interpolation:
+val interpolationDate = new SimpleDateFormat("dd-MM-yyy").parse("19-10-2012")
+val interpolatedValue = fund2.getQuoteForDate(interpolationDate)
+assert(interpolatedValue == 99.42, "Expected (interpolated) 99.42, got: " + interpolatedValue)
 
 println("OK")
