@@ -36,12 +36,12 @@ class CostCalculator(
 
       // update value:
       val curDate = new Date()
-      curDate.setTime(to.getTime + (row + 1 - avgs.length) * 24 * 3600 * 1000);
+      curDate.setTime(to.getTime + (row + 1 - avgs.length) * 24 * 3600 * 1000)
       val lastDate = new Date()
       lastDate.setTime(curDate.getTime - 24 * 3600 * 1000)
-      val newValue = value * funds(fund).getQuoteForDate(curDate) / funds(fund).getQuoteForDate(lastDate)
+      val newValue = value * funds(fund).getQuoteForDate(curDate).get / funds(fund).getQuoteForDate(lastDate).get
       println("Updating value: " + value + " to " + newValue)
-      println("because share value changed from " + funds(fund).getQuoteForDate(lastDate) + " to " + funds(fund).getQuoteForDate(curDate))
+      println("because share value changed from " + funds(fund).getQuoteForDate(lastDate).get + " to " + funds(fund).getQuoteForDate(curDate).get)
       value = newValue
 
       if (maxarg != fund && (decisionVars(maxarg) - decisionVars(fund) > p.smoothFactor)) {

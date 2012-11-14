@@ -20,11 +20,13 @@ class FundOptimizer(
     var bestResult = Double.NegativeInfinity
     var bestParams = initialParams
     for (i <- 1 to count) {
-      val params = bestParams.createRandomFromNormal(((to.getTime - from.getTime)/24.0/3600/1000).toInt)
+      val params = bestParams.createRandomFromNormal(((to.getTime - from.getTime)/24.0/3600/1000).toInt - 1)
       val result = costCalculator.calculate(funds, from, to, initialValue, initialFund, params)
+      println(">> result = " + result + ", best: " + bestResult)
       if (result > bestResult) {
         bestParams = params
         bestResult = result
+        println("-- new best params")
       }
     }
     return bestResult

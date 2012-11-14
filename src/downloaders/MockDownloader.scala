@@ -10,5 +10,5 @@ import io.{BufferedSource, Source}
 class MockDownloader (
   val filename: String
 ) extends Downloader {
-  def download(ignored_url: String): BufferedSource = Source.fromFile(filename)
+  def download(ignored_url: String, data: String = ""): BufferedSource = Source.fromFile(filename)
 }

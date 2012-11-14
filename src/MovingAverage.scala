@@ -21,28 +21,27 @@ class MovingAverage {
     val toDate = math.floor(to.getTime()/24.0/3600/1000).toInt
 
     require (window > 0)
-    require (window < (toDate - fromDate))
+    require (window < (toDate - fromDate), "require that " + window + " < " + toDate + " - " + fromDate)
 
-    val ma = Array.ofDim[Double](toDate - fromDate - window + 1, funds.length)
+    val ma = Array.ofDim[Double](toDate - fromDate - window + 2, funds.length)
 
     // initial row
     val date = new Date(fromDate * 24 * 3600 * 1000)
     for (day <- (0 to window -1)) {
       for (fundind <- (0 to funds.length - 1)){
-        ma(0)(fundind) += funds(fundind).getQuoteForDate(date)
+        ma(0)(fundind) += funds(fundind).getQuoteForDate(date).get
       }
       date.setTime(date.getTime() + 24 * 3600 * 1000)
     }
 
     // iterate: add and subtract
-    for (day <- (1 to toDate - fromDate - window)) {
-      val date = new Date()
-      date.setTime((fromDate + window + day) * 24 * 3600 * 1000)
+    for (day <- (1 to toDate - fromDate - window + 1)) {
       val oldDate = new Date()
-      oldDate.setTime((fromDate + day) * 24 * 3600 * 1000)
+      oldDate.setTime(date.getTime - window * 24 * 3600 * 1000)
       for (fundind <- (0 to funds.length - 1)){
-        ma(day)(fundind) += ma(day-1)(fundind) + funds(fundind).getQuoteForDate(date) - funds(fundind).getQuoteForDate(oldDate)
+        ma(day)(fundind) += ma(day-1)(fundind) + funds(fundind).getQuoteForDate(date).get - funds(fundind).getQuoteForDate(oldDate).get
       }
+      date.setTime(date.getTime() + 24 * 3600 * 1000)
     }
 
     // divide by window

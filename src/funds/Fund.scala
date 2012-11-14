@@ -11,7 +11,7 @@ abstract class Fund(
   val currency: Currency,
   val shortName: String
 ) {
-  def getQuoteForDate(date: Date) : Double
+  def getQuoteForDate(date: Date) : Option[Double]
   def calculateBuyFee(value: Double) : Double
   def calculateSellFee(value: Double) : Double
   def calculateManipulationFee(value: Double, fund: Fund) : Double = {

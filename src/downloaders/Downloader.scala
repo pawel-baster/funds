@@ -8,5 +8,5 @@ import io.BufferedSource
  * To change this template use File | Settings | File Templates.
  */
 abstract class Downloader {
-  def download(url: String): BufferedSource
+  def download(url: String, data: String = ""): BufferedSource
 }

@@ -18,8 +18,11 @@ class Params (
     var newWindow = math.round(window + Random.nextGaussian - 1).toInt
     if (newWindow < 1) newWindow = 1
     if (newWindow > maxWindow) newWindow = maxWindow
-    val newSmoothFactor = smoothFactor + Random.nextGaussian/10.0
-    val newCoefs = coefs.map(coef => coef + Random.nextGaussian()/10.0)
+    val newSmoothFactor = math.abs(smoothFactor + Random.nextGaussian/10.0)
+    val newCoefs = coefs.map(coef => coef + Random.nextGaussian())
+    println ("new params: wnd: " + newWindow + " smthFactor: " + newSmoothFactor)
+    newCoefs.foreach(c => print(c + ", "))
+    println
     return new Params(newWindow, newSmoothFactor, newCoefs)
   }
 }
