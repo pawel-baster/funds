@@ -1,5 +1,7 @@
+package funds.funds
+
+import funds.currencies.Currency
 import java.util.Date
-import currencies.Currency
 
 /**
  * Created with IntelliJ IDEA.

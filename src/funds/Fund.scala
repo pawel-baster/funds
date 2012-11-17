@@ -1,5 +1,7 @@
+package funds.funds
+
 import java.util.Date
-import currencies.Currency
+import funds.currencies.Currency
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
 /**

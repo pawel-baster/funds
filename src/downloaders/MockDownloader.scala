@@ -1,3 +1,5 @@
+package funds.downloaders
+
 import io.{BufferedSource, Source}
 
 /**

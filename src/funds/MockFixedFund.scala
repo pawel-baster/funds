@@ -1,4 +1,6 @@
-import currencies.CurrencyDKK
+package funds.funds
+
+import funds.currencies.CurrencyDKK
 import java.util.Date
 
 /**

@@ -1,5 +1,6 @@
-import collection.immutable.Range.Int
-import java.util
+package funds
+
+import funds.Fund
 import java.util.Date
 
 /**

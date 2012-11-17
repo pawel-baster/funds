@@ -1,5 +1,8 @@
+package funds.funds
+
 import collection.immutable.HashMap
-import currencies.CurrencyDKK
+import funds.currencies.CurrencyDKK
+import funds.downloaders.Downloader
 import java.text.SimpleDateFormat
 import java.util.Date
 

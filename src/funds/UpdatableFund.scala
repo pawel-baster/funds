@@ -1,4 +1,7 @@
-import currencies.Currency
+package funds.funds
+
+import funds.currencies.{Currency, CurrencyDKK}
+import funds.downloaders.Downloader
 
 /**
  * Created with IntelliJ IDEA.

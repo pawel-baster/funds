@@ -1,3 +1,4 @@
+import funds.funds.Fund
 import java.util.Date
 
 /**
