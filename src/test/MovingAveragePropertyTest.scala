@@ -40,15 +40,14 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
       }
     }
 
-    it("should return a sum of 2 first records as a first result if window is set to 2") {
-      forAll {
-        (records: Array[Double]) =>
-          whenever(records.length > 3) {
+    it("should return a sum of n first records as a first result if window is set to n") {
+      forAll(minSuccessful(50), maxDiscarded(1000)) {
+        (window: Int, records: Array[Double]) =>
+          whenever(0 < window && window < 100000 && records.length > window + 1) {
             val funds = Array[Fund](
               new MockFixedFund("test", records)
             )
 
-            val window = 2
             val from = new Date()
             from.setTime(0)
             val to = new Date()
@@ -58,7 +57,29 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
             val ma = new MovingAverage
             val result = ma.calculate(funds, from, to, window)
 
-            ((records(0) + records(1)) / window) should equal(result(0)(0))
+            (records.take(window).sum / window) should equal(result(0)(0))
+          }
+      }
+    }
+
+    it("should return a sum of n last records as a last result if window is set to n") {
+      forAll(minSuccessful(50), maxDiscarded(1000)) {
+        (window: Int, records: Array[Double]) =>
+          whenever(0 < window && window < 100000 && records.length > window + 1) {
+            val funds = Array[Fund](
+              new MockFixedFund("test", records)
+            )
+
+            val from = new Date()
+            from.setTime(0)
+            val to = new Date()
+            to.setTime((records.length - 1) * 24L * 3600 * 1000)
+            require(to.getTime > 0, "to.getTime negative = " + to.getTime + ", array length: " + records.length)
+
+            val ma = new MovingAverage
+            val result = ma.calculate(funds, from, to, window)
+
+            (records.reverse.take(window).sum / window) should equal(result.reverse(0)(0))
           }
       }
     }
