@@ -1,4 +1,4 @@
-package funds.tests
+package test
 
 import org.scalatest._
 import java.util.Date
