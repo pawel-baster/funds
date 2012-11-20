@@ -1,6 +1,7 @@
-import funds.funds.Fund
+package funds
+
+import funds.Fund
 import java.util.Date
-import funds.MovingAverage
 
 /**
  * Created with IntelliJ IDEA.

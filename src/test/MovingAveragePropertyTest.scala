@@ -35,6 +35,10 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
             val ma = new MovingAverage
             val result = ma.calculate(funds, from, to, window)
 
+            println("test:")
+            records.foreach(el => println(" " + el))
+            println("result:")
+            result.foreach(elem => println(elem(0) + " "))
             records.map(Array(_)) should equal(result)
           }
       }
@@ -78,8 +82,10 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
 
             val ma = new MovingAverage
             val result = ma.calculate(funds, from, to, window)
-
-            (records.reverse.take(window).sum / window) should equal(result.reverse(0)(0))
+            println("test:")
+            result.foreach(array => println(array(0)))
+            //(records.reverse.take(window).sum / window) should equal(result.reverse(0)(0))
+            (records.reverse.take(window).sum / window - result.reverse(0)(0)) should be < 0.00001
           }
       }
     }

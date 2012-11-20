@@ -1,3 +1,5 @@
+package funds
+
 import util.Random
 
 /**
