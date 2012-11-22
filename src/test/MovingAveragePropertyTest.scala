@@ -7,6 +7,7 @@ import matchers.ShouldMatchers
 import prop.GeneratorDrivenPropertyChecks
 import scala.Predef._
 import java.util.Date
+import util.Random
 
 
 /**
@@ -21,25 +22,31 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
     it("should return input values for random data if window is set to 1") {
       forAll {
         (records: Array[Double]) =>
-          whenever(records.size > 2) {
+          whenever(records.length > 2) {
+
+            val recordsFiltered = records.map(record => if (math.abs(record) < 1000000) record else Random.nextInt(1000000))
+
             val funds = Array[Fund](
-              new MockFixedFund("test", records)
+              new MockFixedFund("test", recordsFiltered)
             )
 
             val window = 1
             val from = new Date()
             from.setTime(0)
             val to = new Date()
-            to.setTime((records.size - 1) * 24 * 3600 * 1000)
+            to.setTime((recordsFiltered.length - 1) * 24L * 3600 * 1000)
 
             val ma = new MovingAverage
             val result = ma.calculate(funds, from, to, window)
 
-            println("test:")
-            records.foreach(el => println(" " + el))
-            println("result:")
-            result.foreach(elem => println(elem(0) + " "))
-            records.map(Array(_)) should equal(result)
+            //println("test:")
+            //recordsFiltered.foreach(el => println(" " + el))
+            //println("result:")
+            //result.foreach(elem => println(elem(0) + " "))
+            //recordsFiltered.map(Array(_)) should equal(result)
+            (recordsFiltered, result).zipped.foreach { (expected, actual) =>
+              actual.head should be (expected plusOrMinus 0.0001)
+            }
           }
       }
     }
@@ -69,23 +76,27 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
     it("should return a sum of n last records as a last result if window is set to n") {
       forAll(minSuccessful(50), maxDiscarded(1000)) {
         (window: Int, records: Array[Double]) =>
-          whenever(0 < window && window < 100000 && records.length > window + 1) {
+          whenever(0 < window && window < 100000 && records.length > window + 1 && records.length < 100000) {
+
+            val recordsFiltered = records.map(record => if (math.abs(record) < 1000000) record else Random.nextInt(1000000))
+
             val funds = Array[Fund](
-              new MockFixedFund("test", records)
+              new MockFixedFund("test", recordsFiltered)
             )
 
             val from = new Date()
             from.setTime(0)
             val to = new Date()
-            to.setTime((records.length - 1) * 24L * 3600 * 1000)
-            require(to.getTime > 0, "to.getTime negative = " + to.getTime + ", array length: " + records.length)
+            to.setTime((recordsFiltered.length - 1) * 24L * 3600 * 1000)
+            require(to.getTime > 0, "to.getTime negative = " + to.getTime + ", array length: " + recordsFiltered.length)
 
             val ma = new MovingAverage
             val result = ma.calculate(funds, from, to, window)
-            println("test:")
-            result.foreach(array => println(array(0)))
+            //println("test:")
+            //result.foreach(array => println(array(0)))
+            result.reverse(0)(0) should be (recordsFiltered.reverse.take(window).sum / window plusOrMinus 0.0001)
             //(records.reverse.take(window).sum / window) should equal(result.reverse(0)(0))
-            (records.reverse.take(window).sum / window - result.reverse(0)(0)) should be < 0.00001
+            //(records.reverse.take(window).sum / window - result.reverse(0)(0)) should be < 0.00001
           }
       }
     }

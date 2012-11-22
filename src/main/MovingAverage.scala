@@ -12,11 +12,7 @@ import java.util.Date
  */
 class MovingAverage {
 
-  /**
-   * static?
-   * 100,100,100,100,100 -> 200, 200, 200, 200
-   */
-  def calculate(funds: Array[Fund], from: Date, to: Date, window: Int): Array[Array[Double]] = { //{funds: Array[Fund], from: Date, to: Date, window: Int) = {
+  def calculate(funds: Array[Fund], from: Date, to: Date, window: Int): Array[Array[Double]] = {
 
     val fromDate = math.floor(from.getTime()/24.0/3600/1000).toInt
     val toDate = math.floor(to.getTime()/24.0/3600/1000).toInt
@@ -40,11 +36,13 @@ class MovingAverage {
       val oldDate = new Date()
       oldDate.setTime(date.getTime - window * 24 * 3600 * 1000)
       for (fundind <- (0 to funds.length - 1)){
-        ma(day)(fundind) += ma(day-1)(fundind) + funds(fundind).getQuoteForDate(date).get - funds(fundind).getQuoteForDate(oldDate).get
+        ma(day)(fundind) = ma(day-1)(fundind) + funds(fundind).getQuoteForDate(date).get - funds(fundind).getQuoteForDate(oldDate).get
+        //if (ma.length < 5) println("day=index: " + day + ", value: " + ma(day)(fundind) + " = " + ma(day-1)(fundind) + " + " + funds(fundind).getQuoteForDate(date).get + " - " + funds(fundind).getQuoteForDate(oldDate).get)
       }
       date.setTime(date.getTime() + 24 * 3600 * 1000)
     }
-
+    //println("intermediate result:")
+    //if (ma.length < 5) ma.foreach(elem => println(elem(0) + " "))
     // divide by window
     return ma.map(row => {row.map(value => value/window)})
   }
