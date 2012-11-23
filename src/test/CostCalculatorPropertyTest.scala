@@ -6,6 +6,8 @@ import org.scalatest.FunSpec
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.matchers.ShouldMatchers
 import java.util.Date
+import org.scalacheck.Gen
+import util.Random
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,25 +24,24 @@ class CostCalculatorPropertyTest extends FunSpec with GeneratorDrivenPropertyChe
         (records: Array[Double]) =>
           whenever(records.size > 3) {
 
-            val positiveRecords = records.map(math.abs(_) + 0.1)
+            val recordsFiltered = records.map(record => if (record > 0  && math.abs(record) < 1000000) record else Random.nextInt(1000000) + 1)
 
             val funds = Array[Fund](
-              new MockFixedFund("best", positiveRecords),
-              new MockFixedFund("worst", Array(16.0, 8.0, 4.0, 2.0, 1.0)),
-              new MockFixedFund("medium", Array(1.0, 1.0, 1.0, 1.0, 1.0))
+              new MockFixedFund("test1", recordsFiltered),
+              new MockFixedFund("test2", recordsFiltered.reverse)
             )
 
             val window = 2
             val from = new Date()
             from.setTime(0)
             val to = new Date()
-            to.setTime((records.length - 1) * 24L * 3600 * 1000)
+            to.setTime((recordsFiltered.length - 1) * 24L * 3600 * 1000)
 
             val cc = new CostCalculator(new MovingAverage)
 
-            val firstAlways = new Params(window, 0, Array(1.0, 0, 0))
+            val firstAlways = new Params(window, 0, Array(1.0, 0))
             val result = cc.calculate(funds, from, to, 1.0, 0, firstAlways)
-            (positiveRecords.last / positiveRecords.head) should equal (result)
+            (recordsFiltered.last / recordsFiltered.head) should be (result plusOrMinus 0.000001)
           }
       }
     }
