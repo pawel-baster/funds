@@ -22,7 +22,7 @@ class CostCalculatorPropertyTest extends FunSpec with GeneratorDrivenPropertyChe
     it("should return last/first if no fund change is performed") {
       forAll {
         (records: Array[Double]) =>
-          whenever(records.size > 3) {
+          whenever(records.size > 3 && records.size < 100) {
 
             val recordsFiltered = records.map(record => if (record > 0  && math.abs(record) < 1000000) record else Random.nextInt(1000000) + 1)
 
@@ -31,7 +31,7 @@ class CostCalculatorPropertyTest extends FunSpec with GeneratorDrivenPropertyChe
               new MockFixedFund("test2", recordsFiltered.reverse)
             )
 
-            val window = 2
+            val window = 1
             val from = new Date()
             from.setTime(0)
             val to = new Date()
