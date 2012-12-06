@@ -39,9 +39,14 @@ class CostCalculator(
 
       // update value:
       val curDate = new Date()
-      curDate.setTime(to.getTime + (row + 1 - avgs.length) * 24 * 3600 * 1000)
+      curDate.setTime(to.getTime + (row + 1 - avgs.length) * 24L * 3600 * 1000)
       val lastDate = new Date()
-      lastDate.setTime(curDate.getTime - 24 * 3600 * 1000)
+      lastDate.setTime(curDate.getTime - 24L * 3600 * 1000)
+      println("to.getTime(): " + to.getTime + " (" + (to.getTime / 24.0 / 3600 / 1000) + ")")
+      println("row: " + row)
+      println("curDate = " + (to.getTime / 24.0 / 3600 / 1000 + row + 1 - avgs.length) + " lastDate = " + (to.getTime / 24.0 / 3600 / 1000 + row - avgs.length) + ", length = " + avgs.length)
+      require((to.getTime / 24.0 / 3600 / 1000 + row - avgs.length) < avgs.length)
+      require((to.getTime / 24.0 / 3600 / 1000 + row - avgs.length).toLong >= 0 )
       val newValue = value * funds(fund).getQuoteForDate(curDate).get / funds(fund).getQuoteForDate(lastDate).get
       println("Updating value: " + value + " to " + newValue)
       println("because share value changed from " + funds(fund).getQuoteForDate(lastDate).get + " to " + funds(fund).getQuoteForDate(curDate).get)
@@ -52,7 +57,7 @@ class CostCalculator(
         value = funds(fund).calculateManipulationFee(value, funds(maxarg))
         fund = maxarg
       } else {
-        println("(Do not change the fund " + fund + ")")
+        println("(Do not change fund " + fund + ")")
       }
     }
     return value
