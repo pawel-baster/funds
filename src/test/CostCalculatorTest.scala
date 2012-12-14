@@ -5,6 +5,7 @@ import funds.funds.{MockFixedFund, Fund}
 import java.util.Date
 import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
+import util.Random
 
 /**
  * Created with IntelliJ IDEA.
@@ -49,5 +50,25 @@ class CostCalculatorTest extends FunSpec  with ShouldMatchers {
     val cc = new CostCalculator(new MovingAverage)
     val result = cc.calculate(funds, from, to, 100, initialFund, params)
     (result) should equal (expectedResult)
+  }
+
+  it("should return correct result for this dataset") {
+    val records = Array(1.0, 4.0, 6.0, 7.0, 8.0)
+    val window = 1
+    val funds = Array[Fund](
+      new MockFixedFund("test1", records),
+      new MockFixedFund("test2", records.reverse)
+    )
+
+    val from = new Date()
+    from.setTime(0)
+    val to = new Date()
+    to.setTime((records.length - 1) * 24L * 3600 * 1000)
+
+    val cc = new CostCalculator(new MovingAverage)
+
+    val firstAlways = new Params(window, 0, Array(1.0, 0))
+    val result = cc.calculate(funds, from, to, 1.0, 0, firstAlways)
+    (records.last / records.head) should be (result plusOrMinus 0.000001)
   }
 }

@@ -19,11 +19,13 @@ class CostCalculator(
     require(p.coefs.length == funds.length)
 
     val avgs = ma.calculate(funds, from, to, p.window)
+    require((to.getTime - from.getTime) <= avgs.length * 24L * 3600 * 1000)
     println("MA:")
     avgs.foreach(row => {row.foreach(el => print(el + " ")); println})
     var value = initialValue
     var fund = initialFund
-    for (row <- (0 to avgs.length - 1)) {
+
+    for (row <- (1 to avgs.length - 1)) {
       // calculate product
       assert(p.coefs.length == avgs(row).length)
       val decisionVars = (p.coefs, avgs(row)).zipped.map{ case (a,b) => a*b }
@@ -46,7 +48,7 @@ class CostCalculator(
       println("row: " + row)
       println("curDate = " + (to.getTime / 24.0 / 3600 / 1000 + row + 1 - avgs.length) + " lastDate = " + (to.getTime / 24.0 / 3600 / 1000 + row - avgs.length) + ", length = " + avgs.length)
       require((to.getTime / 24.0 / 3600 / 1000 + row - avgs.length) < avgs.length)
-      require((to.getTime / 24.0 / 3600 / 1000 + row - avgs.length).toLong >= 0 )
+      require((to.getTime / 24.0 / 3600 / 1000 + row - avgs.length).toLong >= 0)
       val newValue = value * funds(fund).getQuoteForDate(curDate).get / funds(fund).getQuoteForDate(lastDate).get
       println("Updating value: " + value + " to " + newValue)
       println("because share value changed from " + funds(fund).getQuoteForDate(lastDate).get + " to " + funds(fund).getQuoteForDate(curDate).get)

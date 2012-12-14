@@ -19,13 +19,13 @@ import util.Random
 class CostCalculatorPropertyTest extends FunSpec with GeneratorDrivenPropertyChecks with ShouldMatchers {
 
   describe("A CostCalculator") {
-    it("should return last/first if no fund change is performed") {
+    it("should return (last/first) if no fund change is performed") {
       forAll {
         (window: Int, records: Array[Double]) =>
           whenever(window > 0 && records.length > 3 && records.length < 100) {
 
             val recordsFiltered = records.map(record => if (record > 0  && math.abs(record) < 1000000) record else Random.nextInt(1000000) + 1)
-            val windowFiltered = if (0 < window && window < records.length - 1) window else Random.nextInt(records.length - 2) + 1
+            val windowFiltered = 1
 
             val funds = Array[Fund](
               new MockFixedFund("test1", recordsFiltered),
