@@ -4,7 +4,7 @@ import org.scalatest._
 import java.util.Date
 import scala.Predef._
 import funds.funds._
-import funds.MovingAverage
+import funds.{ExtendedDate, MovingAverage}
 import funds.currencies.CurrencyDKK
 
 /**
@@ -23,9 +23,9 @@ class MovingAverageTest extends FunSpec {
       )
 
       val window = 1
-      val from = new Date()
+      val from = new ExtendedDate()
       from.setTime(0)
-      val to = new Date()
+      val to = new ExtendedDate()
       to.setTime(5 * 24 * 3600 * 1000)
 
       val expected = Array(
@@ -46,9 +46,9 @@ class MovingAverageTest extends FunSpec {
       )
 
       val window = 2
-      val from = new Date()
+      val from = new ExtendedDate()
       from.setTime(0)
-      val to = new Date()
+      val to = new ExtendedDate()
       to.setTime(5 * 24 * 3600 * 1000)
 
       val expected = Array(
@@ -63,8 +63,8 @@ class MovingAverageTest extends FunSpec {
     }
 
     it("should return a valid result if window is set to 3") {
-      val from = new Date()
-      val to = new Date()
+      val from = new ExtendedDate()
+      val to = new ExtendedDate()
       from.setTime(0)
       to.setTime(10 * 24 * 3600 * 1000)
       val window = 3
@@ -91,7 +91,7 @@ class MovingAverageTest extends FunSpec {
   }
 
 
-  def _commonTest(funds: Array[Fund], expectedMA: Array[Array[Double]], window: Int, from: Date, to: Date) {
+  def _commonTest(funds: Array[Fund], expectedMA: Array[Array[Double]], window: Int, from: ExtendedDate, to: ExtendedDate) {
     val ma = new MovingAverage
 
     //println("Expected:")

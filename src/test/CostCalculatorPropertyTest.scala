@@ -1,11 +1,10 @@
 package test
 
 import funds.funds.{MockFixedFund, Fund}
-import funds.{Params, CostCalculator, MovingAverage}
+import funds.{ExtendedDate, Params, CostCalculator, MovingAverage}
 import org.scalatest.FunSpec
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.matchers.ShouldMatchers
-import java.util.Date
 import org.scalacheck.Gen
 import util.Random
 
@@ -32,9 +31,9 @@ class CostCalculatorPropertyTest extends FunSpec with GeneratorDrivenPropertyChe
               new MockFixedFund("test2", recordsFiltered.reverse)
             )
 
-            val from = new Date()
+            val from = new ExtendedDate()
             from.setTime(0)
-            val to = new Date()
+            val to = new ExtendedDate()
             to.setTime((recordsFiltered.length - 1) * 24L * 3600 * 1000)
 
             val cc = new CostCalculator(new MovingAverage)

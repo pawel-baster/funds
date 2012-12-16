@@ -13,8 +13,8 @@ import java.util.Date
 class FundOptimizer(
   val costCalculator: CostCalculator,
   val funds: Array[Fund],
-  val from: Date,
-  val to: Date,
+  val from: ExtendedDate,
+  val to: ExtendedDate,
   val initialParams: Params,
   val initialFund: Int,
   val initialValue: Double

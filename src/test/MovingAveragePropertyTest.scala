@@ -1,7 +1,7 @@
 package test
 
 import funds.funds.{MockFixedFund, Fund}
-import funds.MovingAverage
+import funds.{ExtendedDate, MovingAverage}
 import org.scalatest._
 import matchers.ShouldMatchers
 import prop.GeneratorDrivenPropertyChecks
@@ -31,9 +31,9 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
             )
 
             val window = 1
-            val from = new Date()
+            val from = new ExtendedDate()
             from.setTime(0)
-            val to = new Date()
+            val to = new ExtendedDate()
             to.setTime((recordsFiltered.length - 1) * 24L * 3600 * 1000)
 
             val ma = new MovingAverage
@@ -59,9 +59,9 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
               new MockFixedFund("test", records)
             )
 
-            val from = new Date()
+            val from = new ExtendedDate()
             from.setTime(0)
-            val to = new Date()
+            val to = new ExtendedDate()
             to.setTime((records.length - 1) * 24L * 3600 * 1000)
             require(to.getTime > 0, "to.getTime negative = " + to.getTime + ", array length: " + records.length)
 
@@ -84,9 +84,9 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
               new MockFixedFund("test", recordsFiltered)
             )
 
-            val from = new Date()
+            val from = new ExtendedDate()
             from.setTime(0)
-            val to = new Date()
+            val to = new ExtendedDate()
             to.setTime((recordsFiltered.length - 1) * 24L * 3600 * 1000)
             require(to.getTime > 0, "to.getTime negative = " + to.getTime + ", array length: " + recordsFiltered.length)
 

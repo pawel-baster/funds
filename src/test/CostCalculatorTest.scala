@@ -1,6 +1,6 @@
 package test
 
-import funds.{Params, MovingAverage, CostCalculator}
+import funds.{ExtendedDate, Params, MovingAverage, CostCalculator}
 import funds.funds.{MockFixedFund, Fund}
 import java.util.Date
 import org.scalatest.FunSpec
@@ -28,7 +28,7 @@ class CostCalculatorTest extends FunSpec  with ShouldMatchers {
   }
 
   it("should change the fund and apply fees on fund change") {
-    runTest(new Params(2, 0, Array(1.0, 0, 0)), 342, 1)
+    runTest(new Params(1, 0, Array(1.0, 0, 0)), 342, 1)
   }
 
   it("should not change fund if smoothFactor is big enough") {
@@ -42,9 +42,9 @@ class CostCalculatorTest extends FunSpec  with ShouldMatchers {
       new MockFixedFund("medium", Array(1.0, 1.0, 1.0, 1.0, 1.0))
     )
 
-    val from = new Date()
+    val from = new ExtendedDate()
     from.setTime(0)
-    val to = new Date()
+    val to = new ExtendedDate()
     to.setTime(4 * 24 * 3600 * 1000)
 
     val cc = new CostCalculator(new MovingAverage)
@@ -60,9 +60,9 @@ class CostCalculatorTest extends FunSpec  with ShouldMatchers {
       new MockFixedFund("test2", records.reverse)
     )
 
-    val from = new Date()
+    val from = new ExtendedDate()
     from.setTime(0)
-    val to = new Date()
+    val to = new ExtendedDate()
     to.setTime((records.length - 1) * 24L * 3600 * 1000)
 
     val cc = new CostCalculator(new MovingAverage)
