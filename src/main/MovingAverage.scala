@@ -34,15 +34,11 @@ class MovingAverage {
     // iterate: add and subtract
     for (day <- (1 to toDate - fromDate - window + 1)) {
       val oldDate = ExtendedDate.createFromDays(date.getDayCount() - window)
-//      oldDate.setTime(date.getTime - window * 24 * 3600 * 1000)
       for (fundind <- (0 to funds.length - 1)){
         ma(day)(fundind) = ma(day-1)(fundind) + funds(fundind).getQuoteForDate(date).get - funds(fundind).getQuoteForDate(oldDate).get
-        //if (ma.length < 5) println("day=index: " + day + ", value: " + ma(day)(fundind) + " = " + ma(day-1)(fundind) + " + " + funds(fundind).getQuoteForDate(date).get + " - " + funds(fundind).getQuoteForDate(oldDate).get)
       }
       date.addDays(1)
     }
-    //println("intermediate result:")
-    //if (ma.length < 5) ma.foreach(elem => println(elem(0) + " "))
     // divide by window
     return ma.map(row => {row.map(value => value/window)})
   }

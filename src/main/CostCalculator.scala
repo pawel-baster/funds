@@ -19,7 +19,7 @@ class CostCalculator(
     require(p.coefs.length == funds.length)
 
     val avgs = ma.calculate(funds, from, to, p.window)
-    require((to.getTime - from.getTime) <= avgs.length * 24L * 3600 * 1000)
+    require((to.getDayCount() - from.getDayCount()) <= avgs.length)
     println("MA:")
 
     var fund = initialFund
