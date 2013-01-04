@@ -2,6 +2,7 @@ package test
 
 import org.scalatest._
 import java.util.Date
+import matchers.ShouldMatchers
 import scala.Predef._
 import funds.funds._
 import funds.{ExtendedDate, MovingAverage}
@@ -14,7 +15,7 @@ import funds.currencies.CurrencyDKK
  * Time: 20:52
  * To change this template use File | Settings | File Templates.
  */
-class MovingAverageTest extends FunSpec {
+class MovingAverageTest extends FunSpec with ShouldMatchers {
   describe("A MovingAverage calculator") {
 
     it("should return the same array if window is set to 1") {
@@ -62,6 +63,62 @@ class MovingAverageTest extends FunSpec {
       _commonTest(funds, expected, window, from, to)
     }
 
+    it("should return a valid result if window is set to 5") {
+      val funds = Array[Fund](
+        new MockFixedFund("test", Array(1.0, 2.0, 4.0, 8.0, 16.0, 32.0))
+      )
+
+      val window = 5
+      val from = new ExtendedDate()
+      from.setTime(0)
+      val to = new ExtendedDate()
+      to.setTime(5 * 24 * 3600 * 1000)
+
+      val expected = Array(
+        Array(6.2),
+        Array(12.4)
+      )
+
+      _commonTest(funds, expected, window, from, to)
+    }
+
+    it("should return a valid result if window is set to 6") {
+      val funds = Array[Fund](
+        new MockFixedFund("test", Array(1.0, 2.0, 4.0, 8.0, 16.0, 32.0))
+      )
+
+      val window = 6
+      val from = new ExtendedDate()
+      from.setTime(0)
+      val to = new ExtendedDate()
+      to.setTime(5 * 24 * 3600 * 1000)
+
+      val expected = Array(
+        Array(10.5)
+      )
+
+      _commonTest(funds, expected, window, from, to)
+    }
+
+    it("should shoud fail if window size is too big") {
+      val funds = Array[Fund](
+        new MockFixedFund("test", Array(1.0, 2.0, 4.0, 8.0, 16.0, 32.0))
+      )
+
+      val window = 7
+      val from = new ExtendedDate()
+      from.setTime(0)
+      val to = new ExtendedDate()
+      to.setTime(5 * 24 * 3600 * 1000)
+
+      val expected = Array(
+        Array(-1.0)
+      )
+      intercept[IllegalArgumentException] {
+        _commonTest(funds, expected, window, from, to)
+      }
+    }
+
     it("should return a valid result if window is set to 3") {
       val from = new ExtendedDate()
       val to = new ExtendedDate()
@@ -102,6 +159,8 @@ class MovingAverageTest extends FunSpec {
     val result = ma.calculate(funds, from, to, window)
     //result.foreach(row => {row.foreach(el => print(el + " ")); println})
 
-    assert(expectedMA.deep == result.deep, "returned array does not match expected result")
+    //assert(expectedMA.deep == result.values.deep, "returned array does not match expected result")
+    //ensure order
+    (result.values.toArray) should equal (expectedMA)
   }
 }

@@ -39,13 +39,8 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
             val ma = new MovingAverage
             val result = ma.calculate(funds, from, to, window)
 
-            //println("test:")
-            //recordsFiltered.foreach(el => println(" " + el))
-            //println("result:")
-            //result.foreach(elem => println(elem(0) + " "))
-            //recordsFiltered.map(Array(_)) should equal(result)
-            (recordsFiltered, result).zipped.foreach { (expected, actual) =>
-              actual.head should be (expected plusOrMinus 0.0001)
+            (recordsFiltered, result).zipped.foreach { (expected, actual.values) =>
+              actual.values.head should be (expected plusOrMinus 0.0001)
             }
           }
       }
@@ -68,7 +63,7 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
             val ma = new MovingAverage
             val result = ma.calculate(funds, from, to, window)
 
-            (records.take(window).sum / window) should equal(result(0)(0))
+            (records.take(window).sum / window) should equal(result.get(to.getDayCount()).head)
           }
       }
     }
@@ -94,7 +89,7 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
             val result = ma.calculate(funds, from, to, window)
             //println("test:")
             //result.foreach(array => println(array(0)))
-            result.reverse(0)(0) should be (recordsFiltered.reverse.take(window).sum / window plusOrMinus 0.0001)
+            (result.get(to.getDayCount()).head) should equal (recordsFiltered.reverse.take(window).sum / window plusOrMinus 0.0001)
             //(records.reverse.take(window).sum / window) should equal(result.reverse(0)(0))
             //(records.reverse.take(window).sum / window - result.reverse(0)(0)) should be < 0.00001
           }

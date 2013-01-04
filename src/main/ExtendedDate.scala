@@ -10,10 +10,10 @@ import java.util.Date
  * To change this template use File | Settings | File Templates.
  */
 class ExtendedDate extends Date {
-  def addDays(count: Int) = {
-    //val newDate = new ExtendedDate()
-    setTime(getTime + count * 24L * 3600 * 1000)
-    //return newDate
+  def addDays(count: Int) : ExtendedDate = {
+    val newDate = new ExtendedDate()
+    newDate.setTime(getTime + count * 24L * 3600 * 1000)
+    return newDate
   }
   def getDayCount(): Int = {
     return math.floor(getTime / 24.0 / 3600 / 1000).toInt
