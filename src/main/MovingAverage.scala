@@ -42,14 +42,17 @@ class MovingAverage {
 
     while (!date.after(to)) {
       //println(date.toString())
-      val values = Array[Double](funds.length)
+      val values = new Array[Double](funds.length)
       //println("values: " + values.length + )
       for (fundind <- (0 to funds.length - 1)){
+        println(oldValues(fundind) + " + " + funds(fundind).getQuoteForDate(date).get + " - " + funds(fundind).getQuoteForDate(oldDate).get
+          + " = " + (oldValues(fundind) + funds(fundind).getQuoteForDate(date).get - funds(fundind).getQuoteForDate(oldDate).get))
+        println("values.length: " + values.length + ", oldValues.length: " + oldValues.length)
         values(fundind) = oldValues(fundind) + funds(fundind).getQuoteForDate(date).get - funds(fundind).getQuoteForDate(oldDate).get
       }
-      values.foreach(value => print(" " + value))
+      //values.foreach(value => print(" " + value))
       //println
-      oldDate = date
+      oldDate = oldDate.addDays(1)
       date = date.addDays(1)
       ma += date.getDayCount() -> values
       //println("Adding " + date.getDayCount() + " -> " + values(0))

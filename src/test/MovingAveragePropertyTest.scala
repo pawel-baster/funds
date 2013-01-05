@@ -39,8 +39,11 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
             val ma = new MovingAverage
             val result = ma.calculate(funds, from, to, window)
 
-            (recordsFiltered, result).zipped.foreach { (expected, actual.values) =>
-              actual.values.head should be (expected plusOrMinus 0.0001)
+            val firstItemsOnly = result.values.map(item => { item.head })
+
+             (recordsFiltered, firstItemsOnly).zipped.foreach { (expected, actual) => {
+                (actual) should be (expected plusOrMinus 0.0001)
+              }
             }
           }
       }
