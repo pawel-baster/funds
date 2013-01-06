@@ -24,24 +24,24 @@ class MovingAverage {
     val ma = scala.collection.mutable.LinkedHashMap[Int, Array[Double]]()
 
     // initial row
-    var date = from
+    var date = from.addDays(-1)
     val initialRow = new Array[Double](funds.length)
     for (day <- (0 to window -1)) {
+      date = date.addDays(1)
       for (fundind <- (0 to funds.length - 1)){
-        //println("adding " + funds(fundind).getQuoteForDate(date).get + " to " + initialRow(fundind))
+        println("initial loop: adding " + funds(fundind).getQuoteForDate(date).get + " to " + initialRow(fundind))
         initialRow(fundind) += funds(fundind).getQuoteForDate(date).get
       }
-      date = date.addDays(1)
     }
 
     var oldValues = initialRow
     var currentDate = date;
     var oldDate = from
-    //println("Adding " + date.getDayCount() + " -> " + initialRow(0))
+    println("Adding " + date.getDayCount() + " -> " + initialRow(0))
     ma += date.getDayCount() -> initialRow
 
     while (!date.after(to)) {
-      //println(date.toString())
+      println("second loop for date: " + date.toString())
       val values = new Array[Double](funds.length)
       //println("values: " + values.length + )
       for (fundind <- (0 to funds.length - 1)){
@@ -55,9 +55,8 @@ class MovingAverage {
       oldDate = oldDate.addDays(1)
       date = date.addDays(1)
       ma += date.getDayCount() -> values
-      //println("Adding " + date.getDayCount() + " -> " + values(0))
+      println("Adding " + date.getDayCount() + " -> " + values(0))
       oldValues = values
-
     }
 
     // divide by window

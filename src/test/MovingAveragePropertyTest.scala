@@ -18,33 +18,38 @@ import util.Random
  * To change this template use File | Settings | File Templates.
  */
 class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChecks with ShouldMatchers {
+
+  def normalizeRecords(records: Array[Double]) : Array[Double] = {
+    return records.map(record => if (math.abs(record) < 1000000) record else Random.nextInt(1000000))
+  }
+
   describe("A MovingAverage calculator") {
     it("should return input values for random data if window is set to 1") {
       forAll {
         (records: Array[Double]) =>
           whenever(records.length > 2) {
 
-            val recordsFiltered = records.map(record => if (math.abs(record) < 1000000) record else Random.nextInt(1000000))
+            val recordsFiltered = normalizeRecords(records)
 
             val funds = Array[Fund](
               new MockFixedFund("test", recordsFiltered)
             )
 
             val window = 1
-            val from = new ExtendedDate()
-            from.setTime(0)
-            val to = new ExtendedDate()
-            to.setTime((recordsFiltered.length - 1) * 24L * 3600 * 1000)
+            val from = ExtendedDate.createFromDays(0)
+            val to = ExtendedDate.createFromDays(recordsFiltered.length - 1)
 
             val ma = new MovingAverage
             val result = ma.calculate(funds, from, to, window)
 
-            val firstItemsOnly = result.values.map(item => { item.head })
+            val firstItemsOnly = result.values.map(item => { item.head }).toArray
 
-             (recordsFiltered, firstItemsOnly).zipped.foreach { (expected, actual) => {
+            (firstItemsOnly) should equal (recordsFiltered)
+
+            /* (recordsFiltered, firstItemsOnly).zipped.foreach { (expected, actual) => {
                 (actual) should be (expected plusOrMinus 0.0001)
               }
-            }
+            } */
           }
       }
     }
@@ -53,20 +58,21 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
       forAll(minSuccessful(50), maxDiscarded(1000)) {
         (window: Int, records: Array[Double]) =>
           whenever(0 < window && window < 100000 && records.length > window + 1) {
+            val recordsFiltered = normalizeRecords(records)
+
             val funds = Array[Fund](
-              new MockFixedFund("test", records)
+              new MockFixedFund("test", recordsFiltered)
             )
 
-            val from = new ExtendedDate()
-            from.setTime(0)
-            val to = new ExtendedDate()
-            to.setTime((records.length - 1) * 24L * 3600 * 1000)
-            require(to.getTime > 0, "to.getTime negative = " + to.getTime + ", array length: " + records.length)
+            val from = ExtendedDate.createFromDays(0)
+            val to = ExtendedDate.createFromDays(recordsFiltered.length - 1)
+
+            require(to.getTime > 0, "to.getTime negative = " + to.getTime + ", array length: " + recordsFiltered.length)
 
             val ma = new MovingAverage
             val result = ma.calculate(funds, from, to, window)
 
-            (records.take(window).sum / window) should equal(result.get(to.getDayCount()).head)
+            (recordsFiltered.take(window).sum / window) should equal(result.get(to.getDayCount()).head)
           }
       }
     }
@@ -76,16 +82,15 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
         (window: Int, records: Array[Double]) =>
           whenever(0 < window && window < 100000 && records.length > window + 1 && records.length < 100000) {
 
-            val recordsFiltered = records.map(record => if (math.abs(record) < 1000000) record else Random.nextInt(1000000))
+            val recordsFiltered = normalizeRecords(records)
 
             val funds = Array[Fund](
               new MockFixedFund("test", recordsFiltered)
             )
 
-            val from = new ExtendedDate()
-            from.setTime(0)
-            val to = new ExtendedDate()
-            to.setTime((recordsFiltered.length - 1) * 24L * 3600 * 1000)
+            val from = ExtendedDate.createFromDays(0)
+            val to = ExtendedDate.createFromDays(recordsFiltered.length - 1)
+
             require(to.getTime > 0, "to.getTime negative = " + to.getTime + ", array length: " + recordsFiltered.length)
 
             val ma = new MovingAverage
