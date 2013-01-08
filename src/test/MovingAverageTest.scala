@@ -92,7 +92,7 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
       to.setTime(5 * 24 * 3600 * 1000)
 
       val expected = scala.collection.Map(
-        6 -> Array(10.5)
+        5 -> Array(10.5)
       )
 
       _commonTest(funds, expected, window, from, to)
@@ -168,6 +168,7 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
     //(result.values.toArray) should equal (expectedMA.values.toArray)
     (result.values.size) should equal (expectedMA.values.size)
     result.keys.foreach(key => {
+      assert(expectedMA.contains(key), "key missing in expected result: " + key + ", actual: " + mapToString(result) + "\nexpected: " + mapToString(expectedMA))
       assert(result.get(key).get === expectedMA.get(key).get, "failure for key: " + key + ", actual: " + mapToString(result) + "\nexpected: " + mapToString(expectedMA))
     })
 
