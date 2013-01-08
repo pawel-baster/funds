@@ -24,10 +24,8 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
       )
 
       val window = 1
-      val from = new ExtendedDate()
-      from.setTime(0)
-      val to = new ExtendedDate()
-      to.setTime(5 * 24 * 3600 * 1000)
+      val from = ExtendedDate.createFromDays(0)
+      val to = ExtendedDate.createFromDays(5)
 
       val expected = scala.collection.Map(
         0 -> Array(1.0),
@@ -52,15 +50,15 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
       val to = new ExtendedDate()
       to.setTime(5 * 24 * 3600 * 1000)
 
-      val expected = Array(
-        Array(1.5),
-        Array(3.0),
-        Array(6.0),
-        Array(12.0),
-        Array(24.0)
+      val expected = scala.collection.Map(
+        1 -> Array(1.5),
+        2 -> Array(3.0),
+        3 -> Array(6.0),
+        4 -> Array(12.0),
+        5 -> Array(24.0)
       )
 
-      //_commonTest(funds, expected, window, from, to)
+      _commonTest(funds, expected, window, from, to)
     }
 
     it("should return a valid result if window is set to 5") {
@@ -74,12 +72,12 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
       val to = new ExtendedDate()
       to.setTime(5 * 24 * 3600 * 1000)
 
-      val expected = Array(
-        Array(6.2),
-        Array(12.4)
+      val expected = scala.collection.Map(
+        4 -> Array(6.2),
+        5 -> Array(12.4)
       )
 
-      //_commonTest(funds, expected, window, from, to)
+      _commonTest(funds, expected, window, from, to)
     }
 
     it("should return a valid result if window is set to 6") {
@@ -93,11 +91,11 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
       val to = new ExtendedDate()
       to.setTime(5 * 24 * 3600 * 1000)
 
-      val expected = Array(
-        Array(10.5)
+      val expected = scala.collection.Map(
+        6 -> Array(10.5)
       )
 
-      //_commonTest(funds, expected, window, from, to)
+      _commonTest(funds, expected, window, from, to)
     }
 
     it("should shoud fail if window size is too big") {
@@ -111,11 +109,11 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
       val to = new ExtendedDate()
       to.setTime(5 * 24 * 3600 * 1000)
 
-      val expected = Array(
-        Array(-1.0)
+      val expected = scala.collection.Map(
+        1 -> Array(-1.0)
       )
       intercept[IllegalArgumentException] {
-      //  _commonTest(funds, expected, window, from, to)
+        _commonTest(funds, expected, window, from, to)
       }
     }
 
@@ -131,19 +129,19 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
         new FixedDepositFund(new CurrencyDKK, "test fund2", 0.01)
       )
 
-      val expected = Array(
-        Array(100, 101, 100.00272617997398),
-        Array(100, 102,	100.00545240949477),
-        Array(100, 103,	100.00817871333682),
-        Array(100, 104,	100.01090509150214),
-        Array(100, 105,	100.01363154399274),
-        Array(100, 106,	100.01635807081068),
-        Array(100, 107,	100.019084671958),
-        Array(100, 108, 100.02181134743667),
-        Array(100, 109, 100.02453809724875)
+      val expected = scala.collection.Map(
+        2 -> Array(100, 101, 100.00272617997398),
+        3 -> Array(100, 102,	100.00545240949477),
+        4 -> Array(100, 103,	100.00817871333682),
+        5 -> Array(100, 104,	100.01090509150214),
+        6 -> Array(100, 105,	100.01363154399274),
+        7 -> Array(100, 106,	100.01635807081068),
+        8 -> Array(100, 107,	100.019084671958),
+        9 -> Array(100, 108, 100.02181134743667),
+        10 -> Array(100, 109, 100.02453809724875)
       )
 
-      //_commonTest(funds, expected, window, from, to)
+      _commonTest(funds, expected, window, from, to)
     }
   }
 
@@ -168,6 +166,12 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
     //ensure order
     //(result.keys.toArray) should equal (expectedMA.keys.toArray)
     //(result.values.toArray) should equal (expectedMA.values.toArray)
-    assert(result === expectedMA, "actual: " + mapToString(result) + "\nexpected: " + mapToString(expectedMA))
+    (result.values.size) should equal (expectedMA.values.size)
+    result.keys.foreach(key => {
+      assert(result.get(key).get === expectedMA.get(key).get, "failure for key: " + key + ", actual: " + mapToString(result) + "\nexpected: " + mapToString(expectedMA))
+    })
+
+    //(result) should equal (expectedMA)
+    //assert(result === expectedMA, "actual: " + mapToString(result) + "\nexpected: " + mapToString(expectedMA))
   }
 }

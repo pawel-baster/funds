@@ -35,11 +35,11 @@ class MovingAverage {
     }
 
     var oldValues = initialRow
-    var currentDate = date;
     var oldDate = from
     println("Adding " + date.getDayCount() + " -> " + initialRow(0))
     ma += date.getDayCount() -> initialRow
-
+    date = date.addDays(1)
+    require(oldDate.before(date), "date: " + date.getDayCount() + ", oldDate: " + oldDate.getDayCount())
     while (!date.after(to)) {
       println("second loop for date: " + date.toString())
       val values = new Array[Double](funds.length)
@@ -48,14 +48,16 @@ class MovingAverage {
         println(oldValues(fundind) + " + " + funds(fundind).getQuoteForDate(date).get + " - " + funds(fundind).getQuoteForDate(oldDate).get
           + " = " + (oldValues(fundind) + funds(fundind).getQuoteForDate(date).get - funds(fundind).getQuoteForDate(oldDate).get))
         println("values.length: " + values.length + ", oldValues.length: " + oldValues.length)
+        println("date: " + date.getDayCount() + ", oldDate: " + oldDate.getDayCount())
         values(fundind) = oldValues(fundind) + funds(fundind).getQuoteForDate(date).get - funds(fundind).getQuoteForDate(oldDate).get
       }
       //values.foreach(value => print(" " + value))
       //println
+      println("Adding " + date.getDayCount() + " -> " + values(0))
+      ma += date.getDayCount() -> values
+
       oldDate = oldDate.addDays(1)
       date = date.addDays(1)
-      ma += date.getDayCount() -> values
-      println("Adding " + date.getDayCount() + " -> " + values(0))
       oldValues = values
     }
 
