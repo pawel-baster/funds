@@ -14,7 +14,7 @@ import collection.immutable.HashMap
 class MovingAverage {
 
   def calculate(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, window: Int): scala.collection.Map[Int, Array[Double]] = {
-//println("start")
+  //println("start")
     val fromDate = from.getDayCount()
     val toDate = to.getDayCount()
 
@@ -29,31 +29,31 @@ class MovingAverage {
     for (day <- (0 to window -1)) {
       date = date.addDays(1)
       for (fundind <- (0 to funds.length - 1)){
-        println("initial loop: adding " + funds(fundind).getQuoteForDate(date).get + " to " + initialRow(fundind))
+        //println("initial loop: adding " + funds(fundind).getQuoteForDate(date).get + " to " + initialRow(fundind))
         initialRow(fundind) += funds(fundind).getQuoteForDate(date).get
       }
     }
 
     var oldValues = initialRow
     var oldDate = from
-    println("Adding " + date.getDayCount() + " -> " + initialRow(0))
+    //println("Adding " + date.getDayCount() + " -> " + initialRow(0))
     ma += date.getDayCount() -> initialRow
     date = date.addDays(1)
     require(oldDate.before(date), "date: " + date.getDayCount() + ", oldDate: " + oldDate.getDayCount())
     while (!date.after(to)) {
-      println("second loop for date: " + date.toString())
+      //println("second loop for date: " + date.toString())
       val values = new Array[Double](funds.length)
       //println("values: " + values.length + )
       for (fundind <- (0 to funds.length - 1)){
-        println(oldValues(fundind) + " + " + funds(fundind).getQuoteForDate(date).get + " - " + funds(fundind).getQuoteForDate(oldDate).get
-          + " = " + (oldValues(fundind) + funds(fundind).getQuoteForDate(date).get - funds(fundind).getQuoteForDate(oldDate).get))
-        println("values.length: " + values.length + ", oldValues.length: " + oldValues.length)
-        println("date: " + date.getDayCount() + ", oldDate: " + oldDate.getDayCount())
+        //println(oldValues(fundind) + " + " + funds(fundind).getQuoteForDate(date).get + " - " + funds(fundind).getQuoteForDate(oldDate).get
+        // + " = " + (oldValues(fundind) + funds(fundind).getQuoteForDate(date).get - funds(fundind).getQuoteForDate(oldDate).get))
+        //println("values.length: " + values.length + ", oldValues.length: " + oldValues.length)
+        //println("date: " + date.getDayCount() + ", oldDate: " + oldDate.getDayCount())
         values(fundind) = oldValues(fundind) + funds(fundind).getQuoteForDate(date).get - funds(fundind).getQuoteForDate(oldDate).get
       }
       //values.foreach(value => print(" " + value))
       //println
-      println("Adding " + date.getDayCount() + " -> " + values(0))
+      //println("Adding " + date.getDayCount() + " -> " + values(0))
       ma += date.getDayCount() -> values
 
       oldDate = oldDate.addDays(1)

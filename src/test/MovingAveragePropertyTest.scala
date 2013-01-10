@@ -7,7 +7,7 @@ import matchers.ShouldMatchers
 import prop.GeneratorDrivenPropertyChecks
 import scala.Predef._
 import java.util.Date
-import util.Random
+import util.{Sorting, Random}
 
 
 /**
@@ -42,7 +42,9 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
             val ma = new MovingAverage
             val result = ma.calculate(funds, from, to, window)
 
-            val firstItemsOnly = result.values.map(item => { item.head }).toArray
+            val firstItemsOnly = result.toSeq.sortBy(_._1).map(_._2.head).toArray
+            //Sorting.quickSort(firstItemsOnly)
+            //Sorting.quickSort(recordsFiltered)
 
             (firstItemsOnly) should equal (recordsFiltered)
 
@@ -72,7 +74,7 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
             val ma = new MovingAverage
             val result = ma.calculate(funds, from, to, window)
 
-            (recordsFiltered.take(window).sum / window) should equal(result.get(to.getDayCount()).head)
+            (recordsFiltered.take(window).sum / window) should equal(result.toSeq.sortBy(_._1).head._2.head)
           }
       }
     }
@@ -97,7 +99,8 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
             val result = ma.calculate(funds, from, to, window)
             //println("test:")
             //result.foreach(array => println(array(0)))
-            (result.get(to.getDayCount()).head) should equal (recordsFiltered.reverse.take(window).sum / window plusOrMinus 0.0001)
+            //(result.get(to.getDayCount()).head) should equal (recordsFiltered.reverse.take(window).sum / window plusOrMinus 0.0001)
+            (result.get(to.getDayCount()).head.head) should equal (recordsFiltered.reverse.take(window).sum / window)
             //(records.reverse.take(window).sum / window) should equal(result.reverse(0)(0))
             //(records.reverse.take(window).sum / window - result.reverse(0)(0)) should be < 0.00001
           }
