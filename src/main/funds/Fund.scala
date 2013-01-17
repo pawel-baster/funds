@@ -16,9 +16,9 @@ abstract class Fund(
   def getQuoteForDate(date: Date) : Option[Double]
   def calculateBuyFee(value: Double) : Double
   def calculateSellFee(value: Double) : Double
-  def calculateManipulationFee(value: Double, fund: Fund) : Double = {
-    if (fund.currency.getIsoName() == this.currency.getIsoName()) {
-      return fund.calculateBuyFee(this.calculateSellFee(value))
+  def calculateManipulationFee(value: Double, newFund: Fund) : Double = {
+    if (newFund.currency.getIsoName() == this.currency.getIsoName()) {
+      return newFund.calculateBuyFee(this.calculateSellFee(value))
     } else {
       throw new NotImplementedException();
     }

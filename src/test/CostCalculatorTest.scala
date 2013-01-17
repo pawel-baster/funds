@@ -16,11 +16,11 @@ import util.Random
  */
 class CostCalculatorTest extends FunSpec  with ShouldMatchers {
   it("should return correct result for best params") {
-    runTest(new Params(2, 0, Array(1.0, 0, 0)), 1600, 0)
+    runTest(new Params(2, 0, Array(1.0, 0, 0)), 800, 0)
   }
 
   it("should return correct result for worst params") {
-    runTest(new Params(2, 0, Array(0, 1.0, 0)), 100/16.0, 1)
+    runTest(new Params(2, 0, Array(0, 1.0, 0)), 100/8.0, 1)
   }
 
   it("should return correct result for constant params") {
@@ -32,7 +32,7 @@ class CostCalculatorTest extends FunSpec  with ShouldMatchers {
   }
 
   it("should not change fund if smoothFactor is big enough") {
-    runTest(new Params(2, 20, Array(0, 1.0, 0)), 100/16.0, 1)
+    runTest(new Params(2, 20, Array(0, 1.0, 0)), 100/8.0, 1)
   }
 
   def runTest(params: Params, expectedResult: Double, initialFund: Int) {
@@ -42,10 +42,8 @@ class CostCalculatorTest extends FunSpec  with ShouldMatchers {
       new MockFixedFund("medium", Array(1.0, 1.0, 1.0, 1.0, 1.0))
     )
 
-    val from = new ExtendedDate()
-    from.setTime(0)
-    val to = new ExtendedDate()
-    to.setTime(4 * 24 * 3600 * 1000)
+    val from = ExtendedDate.createFromDays(params.window)
+    val to = ExtendedDate.createFromDays(4)
 
     val cc = new CostCalculator(new MovingAverage)
     val result = cc.calculate(funds, from, to, 100, initialFund, params)
@@ -53,17 +51,15 @@ class CostCalculatorTest extends FunSpec  with ShouldMatchers {
   }
 
   it("should return correct result for this dataset") {
-    val records = Array(1.0, 4.0, 6.0, 7.0, 8.0)
+    val records = Array(1.0, 2.0, 4.0, 6.0, 7.0, 8.0)
     val window = 1
     val funds = Array[Fund](
       new MockFixedFund("test1", records),
       new MockFixedFund("test2", records.reverse)
     )
 
-    val from = new ExtendedDate()
-    from.setTime(0)
-    val to = new ExtendedDate()
-    to.setTime((records.length - 1) * 24L * 3600 * 1000)
+    val from = ExtendedDate.createFromDays(window)
+    val to = ExtendedDate.createFromDays(records.length - 1)
 
     val cc = new CostCalculator(new MovingAverage)
 

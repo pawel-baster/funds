@@ -55,8 +55,8 @@ class NordeaFund(
         }
       }
     })
-    quotes.foreach(item => println(item))
-    println("----")
+    //quotes.foreach(item => println(item))
+    //println("----")
   }
   def calculateSellFee(value: Double): Double = value
 

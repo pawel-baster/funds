@@ -24,23 +24,21 @@ class CostCalculatorPropertyTest extends FunSpec with GeneratorDrivenPropertyChe
           whenever(window > 0 && records.length > 3 && records.length < 100) {
 
             val recordsFiltered = records.map(record => if (record > 0  && math.abs(record) < 1000000) record else Random.nextInt(1000000) + 1)
-            val windowFiltered = 1
+            val windowFiltered = window min (records.length - 2)
 
             val funds = Array[Fund](
               new MockFixedFund("test1", recordsFiltered),
               new MockFixedFund("test2", recordsFiltered.reverse)
             )
 
-            val from = new ExtendedDate()
-            from.setTime(0)
-            val to = new ExtendedDate()
-            to.setTime((recordsFiltered.length - 1) * 24L * 3600 * 1000)
+            val from = ExtendedDate.createFromDays(windowFiltered)
+            val to = ExtendedDate.createFromDays(recordsFiltered.length - 1)
 
             val cc = new CostCalculator(new MovingAverage)
 
             val firstAlways = new Params(windowFiltered, 0, Array(1.0, 0))
             val result = cc.calculate(funds, from, to, 1.0, 0, firstAlways)
-            (recordsFiltered.last / recordsFiltered.head) should be (result plusOrMinus 0.000001)
+            (recordsFiltered.last / recordsFiltered.drop(windowFiltered - 1).head) should be (result plusOrMinus 0.000001)
           }
       }
     }
