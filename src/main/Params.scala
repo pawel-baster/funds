@@ -22,9 +22,6 @@ class Params (
     if (newWindow > maxWindow) newWindow = maxWindow
     val newSmoothFactor = math.abs(smoothFactor + Random.nextGaussian/10.0)
     val newCoefs = coefs.map(coef => coef + Random.nextGaussian())
-    println ("new params: wnd: " + newWindow + " smthFactor: " + newSmoothFactor)
-    newCoefs.foreach(c => print(c + ", "))
-    println
     return new Params(newWindow, newSmoothFactor, newCoefs)
   }
 }

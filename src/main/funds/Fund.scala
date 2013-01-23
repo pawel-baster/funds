@@ -1,5 +1,6 @@
 package funds.funds
 
+import funds.ExtendedDate
 import java.util.Date
 import funds.currencies.Currency
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
@@ -13,7 +14,7 @@ abstract class Fund(
   val currency: Currency,
   val shortName: String
 ) {
-  def getQuoteForDate(date: Date) : Option[Double]
+  def getQuoteForDate(date: ExtendedDate) : Option[Double]
   def calculateBuyFee(value: Double) : Double
   def calculateSellFee(value: Double) : Double
   def calculateManipulationFee(value: Double, newFund: Fund) : Double = {

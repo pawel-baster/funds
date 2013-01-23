@@ -2,6 +2,10 @@ package funds
 
 import funds.Fund
 import java.util.Date
+import collection.parallel.mutable
+import collection.mutable
+import collection.parallel.mutable
+import scala.collection
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,6 +14,13 @@ import java.util.Date
  * Time: 21:50
  * To change this template use File | Settings | File Templates.
  */
+class FundOptimizerResult(
+  val bestParams: Params,
+  val value: Double,
+  val trace: collection.mutable.LinkedHashMap[Int, CostCalculationEntry]
+) {
+}
+
 class FundOptimizer(
   val costCalculator: CostCalculator,
   val funds: Array[Fund],
@@ -19,19 +30,22 @@ class FundOptimizer(
   val initialFund: Int,
   val initialValue: Double
 ) {
-  def optimize(count: Int): Double = {
-    var bestResult = Double.NegativeInfinity
+  def optimize(count: Int): FundOptimizerResult = {
+    var bestValue = Double.NegativeInfinity
     var bestParams = initialParams
+    var bestFunds : collection.mutable.LinkedHashMap[Int, CostCalculationEntry] = null
     for (i <- 1 to count) {
-      val params = bestParams.createRandomFromNormal(((to.getTime - from.getTime)/24.0/3600/1000).toInt - 1)
+      //println("maxWindow = " + to.getDayCount() + " - " + from.getDayCount() + " - 1")
+      val params = bestParams.createRandomFromNormal(to.getDayCount() - from.getDayCount() - 1)
       val result = costCalculator.calculate(funds, from, to, initialValue, initialFund, params)
-      println(">> result = " + result + ", best: " + bestResult)
-      if (result > bestResult) {
+      val value = result.get(to.getDayCount()).get.value
+      //println(">> result = " + value + ", best: " + bestValue)
+      if (value > bestValue) {
         bestParams = params
-        bestResult = result
-        println("-- new best params")
+        bestValue = value
+        bestFunds = result
       }
     }
-    return bestResult
+    return new FundOptimizerResult(bestParams, bestValue, bestFunds)
   }
 }

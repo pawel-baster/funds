@@ -30,7 +30,9 @@ class MovingAverage {
       date = date.addDays(1)
       for (fundind <- (0 to funds.length - 1)){
         //println("initial loop: adding " + funds(fundind).getQuoteForDate(date).get + " to " + initialRow(fundind))
-        initialRow(fundind) += funds(fundind).getQuoteForDate(date).get
+        val quote = funds(fundind).getQuoteForDate(date)
+        if (quote.isDefined)
+          initialRow(fundind) += quote.get
       }
     }
 
@@ -49,7 +51,10 @@ class MovingAverage {
         // + " = " + (oldValues(fundind) + funds(fundind).getQuoteForDate(date).get - funds(fundind).getQuoteForDate(oldDate).get))
         //println("values.length: " + values.length + ", oldValues.length: " + oldValues.length)
         //println("date: " + date.getDayCount() + ", oldDate: " + oldDate.getDayCount())
-        values(fundind) = oldValues(fundind) + funds(fundind).getQuoteForDate(date).get - funds(fundind).getQuoteForDate(oldDate).get
+        val quote = funds(fundind).getQuoteForDate(date)
+        val oldQuote = funds(fundind).getQuoteForDate(oldDate)
+        if (oldQuote.isDefined && quote.isDefined)
+          values(fundind) = oldValues(fundind) + quote.get - oldQuote.get
       }
       //values.foreach(value => print(" " + value))
       //println

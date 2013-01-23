@@ -46,7 +46,7 @@ class CostCalculatorTest extends FunSpec  with ShouldMatchers {
     val to = ExtendedDate.createFromDays(4)
 
     val cc = new CostCalculator(new MovingAverage)
-    val result = cc.calculate(funds, from, to, 100, initialFund, params)
+    val result = cc.calculate(funds, from, to, 100, initialFund, params).get(4).get.value
     (result) should equal (expectedResult)
   }
 
@@ -65,6 +65,6 @@ class CostCalculatorTest extends FunSpec  with ShouldMatchers {
 
     val firstAlways = new Params(window, 0, Array(1.0, 0))
     val result = cc.calculate(funds, from, to, 1.0, 0, firstAlways)
-    (records.last / records.head) should be (result plusOrMinus 0.000001)
+    (records.last / records.head) should be (result.get(to.getDayCount()).get.value plusOrMinus 0.000001)
   }
 }

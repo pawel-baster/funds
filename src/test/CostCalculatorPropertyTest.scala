@@ -38,7 +38,7 @@ class CostCalculatorPropertyTest extends FunSpec with GeneratorDrivenPropertyChe
 
             val firstAlways = new Params(windowFiltered, 0, Array(1.0, 0))
             val result = cc.calculate(funds, from, to, 1.0, 0, firstAlways)
-            (recordsFiltered.last / recordsFiltered.drop(windowFiltered - 1).head) should be (result plusOrMinus 0.000001)
+            (recordsFiltered.last / recordsFiltered.drop(windowFiltered - 1).head) should be (result.get(to.getDayCount()).get.value plusOrMinus 0.000001)
           }
       }
     }

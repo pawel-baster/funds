@@ -2,6 +2,7 @@ package funds
 
 import funds.Fund
 import java.util.Date
+import collection.mutable
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,10 +11,17 @@ import java.util.Date
  * Time: 4:51 PM
  * To change this template use File | Settings | File Templates.
  */
+
+class CostCalculationEntry(
+  val value : Double,
+  val fundIdx: Int
+  ) {
+}
+
 class CostCalculator(
   val ma: MovingAverage
 ) {
-  def calculate(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, initialValue: Double, initialFund: Int, p: Params): Double = {
+  def calculate(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, initialValue: Double, initialFund: Int, p: Params): mutable.LinkedHashMap[Int, CostCalculationEntry] = {
     require(initialFund < funds.length)
     require(initialFund >= 0)
     require(p.coefs.length == funds.length)
@@ -27,6 +35,8 @@ class CostCalculator(
     var fund = initialFund
     var value = initialValue
 
+    val result = new mutable.LinkedHashMap[Int, CostCalculationEntry]
+
     var date = from
     while (!date.after(to)) {
       //println("Calculating value change for date: " + date)
@@ -37,6 +47,7 @@ class CostCalculator(
       //println("decisionVars:" + decisionVars.mkString(", "))
 
       value = value * funds(fund).getQuoteForDate(date).get / funds(fund).getQuoteForDate(date.addDays(-1)).get
+      result += date.getDayCount() -> new CostCalculationEntry(value, fund)
       //println("New value: " + value)
       var maxArg = 0;
       for (i <- 1 to (decisionVars.length - 1)) {
@@ -49,10 +60,10 @@ class CostCalculator(
         fund = maxArg
         value = funds(fund).calculateManipulationFee(value, funds(maxArg))
       }
-
+      //result += date.getDayCount() -> new CostCalculationEntry(value, fund)
       date = date.addDays(1)
     }
 
-    return value
+    return result
   }
 }

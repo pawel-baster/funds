@@ -3,6 +3,7 @@ package funds.funds
 import collection.immutable.HashMap
 import funds.currencies.CurrencyDKK
 import funds.downloaders.Downloader
+import funds.ExtendedDate
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -62,7 +63,7 @@ class NordeaFund(
 
   def calculateBuyFee(value: Double): Double = value
 
-  def getQuoteForDate(date: Date): Option[Double] = {
+  def getQuoteForDate(date: ExtendedDate): Option[Double] = {
     if (dateMax.isEmpty || (date after dateMax.get)) {
       update()
     }
@@ -72,8 +73,7 @@ class NordeaFund(
     }
 
     if (!quotes.contains(date)) {
-      val dayBefore = new Date()
-      dayBefore.setTime(date.getTime - 24 * 3600 * 1000)
+      val dayBefore = date.addDays(-1)
       return getQuoteForDate(dayBefore)
     }
     return quotes.get(date)
