@@ -20,12 +20,13 @@ class NordeaFund(
   val code1: String, // used for downloading
   val code2: String  // used for downloading
 ) extends UpdatableFund(shortName, new CurrencyDKK, downloader) {
-  var quotes = new HashMap[Date, Double]
-  var dateMin: Option[Date] = None
-  var dateMax: Option[Date] = None
+  var lastUpdate = ExtendedDate.createFromString("1970-01-01")
 
   def update() = {
     // check if it has not been updated recently
+   //if (now - lastUpdate < updateInterval)
+    //  return
+
     //val startDate =
     //val endDate =
 
@@ -45,37 +46,17 @@ class NordeaFund(
     val csvFile = downloader.download(url, data)
     csvFile.getLines.drop(1).foreach(l => {
       val cols = l.split(" ")
-      val date = new SimpleDateFormat("dd-MM-yyy").parse(cols(0))
-      if (!quotes.contains(date)) {
-        quotes = quotes + ((date, cols(1).replace(',', '.').toDouble))
-        if (dateMax.isEmpty || (date after dateMax.get)) {
-          dateMax = Option(date)
-        }
-        if (dateMin.isEmpty || (date before dateMin.get)) {
-          dateMin = Option(date)
-        }
+      val date = ExtendedDate.createFromString(cols(0))
+      val dayCount = date.getDayCount()
+      quotes = quotes + ((dayCount, cols(1).replace(',', '.').toDouble))
+      if (dateMax.isEmpty || (date after dateMax.get)) {
+        dateMax = Option(date)
+      }
+      if (dateMin.isEmpty || (date before dateMin.get)) {
+        dateMin = Option(date)
       }
     })
-    //quotes.foreach(item => println(item))
-    //println("----")
   }
   def calculateSellFee(value: Double): Double = value
-
   def calculateBuyFee(value: Double): Double = value
-
-  def getQuoteForDate(date: ExtendedDate): Option[Double] = {
-    if (dateMax.isEmpty || (date after dateMax.get)) {
-      update()
-    }
-
-    if (dateMin.isEmpty || dateMax.isEmpty || (date before dateMin.get)) {
-      return None
-    }
-
-    if (!quotes.contains(date)) {
-      val dayBefore = date.addDays(-1)
-      return getQuoteForDate(dayBefore)
-    }
-    return quotes.get(date)
-  }
 }
