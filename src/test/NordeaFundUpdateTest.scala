@@ -14,7 +14,7 @@ import matchers.ShouldMatchers
  * Time: 7:17 AM
  * To change this template use File | Settings | File Templates.
  */
-class NordeaFundUpdateTest extends FunSpec with ShouldMatchers {
+class NordeaFundUpdateTest extends FunSpec {
   describe("A NordeaFund") {
     it("should return 98.76 for 10-10-2012") {
       val fund1 = new NordeaFund(new MockDownloader("src/test/fixtures/nordea_export_1.csv"), "test1", "", "")
