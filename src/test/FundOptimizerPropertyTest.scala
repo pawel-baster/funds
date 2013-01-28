@@ -22,7 +22,7 @@ class FundOptimizerPropertyTest  extends FunSpec with GeneratorDrivenPropertyChe
     it("should choose a correct fund after sufficient number of iterations") {
       forAll {
         (records: Array[Double]) =>
-          whenever(records.length > 4 && records.length < 100) {
+          whenever(records.length > 4 && records.length < 1000) {
 
             val recordsFiltered = records.map(record => if (record > 0  && math.abs(record) < 1000000) record else Random.nextInt(1000000) + 1)
 
@@ -46,8 +46,8 @@ class FundOptimizerPropertyTest  extends FunSpec with GeneratorDrivenPropertyChe
 
             val result = fundOptimizer.optimize(100)
 
-            assert(result.trace.get(to.getDayCount()).get.value >= initialValue, printFunds(bestIndex, result))
-            assert(bestIndex === result.trace.get(to.getDayCount()).get.fundIdx, printFunds(bestIndex, result))
+            assert(result.trace.get(to.getDayCount()).get.value >= initialValue, "Final value should be greater or equal than the initial value. " + printFunds(bestIndex, result))
+            assert(bestIndex === result.trace.get(to.getDayCount()).get.fundIdx, "FundOptimizer should've chosen the best fund by now" + printFunds(bestIndex, result))
           }
       }
     }

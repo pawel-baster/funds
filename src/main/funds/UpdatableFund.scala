@@ -5,6 +5,7 @@ import funds.downloaders.Downloader
 import funds.ExtendedDate
 import collection.immutable.HashMap
 import java.util.Date
+import java.text.SimpleDateFormat
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,5 +39,16 @@ abstract class UpdatableFund (
       return getQuoteForDate(dayBefore)
     }
     return quotes.get(dayCount)
+  }
+  protected def addQuote(date: ExtendedDate, value: Double) {
+    val dayCount = date.getDayCount()
+    quotes += (dayCount -> value)
+    if (dateMax.isEmpty || (date after dateMax.get)) {
+      dateMax = Option(date)
+    }
+
+    if (dateMin.isEmpty || (date before dateMin.get)) {
+      dateMin = Option(date)
+    }
   }
 }

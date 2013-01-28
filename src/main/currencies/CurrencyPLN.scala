@@ -1,6 +1,5 @@
 package funds.currencies
 
-import funds.currencies.Currency
 import java.util.Date
 
 /**

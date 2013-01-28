@@ -27,8 +27,8 @@ object ExtendedDate {
     newDate.setTime(days * 24L * 3600 * 1000)
     return newDate
   }
-  def createFromString(str: String): ExtendedDate = {
-    val date = new SimpleDateFormat("dd-MM-yyy").parse(str)
+  def createFromString(str: String, format: String): ExtendedDate = {
+    val date = new SimpleDateFormat(format).parse(str)
     val newDate = new ExtendedDate
     newDate.setTime(date.getTime)
     return newDate

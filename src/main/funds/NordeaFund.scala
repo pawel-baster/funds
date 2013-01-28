@@ -20,12 +20,12 @@ class NordeaFund(
   val code1: String, // used for downloading
   val code2: String  // used for downloading
 ) extends UpdatableFund(shortName, new CurrencyDKK, downloader) {
-  var lastUpdate = ExtendedDate.createFromString("1970-01-01")
+  var lastUpdate = ExtendedDate.createFromString("1970-01-01", "dd-MM-yyy")
 
   def update() = {
     // check if it has not been updated recently
-   //if (now - lastUpdate < updateInterval)
-    //  return
+    //if (now - lastUpdate < updateInterval)
+    // return
 
     //val startDate =
     //val endDate =
@@ -46,15 +46,9 @@ class NordeaFund(
     val csvFile = downloader.download(url, data)
     csvFile.getLines.drop(1).foreach(l => {
       val cols = l.split(" ")
-      val date = ExtendedDate.createFromString(cols(0))
-      val dayCount = date.getDayCount()
-      quotes = quotes + ((dayCount, cols(1).replace(',', '.').toDouble))
-      if (dateMax.isEmpty || (date after dateMax.get)) {
-        dateMax = Option(date)
-      }
-      if (dateMin.isEmpty || (date before dateMin.get)) {
-        dateMin = Option(date)
-      }
+      val date = ExtendedDate.createFromString(cols(0), "dd-MM-yyy")
+      val value = cols(1).replace(',', '.').toDouble
+      addQuote(date, value)
     })
   }
   def calculateSellFee(value: Double): Double = value
