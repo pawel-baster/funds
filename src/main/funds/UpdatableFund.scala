@@ -20,8 +20,8 @@ abstract class UpdatableFund (
   val downloader: Downloader
 ) extends Fund(currency, shortName) {
   var quotes = new HashMap[Int, Double]
-  var dateMin: Option[Date] = None
-  var dateMax: Option[Date] = None
+  var dateMin: Option[ExtendedDate] = None
+  var dateMax: Option[ExtendedDate] = None
   def update()
   def getQuoteForDate(date: ExtendedDate): Option[Double] = {
     if (dateMax.isEmpty || (date after dateMax.get)) {

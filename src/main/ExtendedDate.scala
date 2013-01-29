@@ -19,6 +19,11 @@ class ExtendedDate extends Date {
   def getDayCount(): Int = {
     return math.floor(getTime / 24.0 / 3600 / 1000).toInt
   }
+
+  def format(format: String): String = {
+    val formatter = new SimpleDateFormat(format)
+    return formatter.format(this)
+  }
 }
 
 object ExtendedDate {
