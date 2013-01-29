@@ -20,7 +20,6 @@ class NordeaFund(
   val code1: String, // used for downloading
   val code2: String  // used for downloading
 ) extends UpdatableFund(shortName, new CurrencyDKK, downloader) {
-  var lastUpdate = ExtendedDate.createFromString("1970-01-01", "dd-MM-yyy")
 
   def update() = {
     // check if it has not been updated recently

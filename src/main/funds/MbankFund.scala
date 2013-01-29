@@ -18,8 +18,6 @@ class MbankFund(
                  override val shortName: String,
                  val fundCode: String
                  ) extends UpdatableFund(shortName, new CurrencyPLN, downloader) {
-  var lastUpdate = ExtendedDate.createFromString("1970-01-01", "dd-MM-yyy")
-
   def update() = {
     val startDate = if (dateMin.isDefined) dateMin.get else ExtendedDate.createFromString("2000-01-01", "yyy-MM-dd")
 

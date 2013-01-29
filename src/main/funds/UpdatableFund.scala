@@ -22,10 +22,14 @@ abstract class UpdatableFund (
   var quotes = new HashMap[Int, Double]
   var dateMin: Option[ExtendedDate] = None
   var dateMax: Option[ExtendedDate] = None
+  var lastUpdate = ExtendedDate.createFromString("1970-01-01", "dd-MM-yyy")
+  var updateInterval = 24 // h
   def update()
   def getQuoteForDate(date: ExtendedDate): Option[Double] = {
     if (dateMax.isEmpty || (date after dateMax.get)) {
-      update()
+      if (new Date().getTime - lastUpdate.getTime > updateInterval * 3600 * 1000 ) {
+        update()
+      }
     }
 
     if (dateMin.isEmpty || dateMax.isEmpty || (date before dateMin.get)) {
