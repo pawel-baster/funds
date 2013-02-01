@@ -11,13 +11,16 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException
  * Time: 21:16
  */
 abstract class Fund(
-  val currency: Currency,
-  val shortName: String
-) {
-  def getQuoteForDate(date: ExtendedDate) : Option[Double]
-  def calculateBuyFee(value: Double) : Double
-  def calculateSellFee(value: Double) : Double
-  def calculateManipulationFee(value: Double, newFund: Fund) : Double = {
+                     val currency: Currency,
+                     val shortName: String
+                     ) {
+  def getQuoteForDate(date: ExtendedDate): Option[Double]
+
+  def calculateBuyFee(value: Double): Double
+
+  def calculateSellFee(value: Double): Double
+
+  def calculateManipulationFee(value: Double, newFund: Fund): Double = {
     if (newFund.currency.getIsoName() == this.currency.getIsoName()) {
       return newFund.calculateBuyFee(this.calculateSellFee(value))
     } else {

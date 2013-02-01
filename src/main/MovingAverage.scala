@@ -14,21 +14,21 @@ import collection.immutable.HashMap
 class MovingAverage {
 
   def calculate(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, window: Int): scala.collection.Map[Int, Array[Double]] = {
-  //println("start")
+    //println("start")
     val fromDate = from.getDayCount()
     val toDate = to.getDayCount()
 
-    require (window > 0)
-    require (window <= (toDate - fromDate + 1), "require that " + window + " <= 1 + " + toDate + " - " + fromDate)
+    require(window > 0)
+    require(window <= (toDate - fromDate + 1), "require that " + window + " <= 1 + " + toDate + " - " + fromDate)
 
     val ma = scala.collection.mutable.LinkedHashMap[Int, Array[Double]]()
 
     // initial row
     var date = from.addDays(-1)
     val initialRow = new Array[Double](funds.length)
-    for (day <- (0 to window -1)) {
+    for (day <- (0 to window - 1)) {
       date = date.addDays(1)
-      for (fundind <- (0 to funds.length - 1)){
+      for (fundind <- (0 to funds.length - 1)) {
         //println("initial loop: adding " + funds(fundind).getQuoteForDate(date).get + " to " + initialRow(fundind))
         val quote = funds(fundind).getQuoteForDate(date)
         if (quote.isDefined)
@@ -46,7 +46,7 @@ class MovingAverage {
       //println("second loop for date: " + date.toString())
       val values = new Array[Double](funds.length)
       //println("values: " + values.length + )
-      for (fundind <- (0 to funds.length - 1)){
+      for (fundind <- (0 to funds.length - 1)) {
         //println(oldValues(fundind) + " + " + funds(fundind).getQuoteForDate(date).get + " - " + funds(fundind).getQuoteForDate(oldDate).get
         // + " = " + (oldValues(fundind) + funds(fundind).getQuoteForDate(date).get - funds(fundind).getQuoteForDate(oldDate).get))
         //println("values.length: " + values.length + ", oldValues.length: " + oldValues.length)
@@ -67,6 +67,8 @@ class MovingAverage {
     }
 
     // divide by window
-    return ma.mapValues(row => {row.map(value => value/window)})
+    return ma.mapValues(row => {
+      row.map(value => value / window)
+    })
   }
 }

@@ -14,20 +14,23 @@ import java.text.SimpleDateFormat
  * Time: 5:14 PM
  * To change this template use File | Settings | File Templates.
  */
-abstract class UpdatableFund (
-  override val shortName: String,
-  override val currency: Currency,
-  val downloader: Downloader
-) extends Fund(currency, shortName) {
+abstract class UpdatableFund(
+                              override val shortName: String,
+                              override val currency: Currency,
+                              val downloader: Downloader
+                              ) extends Fund(currency, shortName) {
   var quotes = new HashMap[Int, Double]
   var dateMin: Option[ExtendedDate] = None
   var dateMax: Option[ExtendedDate] = None
   var lastUpdate = ExtendedDate.createFromString("1970-01-01", "dd-MM-yyy")
-  var updateInterval = 24 // h
+  var updateInterval = 24
+
+  // h
   def update()
+
   def getQuoteForDate(date: ExtendedDate): Option[Double] = {
     if (dateMax.isEmpty || (date after dateMax.get)) {
-      if (new Date().getTime - lastUpdate.getTime > updateInterval * 3600 * 1000 ) {
+      if (new Date().getTime - lastUpdate.getTime > updateInterval * 3600 * 1000) {
         update()
       }
     }
@@ -44,6 +47,7 @@ abstract class UpdatableFund (
     }
     return quotes.get(dayCount)
   }
+
   protected def addQuote(date: ExtendedDate, value: Double) {
     val dayCount = date.getDayCount()
     quotes += (dayCount -> value)

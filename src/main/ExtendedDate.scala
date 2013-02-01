@@ -11,11 +11,12 @@ import java.text.SimpleDateFormat
  * To change this template use File | Settings | File Templates.
  */
 class ExtendedDate extends Date {
-  def addDays(count: Int) : ExtendedDate = {
+  def addDays(count: Int): ExtendedDate = {
     val newDate = new ExtendedDate()
     newDate.setTime(getTime + count * 24L * 3600 * 1000)
     return newDate
   }
+
   def getDayCount(): Int = {
     return math.floor(getTime / 24.0 / 3600 / 1000).toInt
   }
@@ -32,6 +33,7 @@ object ExtendedDate {
     newDate.setTime(days * 24L * 3600 * 1000)
     return newDate
   }
+
   def createFromString(str: String, format: String): ExtendedDate = {
     val date = new SimpleDateFormat(format).parse(str)
     val newDate = new ExtendedDate

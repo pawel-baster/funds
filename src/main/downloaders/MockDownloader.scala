@@ -9,8 +9,8 @@ import io.{BufferedSource, Source}
  * Time: 7:21 AM
  * To change this template use File | Settings | File Templates.
  */
-class MockDownloader (
-  val filename: String
-) extends Downloader {
+class MockDownloader(
+                      val filename: String
+                      ) extends Downloader {
   def download(ignored_url: String, data: String = ""): BufferedSource = Source.fromFile(filename)
 }

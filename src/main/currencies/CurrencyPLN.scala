@@ -11,6 +11,8 @@ import java.util.Date
  */
 class CurrencyPLN extends Currency {
   def convertTo(cur: Currency, date: Date) = throw new Exception("not impl")
+
   def getName(): String = "Polish Zloty"
+
   def getIsoName(): String = "PLN"
 }

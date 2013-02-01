@@ -1,11 +1,12 @@
 package funds
 
-import funds.Fund
+import currencies.CurrencyDKK
+import funds.{FixedDepositFund, Fund}
 import java.util.Date
 import collection.parallel.mutable
 import collection.mutable
 import collection.parallel.mutable
-import scala.collection
+import scala.{Array, collection}
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,30 +16,30 @@ import scala.collection
  * To change this template use File | Settings | File Templates.
  */
 class FundOptimizerResult(
-  val bestParams: Params,
-  val value: Double,
-  val trace: collection.mutable.LinkedHashMap[Int, CostCalculationEntry]
-) {
+                           val bestParams: Params,
+                           val value: Double,
+                           val trace: collection.mutable.LinkedHashMap[Int, CostCalculationEntry]
+                           ) {
 }
 
 class FundOptimizer(
-  val costCalculator: CostCalculator,
-  val funds: Array[Fund],
-  val from: ExtendedDate,
-  val to: ExtendedDate,
-  val initialParams: Params,
-  val initialFund: Int,
-  val initialValue: Double
-) {
+                     val costCalculator: CostCalculator,
+                     var funds: Array[Fund],
+                     var from: ExtendedDate,
+                     var to: ExtendedDate,
+                     var initialParams: Params,
+                     var initialFund: Int,
+                     var initialValue: Double
+                     ) {
   def optimize(count: Int): FundOptimizerResult = {
     var bestValue = Double.NegativeInfinity
     var bestParams = initialParams
-    var bestFunds : collection.mutable.LinkedHashMap[Int, CostCalculationEntry] = null
+    var bestFunds: collection.mutable.LinkedHashMap[Int, CostCalculationEntry] = null
     for (i <- 1 to count) {
       //println("maxWindow = " + to.getDayCount() + " - " + from.getDayCount() + " - 1")
       val params = bestParams.createRandomFromNormal(to.getDayCount() - from.getDayCount() - 1)
       val result = costCalculator.calculate(funds, from, to, initialValue, initialFund, params)
-      val value = result.get(to.getDayCount()).get.value
+      val value = result.get(to.getDayCount() - 1).get.value
       //println(">> result = " + value + ", best: " + bestValue)
       if (value > bestValue) {
         bestParams = params
@@ -47,5 +48,28 @@ class FundOptimizer(
       }
     }
     return new FundOptimizerResult(bestParams, bestValue, bestFunds)
+  }
+}
+
+object FundOptimizer {
+  def main(args: Array[String]): Unit = {
+    val funds : Array[Fund] = Array(
+      new FixedDepositFund(new CurrencyDKK, "test1", 0.01),
+      new FixedDepositFund(new CurrencyDKK, "test1", 0.02)
+    )
+    val to = new ExtendedDate
+
+    val experiment = new FundOptimizer(
+      new CostCalculator(new MovingAverage),
+      funds,
+      ExtendedDate.createFromString("2000-01-01", "yyy-mm-dd"),
+      to,
+      Params.createRandom(funds.length),
+      0,
+      1
+    )
+
+    val result = experiment.optimize(100)
+    println("bestValue = " + result.value)
   }
 }

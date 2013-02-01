@@ -12,10 +12,12 @@ import funds.currencies.CurrencyDKK
  * To change this template use File | Settings | File Templates.
  */
 class MockIncrementFund(
-  override val shortName: String,
-  val increment: Double
-) extends Fund(new CurrencyDKK, shortName) {
+                         override val shortName: String,
+                         val increment: Double
+                         ) extends Fund(new CurrencyDKK, shortName) {
   def getQuoteForDate(date: ExtendedDate): Option[Double] = Option(100 + increment * date.getDayCount())
-  def calculateBuyFee(value: Double) : Double = 0.99
-  def calculateSellFee(value: Double) : Double = 0.99
+
+  def calculateBuyFee(value: Double): Double = 0.99
+
+  def calculateSellFee(value: Double): Double = 0.99
 }

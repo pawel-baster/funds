@@ -13,21 +13,21 @@ import collection.mutable
  */
 
 class CostCalculationEntry(
-  val value : Double,
-  val fundIdx: Int
-  ) {
+                            val value: Double,
+                            val fundIdx: Int
+                            ) {
 }
 
 class CostCalculator(
-  val ma: MovingAverage
-) {
+                      val ma: MovingAverage
+                      ) {
   def calculate(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, initialValue: Double, initialFund: Int, p: Params): mutable.LinkedHashMap[Int, CostCalculationEntry] = {
     require(initialFund < funds.length)
     require(initialFund >= 0)
     require(p.coefs.length == funds.length)
     require(from.before(to))
 
-    val avgs = ma.calculate(funds, from.addDays(1 - p.window), to, p.window)  //dates are inconsistent and that's causing bugs
+    val avgs = ma.calculate(funds, from.addDays(1 - p.window), to, p.window) //dates are inconsistent and that's causing bugs
     require((to.getDayCount() - from.getDayCount()) <= avgs.values.size)
     //println("MA:")
     //avgs.foreach{case (key, row) => { print(key + " "); row.foreach(el => print(el + " ")); println }}
@@ -43,7 +43,9 @@ class CostCalculator(
       assert(avgs.get(date.getDayCount()).isDefined, "MA should be defined for date: " + date.getDayCount())
       val MARow = avgs.get(date.getDayCount()).get
       assert(p.coefs.length == MARow.length)
-      val decisionVars = (p.coefs, MARow).zipped.map{ case (a,b) => a*b }
+      val decisionVars = (p.coefs, MARow).zipped.map {
+        case (a, b) => a * b
+      }
       //println("decisionVars:" + decisionVars.mkString(", "))
 
       value = value * funds(fund).getQuoteForDate(date).get / funds(fund).getQuoteForDate(date.addDays(-1)).get

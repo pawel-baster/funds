@@ -9,6 +9,8 @@ import java.util.Date
  */
 abstract class Currency {
   def convertTo(cur: Currency, date: Date)
+
   def getName(): String
+
   def getIsoName(): String
 }
