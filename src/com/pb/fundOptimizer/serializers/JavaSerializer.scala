@@ -1,6 +1,7 @@
 package com.pb.fundOptimizer.serializers
 
 import java.io.{ObjectInputStream, FileInputStream, ObjectOutputStream, FileOutputStream}
+import com.pb.fundOptimizer.interfaces.AbstractSerializer
 
 /**
  * Created with IntelliJ IDEA.

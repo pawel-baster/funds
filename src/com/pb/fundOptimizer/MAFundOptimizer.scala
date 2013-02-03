@@ -28,7 +28,7 @@ class MAFundOptimizer(
       //println("maxWindow = " + to.getDayCount() + " - " + from.getDayCount() + " - 1")
       val params = bestParams.createRandomFromNormal(to.getDayCount() - from.getDayCount() - 1)
       val result = costCalculator.calculate(funds, from, to, initialValue, initialFund, params)
-      val value = result.get(to.getDayCount() - 1).get.value
+      val value = result.get(to.getDayCount()).get.value
       //println(">> result = " + value + ", best: " + bestValue)
       if (value > bestValue) {
         bestParams = params

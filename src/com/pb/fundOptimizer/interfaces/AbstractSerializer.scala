@@ -1,4 +1,4 @@
-package com.pb.fundOptimizer.serializers
+package com.pb.fundOptimizer.interfaces
 
 /**
  * Created with IntelliJ IDEA.
