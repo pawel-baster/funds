@@ -11,7 +11,7 @@ import collection.immutable.HashMap
  * Time: 7:45 AM
  * To change this template use File | Settings | File Templates.
  */
-class MovingAverage {
+class MovingAverageCalculator {
 
   def calculate(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, window: Int): scala.collection.Map[Int, Array[Double]] = {
     //println("start")

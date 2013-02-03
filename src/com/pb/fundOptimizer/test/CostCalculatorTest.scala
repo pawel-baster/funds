@@ -1,6 +1,6 @@
 package test
 
-import funds.{ExtendedDate, Params, MovingAverage, CostCalculator}
+import funds.{ExtendedDate, Params, MovingAverageCalculator, CostCalculator}
 import funds.funds.{MockFixedFund, Fund}
 import java.util.Date
 import org.scalatest.FunSpec
@@ -14,13 +14,13 @@ import util.Random
  * Time: 4:18 PM
  * To change this template use File | Settings | File Templates.
  */
-class CostCalculatorTest extends FunSpec  with ShouldMatchers {
+class CostCalculatorTest extends FunSpec with ShouldMatchers {
   it("should return correct result for best params") {
     runTest(new Params(2, 0, Array(1.0, 0, 0)), 800, 0)
   }
 
   it("should return correct result for worst params") {
-    runTest(new Params(2, 0, Array(0, 1.0, 0)), 100/8.0, 1)
+    runTest(new Params(2, 0, Array(0, 1.0, 0)), 100 / 8.0, 1)
   }
 
   it("should return correct result for constant params") {
@@ -32,7 +32,7 @@ class CostCalculatorTest extends FunSpec  with ShouldMatchers {
   }
 
   it("should not change fund if smoothFactor is big enough") {
-    runTest(new Params(2, 20, Array(0, 1.0, 0)), 100/8.0, 1)
+    runTest(new Params(2, 20, Array(0, 1.0, 0)), 100 / 8.0, 1)
   }
 
   def runTest(params: Params, expectedResult: Double, initialFund: Int) {
@@ -45,9 +45,9 @@ class CostCalculatorTest extends FunSpec  with ShouldMatchers {
     val from = ExtendedDate.createFromDays(params.window)
     val to = ExtendedDate.createFromDays(4)
 
-    val cc = new CostCalculator(new MovingAverage)
+    val cc = new CostCalculator(new MovingAverageCalculator)
     val result = cc.calculate(funds, from, to, 100, initialFund, params).get(4).get.value
-    (result) should equal (expectedResult)
+    (result) should equal(expectedResult)
   }
 
   it("should return correct result for this dataset") {
@@ -61,10 +61,10 @@ class CostCalculatorTest extends FunSpec  with ShouldMatchers {
     val from = ExtendedDate.createFromDays(window)
     val to = ExtendedDate.createFromDays(records.length - 1)
 
-    val cc = new CostCalculator(new MovingAverage)
+    val cc = new CostCalculator(new MovingAverageCalculator)
 
     val firstAlways = new Params(window, 0, Array(1.0, 0))
     val result = cc.calculate(funds, from, to, 1.0, 0, firstAlways)
-    (records.last / records.head) should be (result.get(to.getDayCount()).get.value plusOrMinus 0.000001)
+    (records.last / records.head) should be(result.get(to.getDayCount()).get.value plusOrMinus 0.000001)
   }
 }

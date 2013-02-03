@@ -1,7 +1,7 @@
 package test
 
 import funds.funds.{MockFixedFund, Fund}
-import funds.{ExtendedDate, MovingAverage}
+import funds.{ExtendedDate, MovingAverageCalculator}
 import org.scalatest._
 import matchers.ShouldMatchers
 import prop.GeneratorDrivenPropertyChecks
@@ -17,13 +17,13 @@ import util.{Sorting, Random}
  * Time: 14:21
  * To change this template use File | Settings | File Templates.
  */
-class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChecks with ShouldMatchers {
+class MovingAverageCalculatorPropertyTest extends FunSpec with GeneratorDrivenPropertyChecks with ShouldMatchers {
 
-  def normalizeRecords(records: Array[Double]) : Array[Double] = {
+  def normalizeRecords(records: Array[Double]): Array[Double] = {
     return records.map(record => if (math.abs(record) < 1000000) record else Random.nextInt(1000000))
   }
 
-  describe("A MovingAverage calculator") {
+  describe("A MovingAverageCalculator calculator") {
     it("should return input values for random data if window is set to 1") {
       forAll {
         (records: Array[Double]) =>
@@ -39,14 +39,14 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
             val from = ExtendedDate.createFromDays(0)
             val to = ExtendedDate.createFromDays(recordsFiltered.length - 1)
 
-            val ma = new MovingAverage
+            val ma = new MovingAverageCalculator
             val result = ma.calculate(funds, from, to, window)
 
             val firstItemsOnly = result.toSeq.sortBy(_._1).map(_._2.head).toArray
             //Sorting.quickSort(firstItemsOnly)
             //Sorting.quickSort(recordsFiltered)
 
-            (firstItemsOnly) should equal (recordsFiltered)
+            (firstItemsOnly) should equal(recordsFiltered)
 
             /* (recordsFiltered, firstItemsOnly).zipped.foreach { (expected, actual) => {
                 (actual) should be (expected plusOrMinus 0.0001)
@@ -71,7 +71,7 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
 
             require(to.getTime > 0, "to.getTime negative = " + to.getTime + ", array length: " + recordsFiltered.length)
 
-            val ma = new MovingAverage
+            val ma = new MovingAverageCalculator
             val result = ma.calculate(funds, from, to, window)
 
             (recordsFiltered.take(window).sum / window) should equal(result.toSeq.sortBy(_._1).head._2.head)
@@ -95,12 +95,12 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
 
             require(to.getTime > 0, "to.getTime negative = " + to.getTime + ", array length: " + recordsFiltered.length)
 
-            val ma = new MovingAverage
+            val ma = new MovingAverageCalculator
             val result = ma.calculate(funds, from, to, window)
             //println("com.pb.fundOptimizer.test:")
             //result.foreach(array => println(array(0)))
             //(result.get(to.getDayCount()).head) should equal (recordsFiltered.reverse.take(window).sum / window plusOrMinus 0.0001)
-            (result.get(to.getDayCount()).head.head) should equal (recordsFiltered.reverse.take(window).sum / window)
+            (result.get(to.getDayCount()).head.head) should equal(recordsFiltered.reverse.take(window).sum / window)
             //(records.reverse.take(window).sum / window) should equal(result.reverse(0)(0))
             //(records.reverse.take(window).sum / window - result.reverse(0)(0)) should be < 0.00001
           }

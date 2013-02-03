@@ -5,7 +5,7 @@ import java.util.Date
 import matchers.ShouldMatchers
 import scala.Predef._
 import funds.funds._
-import funds.{ExtendedDate, MovingAverage}
+import funds.{ExtendedDate, MovingAverageCalculator}
 import funds.currencies.CurrencyDKK
 
 /**
@@ -15,8 +15,8 @@ import funds.currencies.CurrencyDKK
  * Time: 20:52
  * To change this template use File | Settings | File Templates.
  */
-class MovingAverageTest extends FunSpec with ShouldMatchers {
-  describe("A MovingAverage calculator") {
+class MovingAverageCalculatorTest extends FunSpec with ShouldMatchers {
+  describe("A MovingAverageCalculator calculator") {
 
     it("should return the same array if window is set to 1") {
       val funds = Array[Fund](
@@ -131,12 +131,12 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
 
       val expected = scala.collection.Map(
         2 -> Array(100, 101, 100.00272617997398),
-        3 -> Array(100, 102,	100.00545240949477),
-        4 -> Array(100, 103,	100.00817871333682),
-        5 -> Array(100, 104,	100.01090509150214),
-        6 -> Array(100, 105,	100.01363154399274),
-        7 -> Array(100, 106,	100.01635807081068),
-        8 -> Array(100, 107,	100.019084671958),
+        3 -> Array(100, 102, 100.00545240949477),
+        4 -> Array(100, 103, 100.00817871333682),
+        5 -> Array(100, 104, 100.01090509150214),
+        6 -> Array(100, 105, 100.01363154399274),
+        7 -> Array(100, 106, 100.01635807081068),
+        8 -> Array(100, 107, 100.019084671958),
         9 -> Array(100, 108, 100.02181134743667),
         10 -> Array(100, 109, 100.02453809724875)
       )
@@ -145,14 +145,14 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
     }
   }
 
-  def mapToString(aMap : scala.collection.Map[Int, Array[Double]]) : String = {
+  def mapToString(aMap: scala.collection.Map[Int, Array[Double]]): String = {
     var result = ""
     for ((key, value) <- aMap) result = result + "\n" + key.toString + " -> " + value.mkString
     return result
   }
 
   def _commonTest(funds: Array[Fund], expectedMA: scala.collection.Map[Int, Array[Double]], window: Int, from: ExtendedDate, to: ExtendedDate) {
-    val ma = new MovingAverage
+    val ma = new MovingAverageCalculator
 
     //println("Expected:")
     //expectedMA.foreach(row => {row.foreach(el => print(el + " ")); println})
@@ -166,7 +166,7 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
     //ensure order
     //(result.keys.toArray) should equal (expectedMA.keys.toArray)
     //(result.values.toArray) should equal (expectedMA.values.toArray)
-    (result.values.size) should equal (expectedMA.values.size)
+    (result.values.size) should equal(expectedMA.values.size)
     result.keys.foreach(key => {
       assert(expectedMA.contains(key), "key missing in expected result: " + key + ", actual: " + mapToString(result) + "\nexpected: " + mapToString(expectedMA))
       assert(result.get(key).get === expectedMA.get(key).get, "failure for key: " + key + ", actual: " + mapToString(result) + "\nexpected: " + mapToString(expectedMA))

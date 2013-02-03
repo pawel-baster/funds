@@ -8,6 +8,7 @@ import org.scalatest.matchers.ShouldMatchers
 import util.Random
 import java.util.Date
 import scala.Predef._
+import com.pb.fundOptimizer.interfaces.FundOptimizerResult
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,7 +17,7 @@ import scala.Predef._
  * Time: 5:02 PM
  * To change this template use File | Settings | File Templates.
  */
-class MAFundOptimizerPropertyTest  extends FunSpec with GeneratorDrivenPropertyChecks with ShouldMatchers {
+class MAFundOptimizerPropertyTest extends FunSpec with GeneratorDrivenPropertyChecks with ShouldMatchers {
 
   describe("A MAFundOptimizer") {
     it("should choose a correct fund after sufficient number of iterations") {
@@ -24,7 +25,7 @@ class MAFundOptimizerPropertyTest  extends FunSpec with GeneratorDrivenPropertyC
         (records: Array[Double]) =>
           whenever(records.length > 4 && records.length < 1000) {
 
-            val recordsFiltered = records.map(record => if (record > 0  && math.abs(record) < 1000000) record else Random.nextInt(1000000) + 1)
+            val recordsFiltered = records.map(record => if (record > 0 && math.abs(record) < 1000000) record else Random.nextInt(1000000) + 1)
 
             val sorted = recordsFiltered.sorted
 
@@ -42,9 +43,9 @@ class MAFundOptimizerPropertyTest  extends FunSpec with GeneratorDrivenPropertyC
             val initialParams = new Params(window, 0, Array(1.0, 0))
             val initialFund = 1 - bestIndex // start with the wrong one
             val initialValue = 1
-            val fundOptimizer = new MAFundOptimizer(new CostCalculator(new MovingAverage), funds, from, to, initialParams, initialFund, initialValue)
+            val fundOptimizer = new MAFundOptimizer(new CostCalculator(new MovingAverageCalculator))
 
-            val result = fundOptimizer.optimize(100)
+            val result = fundOptimizer.optimize(funds, from, to, initialParams, initialFund, initialValue, 100)
 
             assert(result.trace.get(to.getDayCount()).get.value >= initialValue, "Final value should be greater or equal than the initial value. " + printFunds(bestIndex, result))
             assert(bestIndex === result.trace.get(to.getDayCount()).get.fundIdx, "MAFundOptimizer should've chosen the best fund by now: " + printFunds(bestIndex, result))
@@ -53,7 +54,7 @@ class MAFundOptimizerPropertyTest  extends FunSpec with GeneratorDrivenPropertyC
     }
   }
 
-  def printFunds(bestIndex: Int, result: MAFundOptimizerResult) : String = {
+  def printFunds(bestIndex: Int, result: FundOptimizerResult): String = {
     return result.trace.values.foldLeft("")(_ + _.fundIdx.toString) + ":" + bestIndex
   }
 }

@@ -22,12 +22,17 @@ class Params(
     val newCoefs = coefs.map(coef => coef + Random.nextGaussian())
     return new Params(newWindow, smoothFactor, newCoefs)
   }
+
+  override def toString(): String = {
+    return "params: window=" + window + ", smoothFactor=" + smoothFactor + ", coefs: [" + coefs.mkString(",") + "]"
+  }
 }
 
 object Params {
   val maxWindow = 300
+
   def createRandom(coefCount: Int): Params = {
-    val coefs : Array[Double] = (1 to coefCount).toArray.map(_ => Random.nextGaussian())
+    val coefs: Array[Double] = (1 to coefCount).toArray.map(_ => Random.nextGaussian())
     var params = new Params(
       1 + Random.nextInt(maxWindow),
       0.1,

@@ -3,6 +3,7 @@ package funds
 import funds.Fund
 import java.util.Date
 import collection.mutable
+import com.pb.fundOptimizer.interfaces.CostCalculationEntry
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,14 +13,8 @@ import collection.mutable
  * To change this template use File | Settings | File Templates.
  */
 
-class CostCalculationEntry(
-                            val value: Double,
-                            val fundIdx: Int
-                            ) {
-}
-
 class CostCalculator(
-                      val ma: MovingAverage
+                      val ma: MovingAverageCalculator
                       ) {
   def calculate(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, initialValue: Double, initialFund: Int, p: Params): mutable.LinkedHashMap[Int, CostCalculationEntry] = {
     require(initialFund < funds.length)
@@ -48,6 +43,8 @@ class CostCalculator(
       }
       //println("decisionVars:" + decisionVars.mkString(", "))
 
+      assert(funds(fund).getQuoteForDate(date.addDays(-1)).isDefined, "asserting that quote is defined for fund " + funds(fund).shortName + " for date: " + date.addDays(-1))
+
       value = value * funds(fund).getQuoteForDate(date).get / funds(fund).getQuoteForDate(date.addDays(-1)).get
       result += date.getDayCount() -> new CostCalculationEntry(value, fund)
       //println("New value: " + value)
@@ -58,7 +55,7 @@ class CostCalculator(
         }
       }
 
-      if (decisionVars(maxArg) - decisionVars(fund) > p.smoothFactor) {
+      if ((decisionVars(maxArg) - decisionVars(fund) > p.smoothFactor) && funds(maxArg).getQuoteForDate(date).isDefined) {
         fund = maxArg
         value = funds(fund).calculateManipulationFee(value, funds(maxArg))
       }
