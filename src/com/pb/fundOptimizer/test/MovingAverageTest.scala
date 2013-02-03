@@ -20,7 +20,7 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
 
     it("should return the same array if window is set to 1") {
       val funds = Array[Fund](
-        new MockFixedFund("test", Array(1.0, 2.0, 4.0, 8.0, 16.0, 32.0))
+        new MockFixedFund("com/pb/fundOptimizer/test", Array(1.0, 2.0, 4.0, 8.0, 16.0, 32.0))
       )
 
       val window = 1
@@ -41,7 +41,7 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
 
     it("should return a valid result if window is set to 2") {
       val funds = Array[Fund](
-        new MockFixedFund("test", Array(1.0, 2.0, 4.0, 8.0, 16.0, 32.0))
+        new MockFixedFund("com/pb/fundOptimizer/test", Array(1.0, 2.0, 4.0, 8.0, 16.0, 32.0))
       )
 
       val window = 2
@@ -63,7 +63,7 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
 
     it("should return a valid result if window is set to 5") {
       val funds = Array[Fund](
-        new MockFixedFund("test", Array(1.0, 2.0, 4.0, 8.0, 16.0, 32.0))
+        new MockFixedFund("com/pb/fundOptimizer/test", Array(1.0, 2.0, 4.0, 8.0, 16.0, 32.0))
       )
 
       val window = 5
@@ -82,7 +82,7 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
 
     it("should return a valid result if window is set to 6") {
       val funds = Array[Fund](
-        new MockFixedFund("test", Array(1.0, 2.0, 4.0, 8.0, 16.0, 32.0))
+        new MockFixedFund("com/pb/fundOptimizer/test", Array(1.0, 2.0, 4.0, 8.0, 16.0, 32.0))
       )
 
       val window = 6
@@ -100,7 +100,7 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
 
     it("should shoud fail if window size is too big") {
       val funds = Array[Fund](
-        new MockFixedFund("test", Array(1.0, 2.0, 4.0, 8.0, 16.0, 32.0))
+        new MockFixedFund("com/pb/fundOptimizer/test", Array(1.0, 2.0, 4.0, 8.0, 16.0, 32.0))
       )
 
       val window = 7
@@ -126,7 +126,7 @@ class MovingAverageTest extends FunSpec with ShouldMatchers {
       val funds = Array(
         new MockIncrementFund("const", 0),
         new MockIncrementFund("linear", 1),
-        new FixedDepositFund(new CurrencyDKK, "test fund2", 0.01)
+        new FixedDepositFund(new CurrencyDKK, "com.pb.fundOptimizer.test fund2", 0.01)
       )
 
       val expected = scala.collection.Map(

@@ -1,4 +1,4 @@
-package main.funds
+package fundOptimizer.funds
 
 import funds.currencies.CurrencyDKK
 import funds.downloaders.Downloader

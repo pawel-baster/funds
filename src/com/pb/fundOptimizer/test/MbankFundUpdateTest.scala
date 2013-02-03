@@ -5,7 +5,7 @@ import funds.ExtendedDate
 import funds.funds.NordeaFund
 import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
-import main.funds.MbankFund
+import fundOptimizer.funds.MbankFund
 
 /**
  * Created with IntelliJ IDEA.
@@ -50,7 +50,7 @@ class MbankFundUpdateTest extends FunSpec with ShouldMatchers {
   }
 
   def commonTest(dateStr: String, expectedResult: Option[Double]) {
-    val fund1 = new MbankFund(new MockDownloader("src/test/fixtures/mbank.dat"), "test1", "test1")
+    val fund1 = new MbankFund(new MockDownloader("src/com/pb/fundOptimizer/test/fixtures/mbank.dat"), "test1", "test1")
     val date1 = ExtendedDate.createFromString(dateStr, "dd-MM-yyy")
     assert(fund1.getQuoteForDate(date1) === expectedResult)
   }

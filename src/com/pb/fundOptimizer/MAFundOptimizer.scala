@@ -15,14 +15,14 @@ import scala.{Array, collection}
  * Time: 21:50
  * To change this template use File | Settings | File Templates.
  */
-class FundOptimizerResult(
+class MAFundOptimizerResult(
                            val bestParams: Params,
                            val value: Double,
                            val trace: collection.mutable.LinkedHashMap[Int, CostCalculationEntry]
                            ) {
 }
 
-class FundOptimizer(
+class MAFundOptimizer(
                      val costCalculator: CostCalculator,
                      var funds: Array[Fund],
                      var from: ExtendedDate,
@@ -31,7 +31,7 @@ class FundOptimizer(
                      var initialFund: Int,
                      var initialValue: Double
                      ) {
-  def optimize(count: Int): FundOptimizerResult = {
+  def optimize(count: Int): MAFundOptimizerResult = {
     var bestValue = Double.NegativeInfinity
     var bestParams = initialParams
     var bestFunds: collection.mutable.LinkedHashMap[Int, CostCalculationEntry] = null
@@ -39,7 +39,7 @@ class FundOptimizer(
       //println("maxWindow = " + to.getDayCount() + " - " + from.getDayCount() + " - 1")
       val params = bestParams.createRandomFromNormal(to.getDayCount() - from.getDayCount() - 1)
       val result = costCalculator.calculate(funds, from, to, initialValue, initialFund, params)
-      val value = result.get(to.getDayCount() - 1).get.value
+      val value = result.get(to.getDayCount()).get.value
       //println(">> result = " + value + ", best: " + bestValue)
       if (value > bestValue) {
         bestParams = params
@@ -47,11 +47,11 @@ class FundOptimizer(
         bestFunds = result
       }
     }
-    return new FundOptimizerResult(bestParams, bestValue, bestFunds)
+    return new MAFundOptimizerResult(bestParams, bestValue, bestFunds)
   }
 }
 
-object FundOptimizer {
+/*object MAFundOptimizer {
   def main(args: Array[String]): Unit = {
     val funds : Array[Fund] = Array(
       new FixedDepositFund(new CurrencyDKK, "test1", 0.01),
@@ -59,7 +59,7 @@ object FundOptimizer {
     )
     val to = new ExtendedDate
 
-    val experiment = new FundOptimizer(
+    val experiment = new MAFundOptimizer(
       new CostCalculator(new MovingAverage),
       funds,
       ExtendedDate.createFromString("2000-01-01", "yyy-mm-dd"),
@@ -72,4 +72,4 @@ object FundOptimizer {
     val result = experiment.optimize(100)
     println("bestValue = " + result.value)
   }
-}
+}*/

@@ -16,9 +16,9 @@ import scala.Predef._
  * Time: 5:02 PM
  * To change this template use File | Settings | File Templates.
  */
-class FundOptimizerPropertyTest  extends FunSpec with GeneratorDrivenPropertyChecks with ShouldMatchers {
+class MAFundOptimizerPropertyTest  extends FunSpec with GeneratorDrivenPropertyChecks with ShouldMatchers {
 
-  describe("A FundOptimizer") {
+  describe("A MAFundOptimizer") {
     it("should choose a correct fund after sufficient number of iterations") {
       forAll {
         (records: Array[Double]) =>
@@ -42,18 +42,18 @@ class FundOptimizerPropertyTest  extends FunSpec with GeneratorDrivenPropertyChe
             val initialParams = new Params(window, 0, Array(1.0, 0))
             val initialFund = 1 - bestIndex // start with the wrong one
             val initialValue = 1
-            val fundOptimizer = new FundOptimizer(new CostCalculator(new MovingAverage), funds, from, to, initialParams, initialFund, initialValue)
+            val fundOptimizer = new MAFundOptimizer(new CostCalculator(new MovingAverage), funds, from, to, initialParams, initialFund, initialValue)
 
             val result = fundOptimizer.optimize(100)
 
             assert(result.trace.get(to.getDayCount()).get.value >= initialValue, "Final value should be greater or equal than the initial value. " + printFunds(bestIndex, result))
-            assert(bestIndex === result.trace.get(to.getDayCount()).get.fundIdx, "FundOptimizer should've chosen the best fund by now" + printFunds(bestIndex, result))
+            assert(bestIndex === result.trace.get(to.getDayCount()).get.fundIdx, "MAFundOptimizer should've chosen the best fund by now: " + printFunds(bestIndex, result))
           }
       }
     }
   }
 
-  def printFunds(bestIndex: Int, result: FundOptimizerResult) : String = {
+  def printFunds(bestIndex: Int, result: MAFundOptimizerResult) : String = {
     return result.trace.values.foldLeft("")(_ + _.fundIdx.toString) + ":" + bestIndex
   }
 }

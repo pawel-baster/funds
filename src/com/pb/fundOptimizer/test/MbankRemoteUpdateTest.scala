@@ -3,8 +3,8 @@ package test
 import funds.ExtendedDate
 import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
-import main.funds.MbankFund
-import main.downloaders.RemoteDownloader
+import fundOptimizer.funds.MbankFund
+import fundOptimizer.downloaders.RemoteDownloader
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,7 +16,7 @@ import main.downloaders.RemoteDownloader
 class MbankRemoteUpdateTest extends FunSpec with ShouldMatchers {
   describe("An MBank Fund") {
     it("should be able to update itself using Internet connection") {
-      val fund = new MbankFund(new RemoteDownloader(), "test", "PKCS")
+      val fund = new MbankFund(new RemoteDownloader(), "com/pb/fundOptimizer/test", "PKCS")
       val quote = fund.getQuoteForDate(ExtendedDate.createFromString("2010-01-06", "yyy-MM-dd"))
       assert(quote.isDefined)
       assert(quote.get === 1654.27)

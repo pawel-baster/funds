@@ -32,7 +32,7 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
             val recordsFiltered = normalizeRecords(records)
 
             val funds = Array[Fund](
-              new MockFixedFund("test", recordsFiltered)
+              new MockFixedFund("com/pb/fundOptimizer/test", recordsFiltered)
             )
 
             val window = 1
@@ -63,7 +63,7 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
             val recordsFiltered = normalizeRecords(records)
 
             val funds = Array[Fund](
-              new MockFixedFund("test", recordsFiltered)
+              new MockFixedFund("com/pb/fundOptimizer/test", recordsFiltered)
             )
 
             val from = ExtendedDate.createFromDays(0)
@@ -87,7 +87,7 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
             val recordsFiltered = normalizeRecords(records)
 
             val funds = Array[Fund](
-              new MockFixedFund("test", recordsFiltered)
+              new MockFixedFund("com/pb/fundOptimizer/test", recordsFiltered)
             )
 
             val from = ExtendedDate.createFromDays(0)
@@ -97,7 +97,7 @@ class MovingAveragePropertyTest extends FunSpec with GeneratorDrivenPropertyChec
 
             val ma = new MovingAverage
             val result = ma.calculate(funds, from, to, window)
-            //println("test:")
+            //println("com.pb.fundOptimizer.test:")
             //result.foreach(array => println(array(0)))
             //(result.get(to.getDayCount()).head) should equal (recordsFiltered.reverse.take(window).sum / window plusOrMinus 0.0001)
             (result.get(to.getDayCount()).head.head) should equal (recordsFiltered.reverse.take(window).sum / window)

@@ -1,4 +1,4 @@
-package main.downloaders
+package fundOptimizer.downloaders
 
 import funds.downloaders.Downloader
 import io.{Source, BufferedSource}
