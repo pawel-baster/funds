@@ -7,6 +7,7 @@ import _root_.funds.{Params, ExtendedDate}
 import com.pb.fundOptimizer.Experiment
 import com.pb.fundOptimizer.interfaces.{FundRepository, FundOptimizer}
 import com.pb.fundOptimizer.funds.MbankFundRepository
+import java.io.{ObjectOutputStream, FileOutputStream}
 
 /**
  * Created with IntelliJ IDEA.
@@ -28,6 +29,7 @@ class Model(
   }
 
   def serialize() = {
+    // ja
 
   }
 }
