@@ -5,7 +5,7 @@ import _root_.funds.downloaders.Downloader
 import _root_.funds.funds.{Fund, FixedDepositFund}
 import _root_.funds.{Params, ExtendedDate}
 import com.pb.fundOptimizer.Experiment
-import com.pb.fundOptimizer.interfaces.{FundRepository, FundOptimizer}
+import com.pb.fundOptimizer.interfaces.{AbstractSerializer, FundRepository, FundOptimizer}
 import com.pb.fundOptimizer.funds.MbankFundRepository
 import java.io.{ObjectOutputStream, FileOutputStream}
 
@@ -17,6 +17,7 @@ import java.io.{ObjectOutputStream, FileOutputStream}
  * To change this template use File | Settings | File Templates.
  */
 class Model(
+             val serializer: AbstractSerializer[Model],
              val experiments: Array[Experiment],
              val fundRepository: FundRepository,
              val fileName: String
@@ -29,15 +30,15 @@ class Model(
   }
 
   def serialize() = {
-    // ja
-
+    serializer.serialize(this, fileName)
   }
 }
 
 object Model {
-  def unserializeOrNew(fileName: String, downloader: Downloader, fundRepo: FundRepository): Model = {
+  def unserializeOrNew(serializer: AbstractSerializer[Model], fileName: String, downloader: Downloader, fundRepo: FundRepository): Model = {
     val experiment = createMbankModel(fundRepo)
-    return new Model(Array(experiment), fundRepo, "data/model.dat")
+    // @todo: remember about updating end date
+    return new Model(serializer, Array(experiment), fundRepo, "data/model.dat")
   }
 
   def createMbankModel(fundRepo: FundRepository): Experiment = {
@@ -62,7 +63,7 @@ object Model {
     )
 
     val from = ExtendedDate.createFromString("01-01-2000", "mm-dd-yyy")
-    val to = new ExtendedDate
+    val to = new ExtendedDate().addDays(-10)
     val params = Params.createRandom(funds.length)
     val initialFund = 0
     val initialValue = 1000
