@@ -1,6 +1,6 @@
 package com.pb.fundOptimizer.serializers
 
-import java.io.{ObjectInputStream, FileInputStream, ObjectOutputStream, FileOutputStream}
+import java.io._
 import com.pb.fundOptimizer.interfaces.AbstractSerializer
 
 /**
@@ -11,16 +11,16 @@ import com.pb.fundOptimizer.interfaces.AbstractSerializer
  * To change this template use File | Settings | File Templates.
  */
 class JavaSerializer[T] extends AbstractSerializer[T] {
-  def unserialize(filename: String): T = {
-    val fis = new FileInputStream(filename)
+  def unserialize(file: File): T = {
+    val fis = new FileInputStream(file)
     val ois = new ObjectInputStream(fis)
     var obj: T = ois.readObject.asInstanceOf[T]
     ois.close
     return obj
   }
 
-  def serialize(obj: T, filename: String) = {
-    val fos = new FileOutputStream(filename)
+  def serialize(obj: T, file: File) = {
+    val fos = new FileOutputStream(file)
     val oos = new ObjectOutputStream(fos)
     oos.writeObject(obj)
     oos.close

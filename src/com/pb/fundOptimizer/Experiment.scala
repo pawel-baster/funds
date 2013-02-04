@@ -19,13 +19,13 @@ class Experiment(
                   val initialParams: Params,
                   val initialFund: Int,
                   val initialValue: Double
-                  ) {
+                  ) extends Serializable  {
   var bestValue = Double.NegativeInfinity
   var bestParams = initialParams
 
-  def optimize(fundOptimizer: FundOptimizer, initialCount: Int = 100) {
+  def optimize(fundOptimizer: FundOptimizer, initialCount: Int = 1000) {
     logger.info("before optimizing. Best value: " + bestValue + ", Iteration count: " + initialCount + ", Params: " + bestParams)
-    val result = fundOptimizer.optimize(funds, from, to, bestParams, initialFund, initialValue, initialCount)
+    val result = fundOptimizer.optimize(funds, from, to, initialFund, bestParams, bestValue, initialValue, initialCount)
     bestValue = result.value
     bestParams = result.bestParams
     logger.info("after optimizing. Best value: " + bestValue + ", Iteration count: " + initialCount + ", Params: " + bestParams)

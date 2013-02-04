@@ -15,7 +15,7 @@ import funds.funds.Fund
 class CostCalculationEntry(
                             var value: Double,
                             val fundIdx: Int
-                            ) {
+                            ) extends Serializable {
 }
 
 class FundOptimizerResult(
@@ -26,6 +26,6 @@ class FundOptimizerResult(
 }
 
 abstract class FundOptimizer {
-  def optimize(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, initialParams: Params, initialFund: Int, initialValue: Double, count: Int): FundOptimizerResult
+  def optimize(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, initialFund: Int, initialBestParams: Params, initialBestValue: Double, initialValue: Double, count: Int): FundOptimizerResult
 }
 

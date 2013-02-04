@@ -7,7 +7,7 @@ import java.util.Date
  * Date: 25.08.12
  * Time: 21:26
  */
-abstract class Currency {
+abstract class Currency extends Serializable {
   def convertTo(cur: Currency, date: Date)
 
   def getName(): String

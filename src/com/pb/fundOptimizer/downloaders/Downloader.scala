@@ -9,6 +9,6 @@ import io.BufferedSource
  * Time: 7:20 AM
  * To change this template use File | Settings | File Templates.
  */
-abstract class Downloader {
+abstract class Downloader extends Serializable  {
   def download(url: String, data: String = ""): BufferedSource
 }

@@ -13,7 +13,7 @@ class Params(
               val window: Int,
               val smoothFactor: Double,
               val coefs: Array[Double]
-              ) {
+              ) extends Serializable {
   def createRandomFromNormal(maxWindow: Int): Params = {
     var newWindow = math.round(window + Random.nextGaussian - 1).toInt
     if (newWindow < 1) newWindow = 1

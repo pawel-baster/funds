@@ -9,6 +9,6 @@ import funds.funds.Fund
  * Time: 15:40
  * To change this template use File | Settings | File Templates.
  */
-abstract class FundRepository {
+abstract class FundRepository extends Serializable {
   def getFund(name: String): Fund
 }

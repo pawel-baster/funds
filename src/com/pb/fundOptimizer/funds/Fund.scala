@@ -13,7 +13,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException
 abstract class Fund(
                      val currency: Currency,
                      val shortName: String
-                     ) {
+                     ) extends Serializable {
   def getQuoteForDate(date: ExtendedDate): Option[Double]
 
   def calculateBuyFee(value: Double): Double

@@ -3,6 +3,7 @@ package com.pb.fundOptimizer.test
 import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
 import com.pb.fundOptimizer.serializers.JavaSerializer
+import java.io.File
 
 class TestClass(
                  val val1: Int,
@@ -24,9 +25,9 @@ class JavaSerializerTest extends FunSpec with ShouldMatchers {
       val nestedObject = new TestClass(1)
       val testObject = new TestClass(2, nestedObject)
       val serializer = new JavaSerializer[TestClass]
-      val filename = "src/com/pb/fundOptimizer/test/fixtures/javaSerializer.dat"
-      serializer.serialize(testObject, filename)
-      val unserializedObject = serializer.unserialize(filename)
+      val file = new File("src/com/pb/fundOptimizer/test/fixtures/javaSerializer.dat")
+      serializer.serialize(testObject, file)
+      val unserializedObject = serializer.unserialize(file)
       assert(unserializedObject.isInstanceOf[TestClass])
       (testObject.val1) should equal(unserializedObject.val1)
       (testObject.nestedObject.val1) should equal(unserializedObject.nestedObject.val1)

@@ -1,5 +1,7 @@
 package com.pb.fundOptimizer.interfaces
 
+import java.io.File
+
 /**
  * Created with IntelliJ IDEA.
  * User: pb
@@ -7,7 +9,7 @@ package com.pb.fundOptimizer.interfaces
  * Time: 20:36
  * To change this template use File | Settings | File Templates.
  */
-abstract class AbstractSerializer[T] {
-  def unserialize(filename: String): T
-  def serialize(obj: T, filename: String)
+abstract class AbstractSerializer[T] extends Serializable {
+  def unserialize(file: File): T
+  def serialize(obj: T, file: File)
 }

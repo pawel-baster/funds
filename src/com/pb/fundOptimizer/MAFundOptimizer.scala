@@ -20,17 +20,18 @@ import com.pb.fundOptimizer.interfaces.{FundOptimizerResult, CostCalculationEntr
 class MAFundOptimizer(
                        val costCalculator: CostCalculator
                        ) extends FundOptimizer {
-  def optimize(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, initialParams: Params, initialFund: Int, initialValue: Double, count: Int): FundOptimizerResult = {
-    var bestValue = Double.NegativeInfinity
-    var bestParams = initialParams
+  def optimize(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, initialFund: Int, initialBestParams: Params, initialBestValue: Double, initialValue: Double, count: Int): FundOptimizerResult = {
+    var bestValue = initialBestValue
+    var bestParams = initialBestParams
     var bestFunds: collection.mutable.LinkedHashMap[Int, CostCalculationEntry] = null
     for (i <- 1 to count) {
       //println("maxWindow = " + to.getDayCount() + " - " + from.getDayCount() + " - 1")
       val params = bestParams.createRandomFromNormal(to.getDayCount() - from.getDayCount() - 1)
       val result = costCalculator.calculate(funds, from, to, initialValue, initialFund, params)
-      val value = result.get(to.getDayCount()).get.value
+      val value = result.get(to.getDayCount() - 1).get.value - 0.001 * params.coefs.map(c => c * c).sum
       //println(">> result = " + value + ", best: " + bestValue)
       if (value > bestValue) {
+        println("#" + i + " better params: " + value + " > " + bestValue)
         bestParams = params
         bestValue = value
         bestFunds = result
@@ -39,26 +40,3 @@ class MAFundOptimizer(
     return new FundOptimizerResult(bestParams, bestValue, bestFunds)
   }
 }
-
-/*object MAFundOptimizer {
-  def main(args: Array[String]): Unit = {
-    val funds : Array[Fund] = Array(
-      new FixedDepositFund(new CurrencyDKK, "test1", 0.01),
-      new FixedDepositFund(new CurrencyDKK, "test1", 0.02)
-    )
-    val to = new ExtendedDate
-
-    val experiment = new MAFundOptimizer(
-      new CostCalculator(new MovingAverageCalculator),
-      funds,
-      ExtendedDate.createFromString("2000-01-01", "yyy-mm-dd"),
-      to,
-      Params.createRandom(funds.length),
-      0,
-      1
-    )
-
-    val result = experiment.optimize(100)
-    println("bestValue = " + result.value)
-  }
-}*/
