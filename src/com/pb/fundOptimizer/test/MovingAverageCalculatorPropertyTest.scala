@@ -1,4 +1,4 @@
-package test
+package com.pb.fundOptimizer.test
 
 import funds.funds.{MockFixedFund, Fund}
 import funds.{ExtendedDate, MovingAverageCalculator}

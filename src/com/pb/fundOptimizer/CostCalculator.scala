@@ -28,7 +28,7 @@ class CostCalculator(
     //avgs.foreach{case (key, row) => { print(key + " "); row.foreach(el => print(el + " ")); println }}
 
     var fund = initialFund
-    var value = initialValue
+    //var value = initialValue
 
     val result = new mutable.LinkedHashMap[Int, CostCalculationEntry]
 
@@ -45,8 +45,8 @@ class CostCalculator(
 
       assert(funds(fund).getQuoteForDate(date.addDays(-1)).isDefined, "asserting that quote is defined for fund " + funds(fund).shortName + " for date: " + date.addDays(-1))
 
-      value = value * funds(fund).getQuoteForDate(date).get / funds(fund).getQuoteForDate(date.addDays(-1)).get
-      result += date.getDayCount() -> new CostCalculationEntry(value, fund)
+      //value = value * funds(fund).getQuoteForDate(date).get / funds(fund).getQuoteForDate(date.addDays(-1)).get
+      result += date.getDayCount() -> new CostCalculationEntry(0, fund)
       //println("New value: " + value)
       var maxArg = 0;
       for (i <- 1 to (decisionVars.length - 1)) {
@@ -57,12 +57,33 @@ class CostCalculator(
 
       if ((decisionVars(maxArg) - decisionVars(fund) > p.smoothFactor) && funds(maxArg).getQuoteForDate(date).isDefined) {
         fund = maxArg
-        value = funds(fund).calculateManipulationFee(value, funds(maxArg))
       }
-      //result += date.getDayCount() -> new CostCalculationEntry(value, fund)
+      result += date.getDayCount() -> new CostCalculationEntry(0, fund)
       date = date.addDays(1)
     }
 
+    calculateValue(funds, result, initialValue, initialFund)
+
     return result
+  }
+
+  def calculateValue(funds: Array[Fund], result: mutable.LinkedHashMap[Int, CostCalculationEntry], initialValue: Double, initialFund: Int) = {
+    //println("---")
+    var value = initialValue
+    var fund = initialFund
+    result.foreach {
+      case(i: Int, entry : CostCalculationEntry) => {
+        //println("I " + i + " " + value)
+        val date = ExtendedDate.createFromDays(i)
+        value = value * funds(fund).getQuoteForDate(date).get / funds(fund).getQuoteForDate(date.addDays(-1)).get
+        entry.value = value
+        if (entry.fundIdx != fund) {
+          //print("C " + fund + " -> " + entry.fundIdx + " ")
+          value = funds(fund).calculateManipulationFee(value, funds(entry.fundIdx))
+          fund = entry.fundIdx
+          //println("C " + value)
+        }
+      }
+    }
   }
 }

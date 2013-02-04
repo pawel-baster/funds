@@ -1,4 +1,4 @@
-package test
+package com.pb.fundOptimizer.test
 
 import funds.{ExtendedDate, Params, MovingAverageCalculator, CostCalculator}
 import funds.funds.{MockFixedFund, Fund}
@@ -46,8 +46,9 @@ class CostCalculatorTest extends FunSpec with ShouldMatchers {
     val to = ExtendedDate.createFromDays(4)
 
     val cc = new CostCalculator(new MovingAverageCalculator)
-    val result = cc.calculate(funds, from, to, 100, initialFund, params).get(4).get.value
-    (result) should equal(expectedResult)
+    val ccResult = cc.calculate(funds, from, to, 100, initialFund, params)
+    assert(ccResult.get(to.getDayCount()).isDefined)
+    (ccResult.get(to.getDayCount()).get.value) should equal(expectedResult)
   }
 
   it("should return correct result for this dataset") {

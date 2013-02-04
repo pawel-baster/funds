@@ -1,4 +1,4 @@
-package test
+package com.pb.fundOptimizer.test
 
 import funds.downloaders.MockDownloader
 import funds.ExtendedDate

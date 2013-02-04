@@ -1,4 +1,4 @@
-package test
+package com.pb.fundOptimizer.test
 
 import org.scalatest._
 import java.util.Date

@@ -1,4 +1,4 @@
-package test
+package com.pb.fundOptimizer.test
 
 import funds._
 import _root_.funds.funds.{MockFixedFund, Fund}
@@ -45,7 +45,7 @@ class MAFundOptimizerPropertyTest extends FunSpec with GeneratorDrivenPropertyCh
             val initialValue = 1
             val fundOptimizer = new MAFundOptimizer(new CostCalculator(new MovingAverageCalculator))
 
-            val result = fundOptimizer.optimize(funds, from, to, initialParams, initialFund, initialValue, 100)
+            val result = fundOptimizer.optimize(funds, from, to, initialParams, initialFund, initialValue, 200)
 
             assert(result.trace.get(to.getDayCount()).get.value >= initialValue, "Final value should be greater or equal than the initial value. " + printFunds(bestIndex, result) + ", calculated value: " + result.trace.get(to.getDayCount()).get.value + ", initial: " + initialValue)
             assert(bestIndex === result.trace.get(to.getDayCount()).get.fundIdx, "MAFundOptimizer should've chosen the best fund by now: " + printFunds(bestIndex, result))

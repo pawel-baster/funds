@@ -13,7 +13,7 @@ import funds.funds.Fund
 
 
 class CostCalculationEntry(
-                            val value: Double,
+                            var value: Double,
                             val fundIdx: Int
                             ) {
 }
