@@ -35,6 +35,8 @@ class MbankFund(
     lastUpdate = new ExtendedDate
   }
 
+  def calculateDailyManagingFee(value: Double): Double = 0.999888165 * value // annual: 0.96
+
   def calculateSellFee(value: Double): Double = value
 
   def calculateBuyFee(value: Double): Double = value

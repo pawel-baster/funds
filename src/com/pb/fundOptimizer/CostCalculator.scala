@@ -55,7 +55,7 @@ class CostCalculator(
         }
       }
 
-      if ((decisionVars(maxArg) - decisionVars(fund) > p.smoothFactor) && funds(maxArg).getQuoteForDate(date).isDefined) {
+      if ((decisionVars(maxArg) - decisionVars(fund) > p.smoothFactor) && funds(maxArg).getQuoteForDate(date.addDays(-1)).isDefined) {
         fund = maxArg
       }
       result += date.getDayCount() -> new CostCalculationEntry(0, fund)
@@ -75,7 +75,11 @@ class CostCalculator(
       case(i: Int, entry : CostCalculationEntry) => {
         //println("I " + i + " " + value)
         val date = ExtendedDate.createFromDays(i)
-        value = value * funds(fund).getQuoteForDate(date).get / funds(fund).getQuoteForDate(date.addDays(-1)).get
+        val previousDayQuoteOption = funds(fund).getQuoteForDate(date.addDays(-1))
+        if (previousDayQuoteOption.isEmpty) {
+          throw new Exception("Missing quote for fund " + funds(fund).shortName + ", date: " + date.format("dd-mm-yyy"))
+        }
+        value = funds(fund).calculateDailyManagingFee(value * funds(fund).getQuoteForDate(date).get / previousDayQuoteOption.get)
         entry.value = value
         if (entry.fundIdx != fund) {
           //print("C " + fund + " -> " + entry.fundIdx + " ")
@@ -85,5 +89,7 @@ class CostCalculator(
         }
       }
     }
+    // apply sell fee and income tax
+    result.values.last.value = initialValue + (funds(fund).calculateSellFee(value) - initialValue) * 0.8
   }
 }

@@ -28,6 +28,16 @@ class Experiment(
     val result = fundOptimizer.optimize(funds, from, to, initialFund, bestParams, bestValue, initialValue, initialCount)
     bestValue = result.value
     bestParams = result.bestParams
+    if (result.trace != null) {
+      result.trace.foreach{
+        case (dayCount, entry) => {
+          print("\"" + ExtendedDate.createFromDays(dayCount).format("yyy-mm-dd") + "\";")
+          print(entry.value + ";")
+          print(funds(entry.fundIdx).shortName + ";")
+          println
+        }
+      }
+    }
     logger.info("after optimizing. Best value: " + bestValue + ", Iteration count: " + initialCount + ", Params: " + bestParams)
   }
 }

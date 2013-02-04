@@ -1,5 +1,8 @@
 package com.pb.fundOptimizer.logging
 
+import funds.ExtendedDate
+import java.util.Date
+
 /**
  * Created with IntelliJ IDEA.
  * User: pb
@@ -13,6 +16,6 @@ class logger {
 
 object logger {
   def info(line: String) {
-    println(line)
+    println(new ExtendedDate().format("yyyy-MM-dd H:m:s ") + line)
   }
 }

@@ -20,6 +20,8 @@ abstract class Fund(
 
   def calculateSellFee(value: Double): Double
 
+  def calculateDailyManagingFee(value: Double): Double
+
   def calculateManipulationFee(value: Double, newFund: Fund): Double = {
     if (newFund.currency.getIsoName() == this.currency.getIsoName()) {
       return newFund.calculateBuyFee(this.calculateSellFee(value))
