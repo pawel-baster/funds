@@ -5,7 +5,7 @@ import _root_.funds.downloaders.Downloader
 import _root_.funds.funds.{Fund, FixedDepositFund}
 import _root_.funds.{Params, ExtendedDate}
 import com.pb.fundOptimizer.Experiment
-import com.pb.fundOptimizer.interfaces.{AbstractSerializer, FundRepository, FundOptimizer}
+import com.pb.fundOptimizer.interfaces.{FundOptimizerResultExporter, AbstractSerializer, FundRepository, FundOptimizer}
 import com.pb.fundOptimizer.funds.MbankFundRepository
 import java.io.{File, ObjectOutputStream, FileOutputStream}
 
@@ -18,6 +18,7 @@ import java.io.{File, ObjectOutputStream, FileOutputStream}
  */
 class Model (
              val serializer: AbstractSerializer[Model],
+             val resultSerializer: FundOptimizerResultExporter,
              val experiments: Array[Experiment],
              val fundRepository: FundRepository,
              val file: File
@@ -25,7 +26,7 @@ class Model (
 
   def optimize(fundOptimizer: FundOptimizer) = {
     experiments.foreach {
-      _.optimize(fundOptimizer)
+      _.optimize(fundOptimizer, resultSerializer)
     }
   }
 
@@ -35,14 +36,14 @@ class Model (
 }
 
 object Model {
-  def unserializeOrNew(serializer: AbstractSerializer[Model], file: File, downloader: Downloader, fundRepo: FundRepository): Model = {
+  def unserializeOrNew(modelSerializer: AbstractSerializer[Model], resultSerializer: FundOptimizerResultExporter, file: File, downloader: Downloader, fundRepo: FundRepository): Model = {
     if (file.exists()) {
-      val model = serializer.unserialize(file)
+      val model = modelSerializer.unserialize(file)
       // @todo: remember about updating end date
       return model
     } else {
       val experiment = createMbankModel(fundRepo)
-      return new Model(serializer, Array(experiment), fundRepo, file)
+      return new Model(modelSerializer, resultSerializer, Array(experiment), fundRepo, file)
     }
   }
 

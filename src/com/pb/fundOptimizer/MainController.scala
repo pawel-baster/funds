@@ -7,6 +7,7 @@ import downloaders.RemoteDownloader
 import com.pb.fundOptimizer.logging.logger
 import com.pb.fundOptimizer.serializers.JavaSerializer
 import java.io.File
+import com.pb.fundOptimizer.CsvFundOptimizerResultSerializer
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,8 +26,9 @@ object MainController {
     val downloader = new RemoteDownloader
     val repo = new MbankFundRepository(downloader)
     val file = new File("data/model.dat")
-    val serializer = new JavaSerializer[Model]
-    val model = Model.unserializeOrNew(serializer, file, downloader, repo)
+    val modelSerializer = new JavaSerializer[Model]
+    val resultSerializer = new CsvFundOptimizerResultSerializer
+    val model = Model.unserializeOrNew(modelSerializer, resultSerializer, file, downloader, repo)
     val maCalculator = new MovingAverageCalculator()
     val costCalculator = new CostCalculator(maCalculator)
     val maFundOptimizer = new MAFundOptimizer(costCalculator)

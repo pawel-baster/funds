@@ -2,7 +2,7 @@ package com.pb.fundOptimizer
 
 import _root_.funds.{Params, ExtendedDate}
 import _root_.funds.funds.Fund
-import interfaces.FundOptimizer
+import interfaces.{FundOptimizerResultExporter, FundOptimizer}
 import logging.logger
 
 /**
@@ -23,20 +23,13 @@ class Experiment(
   var bestValue = Double.NegativeInfinity
   var bestParams = initialParams
 
-  def optimize(fundOptimizer: FundOptimizer, initialCount: Int = 1000) {
+  def optimize(fundOptimizer: FundOptimizer, resultSerializer: FundOptimizerResultExporter, initialCount: Int = 1000) {
     logger.info("before optimizing. Best value: " + bestValue + ", Iteration count: " + initialCount + ", Params: " + bestParams)
     val result = fundOptimizer.optimize(funds, from, to, initialFund, bestParams, bestValue, initialValue, initialCount)
     bestValue = result.value
     bestParams = result.bestParams
     if (result.trace != null) {
-      result.trace.foreach{
-        case (dayCount, entry) => {
-          print("\"" + ExtendedDate.createFromDays(dayCount).format("yyy-mm-dd") + "\";")
-          print(entry.value + ";")
-          print(funds(entry.fundIdx).shortName + ";")
-          println
-        }
-      }
+      resultSerializer.export(funds, result)
     }
     logger.info("after optimizing. Best value: " + bestValue + ", Iteration count: " + initialCount + ", Params: " + bestParams)
   }
