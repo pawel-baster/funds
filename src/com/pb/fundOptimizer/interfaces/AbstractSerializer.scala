@@ -11,5 +11,6 @@ import java.io.File
  */
 abstract class AbstractSerializer[T] extends Serializable {
   def unserialize(file: File): T
+
   def serialize(obj: T, file: File)
 }

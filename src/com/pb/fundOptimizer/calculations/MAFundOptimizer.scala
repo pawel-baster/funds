@@ -1,7 +1,7 @@
-package funds
+package com.pb.fundOptimizer.calculations
 
-import currencies.CurrencyDKK
-import funds.{FixedDepositFund, Fund}
+import _root_.funds.funds.Fund
+import funds._
 import java.util.Date
 import collection.parallel.mutable
 import collection.mutable

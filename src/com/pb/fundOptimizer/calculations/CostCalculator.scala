@@ -1,6 +1,7 @@
-package funds
+package com.pb.fundOptimizer.calculations
 
-import funds.Fund
+import funds.ExtendedDate
+import funds.funds.Fund
 import java.util.Date
 import collection.mutable
 import com.pb.fundOptimizer.interfaces.CostCalculationEntry
@@ -72,7 +73,7 @@ class CostCalculator(
     var value = initialValue
     var fund = initialFund
     result.foreach {
-      case(i: Int, entry : CostCalculationEntry) => {
+      case (i: Int, entry: CostCalculationEntry) => {
         //println("I " + i + " " + value)
         val date = ExtendedDate.createFromDays(i)
         val previousDayQuoteOption = funds(fund).getQuoteForDate(date.addDays(-1))

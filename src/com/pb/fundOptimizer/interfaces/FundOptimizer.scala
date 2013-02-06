@@ -1,7 +1,8 @@
 package com.pb.fundOptimizer.interfaces
 
-import funds.{Params, ExtendedDate, CostCalculator}
+import funds.{ExtendedDate}
 import funds.funds.Fund
+import com.pb.fundOptimizer.calculations.Params
 
 /**
  * Created with IntelliJ IDEA.

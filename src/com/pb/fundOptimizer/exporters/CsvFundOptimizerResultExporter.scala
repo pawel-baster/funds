@@ -1,8 +1,8 @@
-package com.pb.fundOptimizer
+package com.pb.fundOptimizer.exporters
 
 import _root_.funds.ExtendedDate
 import _root_.funds.funds.Fund
-import interfaces.{FundOptimizerResult, FundOptimizerResultExporter}
+import com.pb.fundOptimizer.interfaces.{FundOptimizerResult, FundOptimizerResultExporter}
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,9 +11,9 @@ import interfaces.{FundOptimizerResult, FundOptimizerResultExporter}
  * Time: 5:04 PM
  * To change this template use File | Settings | File Templates.
  */
-class CsvFundOptimizerResultSerializer extends FundOptimizerResultExporter {
+class CsvFundOptimizerResultExporter extends FundOptimizerResultExporter {
   def export(funds: Array[Fund], result: FundOptimizerResult) {
-    result.trace.foreach{
+    result.trace.foreach {
       case (dayCount, entry) => {
         print("\"" + ExtendedDate.createFromDays(dayCount).format("yyy-mm-dd") + "\";")
         print(entry.value + ";")

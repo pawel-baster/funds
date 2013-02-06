@@ -1,13 +1,14 @@
 package com.pb.fundOptimizer.test
 
 import funds.funds.{MockFixedFund, Fund}
-import funds.{ExtendedDate, MovingAverageCalculator}
+import funds.{ExtendedDate}
 import org.scalatest._
 import matchers.ShouldMatchers
 import prop.GeneratorDrivenPropertyChecks
 import scala.Predef._
 import java.util.Date
 import util.{Sorting, Random}
+import com.pb.fundOptimizer.calculations.MovingAverageCalculator
 
 
 /**

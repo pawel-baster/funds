@@ -1,13 +1,14 @@
 package fundOptimizer
 
 import _root_.funds.downloaders.Downloader
-import _root_.funds.{MovingAverageCalculator, CostCalculator, MAFundOptimizer}
 import com.pb.fundOptimizer.funds.MbankFundRepository
 import downloaders.RemoteDownloader
 import com.pb.fundOptimizer.logging.logger
 import com.pb.fundOptimizer.serializers.JavaSerializer
 import java.io.File
-import com.pb.fundOptimizer.CsvFundOptimizerResultSerializer
+import scala.Array
+import com.pb.fundOptimizer.exporters.CsvFundOptimizerResultExporter
+import com.pb.fundOptimizer.calculations.{CostCalculator, MovingAverageCalculator, MAFundOptimizer}
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,15 +25,20 @@ object MainController {
   def main(args: Array[String]): Unit = {
     logger.info("MainController::main - start")
     val downloader = new RemoteDownloader
-    val repo = new MbankFundRepository(downloader)
+    val fundRepo = new MbankFundRepository(downloader)
     val file = new File("data/model.dat")
     val modelSerializer = new JavaSerializer[Model]
-    val resultSerializer = new CsvFundOptimizerResultSerializer
-    val model = Model.unserializeOrNew(modelSerializer, resultSerializer, file, downloader, repo)
+    val resultExporter = new CsvFundOptimizerResultExporter
+    val model = if (file.exists()) modelSerializer.unserialize(file)
+    else {
+      // @todo: remember about updating end date
+      val experiment = Model.createMbankModel(fundRepo)
+      new Model(Array(experiment), fundRepo)
+    }
     val maCalculator = new MovingAverageCalculator()
     val costCalculator = new CostCalculator(maCalculator)
     val maFundOptimizer = new MAFundOptimizer(costCalculator)
-    model.optimize(maFundOptimizer)
-    model.serialize
+    model.optimize(maFundOptimizer, resultExporter)
+    modelSerializer.serialize(model, file)
   }
 }

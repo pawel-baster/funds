@@ -1,11 +1,12 @@
 package com.pb.fundOptimizer.test
 
-import funds.{ExtendedDate, Params, MovingAverageCalculator, CostCalculator}
+import funds.{ExtendedDate}
 import funds.funds.{MockFixedFund, Fund}
 import java.util.Date
 import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
 import util.Random
+import com.pb.fundOptimizer.calculations.{CostCalculator, Params, MovingAverageCalculator}
 
 /**
  * Created with IntelliJ IDEA.

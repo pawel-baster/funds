@@ -9,6 +9,7 @@ import util.Random
 import java.util.Date
 import scala.Predef._
 import com.pb.fundOptimizer.interfaces.FundOptimizerResult
+import com.pb.fundOptimizer.calculations.{CostCalculator, Params, MovingAverageCalculator, MAFundOptimizer}
 
 /**
  * Created with IntelliJ IDEA.

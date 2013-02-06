@@ -3,11 +3,12 @@ package fundOptimizer
 import _root_.funds.currencies.{CurrencyPLN, CurrencyDKK}
 import _root_.funds.downloaders.Downloader
 import _root_.funds.funds.{Fund, FixedDepositFund}
-import _root_.funds.{Params, ExtendedDate}
+import _root_.funds.{ExtendedDate}
 import com.pb.fundOptimizer.Experiment
 import com.pb.fundOptimizer.interfaces.{FundOptimizerResultExporter, AbstractSerializer, FundRepository, FundOptimizer}
 import com.pb.fundOptimizer.funds.MbankFundRepository
 import java.io.{File, ObjectOutputStream, FileOutputStream}
+import com.pb.fundOptimizer.calculations.Params
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,36 +17,19 @@ import java.io.{File, ObjectOutputStream, FileOutputStream}
  * Time: 20:16
  * To change this template use File | Settings | File Templates.
  */
-class Model (
-             val serializer: AbstractSerializer[Model],
-             val resultSerializer: FundOptimizerResultExporter,
+class Model(
              val experiments: Array[Experiment],
-             val fundRepository: FundRepository,
-             val file: File
+             val fundRepository: FundRepository
              ) extends Serializable {
 
-  def optimize(fundOptimizer: FundOptimizer) = {
+  def optimize(fundOptimizer: FundOptimizer, resultExporter: FundOptimizerResultExporter) = {
     experiments.foreach {
-      _.optimize(fundOptimizer, resultSerializer)
+      _.optimize(fundOptimizer, resultExporter)
     }
-  }
-
-  def serialize() = {
-    serializer.serialize(this, file)
   }
 }
 
 object Model {
-  def unserializeOrNew(modelSerializer: AbstractSerializer[Model], resultSerializer: FundOptimizerResultExporter, file: File, downloader: Downloader, fundRepo: FundRepository): Model = {
-    if (file.exists()) {
-      val model = modelSerializer.unserialize(file)
-      // @todo: remember about updating end date
-      return model
-    } else {
-      val experiment = createMbankModel(fundRepo)
-      return new Model(modelSerializer, resultSerializer, Array(experiment), fundRepo, file)
-    }
-  }
 
   def createMbankModel(fundRepo: FundRepository): Experiment = {
 
@@ -69,7 +53,7 @@ object Model {
     )
 
     val from = ExtendedDate.createFromString("01-01-2000", "mm-dd-yyy")
-    val to = new ExtendedDate()//.addDays(-10)
+    val to = new ExtendedDate() //.addDays(-10)
     val params = Params.createRandom(funds.length)
     val initialFund = 0
     val initialValue = 1000

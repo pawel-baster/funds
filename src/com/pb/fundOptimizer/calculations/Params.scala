@@ -1,4 +1,4 @@
-package funds
+package com.pb.fundOptimizer.calculations
 
 import util.Random
 

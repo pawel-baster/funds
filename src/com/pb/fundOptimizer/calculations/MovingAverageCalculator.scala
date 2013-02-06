@@ -1,6 +1,7 @@
-package funds
+package com.pb.fundOptimizer.calculations
 
-import funds.Fund
+import funds.ExtendedDate
+import funds.funds.Fund
 import java.util.Date
 import collection.immutable.HashMap
 

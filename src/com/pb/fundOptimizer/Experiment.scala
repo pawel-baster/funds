@@ -1,7 +1,8 @@
 package com.pb.fundOptimizer
 
-import _root_.funds.{Params, ExtendedDate}
+import _root_.funds.{ExtendedDate}
 import _root_.funds.funds.Fund
+import calculations.Params
 import interfaces.{FundOptimizerResultExporter, FundOptimizer}
 import logging.logger
 
@@ -19,7 +20,7 @@ class Experiment(
                   val initialParams: Params,
                   val initialFund: Int,
                   val initialValue: Double
-                  ) extends Serializable  {
+                  ) extends Serializable {
   var bestValue = Double.NegativeInfinity
   var bestParams = initialParams
 

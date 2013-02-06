@@ -5,8 +5,9 @@ import java.util.Date
 import matchers.ShouldMatchers
 import scala.Predef._
 import funds.funds._
-import funds.{ExtendedDate, MovingAverageCalculator}
+import funds.{ExtendedDate}
 import funds.currencies.CurrencyDKK
+import com.pb.fundOptimizer.calculations.MovingAverageCalculator
 
 /**
  * Created with IntelliJ IDEA.
