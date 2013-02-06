@@ -21,6 +21,8 @@ class MockFixedFund(
 
   def calculateSellFee(value: Double): Double = sellFee * value
 
+  def calculateDailyManagingFee(value: Double): Double = value
+
   def getQuoteForDate(date: ExtendedDate): Option[Double] = {
     val dayCount = date.getDayCount()
     if (0 > dayCount || dayCount >= values.length)

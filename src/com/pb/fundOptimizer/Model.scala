@@ -9,6 +9,7 @@ import com.pb.fundOptimizer.interfaces.{FundOptimizerResultExporter, AbstractSer
 import com.pb.fundOptimizer.funds.MbankFundRepository
 import java.io.{File, ObjectOutputStream, FileOutputStream}
 import com.pb.fundOptimizer.calculations.Params
+import com.pb.fundOptimizer.logging.logger
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,13 +19,16 @@ import com.pb.fundOptimizer.calculations.Params
  * To change this template use File | Settings | File Templates.
  */
 class Model(
-             val experiments: Array[Experiment],
+             val experiments: Map[String, Experiment],
              val fundRepository: FundRepository
              ) extends Serializable {
 
   def optimize(fundOptimizer: FundOptimizer, resultExporter: FundOptimizerResultExporter) = {
     experiments.foreach {
-      _.optimize(fundOptimizer, resultExporter)
+      case (name, experiment) => {
+        logger.info("Starting experiment: " + name)
+        experiment.optimize(fundOptimizer, resultExporter)
+      }
     }
   }
 }
