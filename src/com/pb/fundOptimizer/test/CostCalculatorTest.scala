@@ -17,7 +17,7 @@ import com.pb.fundOptimizer.calculations.{CostCalculator, Params, MovingAverageC
  */
 class CostCalculatorTest extends FunSpec with ShouldMatchers {
   it("should return correct result for best params") {
-    runTest(new Params(2, 0, Array(1.0, 0, 0)), 800, 0)
+    runTest(new Params(2, 0, Array(1.0, 0, 0)), calculateTaxesAndFees(800), 0)
   }
 
   it("should return correct result for worst params") {
