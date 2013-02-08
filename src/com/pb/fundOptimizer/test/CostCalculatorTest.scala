@@ -17,23 +17,23 @@ import com.pb.fundOptimizer.calculations.{CostCalculator, Params, MovingAverageC
  */
 class CostCalculatorTest extends FunSpec with ShouldMatchers {
   it("should return correct result for best params") {
-    runTest(new Params(2, 0, Array(1.0, 0, 0)), calculateTaxesAndFees(800), 0)
+    runTest(new Params(2, 0, Array(1.0, 0, 0)), calculateTaxesAndFees(new MockFixedFund("mock", Array()), 800, 100), 0)
   }
 
   it("should return correct result for worst params") {
-    runTest(new Params(2, 0, Array(0, 1.0, 0)), 100 / 8.0, 1)
+    runTest(new Params(2, 0, Array(0, 1.0, 0)), calculateTaxesAndFees(new MockFixedFund("mock", Array()), 100 / 8.0, 100), 1)
   }
 
   it("should return correct result for constant params") {
-    runTest(new Params(2, 0, Array(0, 0, 1.0)), 100, 2)
+    runTest(new Params(2, 0, Array(0, 0, 1.0)), calculateTaxesAndFees(new MockFixedFund("mock", Array()), 100, 100), 2)
   }
 
   it("should change the fund and apply fees on fund change") {
-    runTest(new Params(1, 0, Array(1.0, 0, 0)), 342, 1)
+    runTest(new Params(1, 0, Array(1.0, 0, 0)), calculateTaxesAndFees(new MockFixedFund("mock", Array()), 342, 100), 1)
   }
 
   it("should not change fund if smoothFactor is big enough") {
-    runTest(new Params(2, 20, Array(0, 1.0, 0)), 100 / 8.0, 1)
+    runTest(new Params(2, 20, Array(0, 1.0, 0)), calculateTaxesAndFees(new MockFixedFund("mock", Array()), 100 / 8.0, 100), 1)
   }
 
   def runTest(params: Params, expectedResult: Double, initialFund: Int) {
@@ -67,6 +67,13 @@ class CostCalculatorTest extends FunSpec with ShouldMatchers {
 
     val firstAlways = new Params(window, 0, Array(1.0, 0))
     val result = cc.calculate(funds, from, to, 1.0, 0, firstAlways)
-    (records.last / records.head) should be(result.get(to.getDayCount()).get.value plusOrMinus 0.000001)
+    val finalValue = calculateTaxesAndFees(new MockFixedFund("mock", Array()), records.last / records.head, 1.0)
+    finalValue should be(result.get(to.getDayCount()).get.value plusOrMinus 0.000001)
+  }
+
+  def calculateTaxesAndFees(fund: Fund, value: Double, initialValue: Double): Double = {
+    var valueAfterTaxes = fund.calculateSellFee(value)
+    valueAfterTaxes = (valueAfterTaxes - initialValue) * 0.8 + initialValue
+    return valueAfterTaxes
   }
 }
