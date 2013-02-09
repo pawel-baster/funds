@@ -7,7 +7,7 @@ import com.pb.fundOptimizer.logging.logger
 import com.pb.fundOptimizer.serializers.JavaSerializer
 import java.io.File
 import scala.Array
-import com.pb.fundOptimizer.exporters.CsvFundOptimizerResultExporter
+import com.pb.fundOptimizer.publishers.CsvFundOptimizerResultPublisher
 import com.pb.fundOptimizer.calculations.{CostCalculator, MovingAverageCalculator, MAFundOptimizer}
 
 /**
@@ -28,7 +28,7 @@ object MainController {
     val fundRepo = new MbankFundRepository(downloader)
     val file = new File("data/model.dat")
     val modelSerializer = new JavaSerializer[Model]
-    val resultExporter = new CsvFundOptimizerResultExporter
+    val resultExporter = new CsvFundOptimizerResultPublisher("data")
     val model = if (file.exists()) modelSerializer.unserialize(file)
     else {
       // @todo: remember about updating end date

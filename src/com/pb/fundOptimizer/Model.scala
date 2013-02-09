@@ -5,7 +5,7 @@ import _root_.funds.downloaders.Downloader
 import _root_.funds.funds.{Fund, FixedDepositFund}
 import _root_.funds.{ExtendedDate}
 import com.pb.fundOptimizer.Experiment
-import com.pb.fundOptimizer.interfaces.{FundOptimizerResultExporter, AbstractSerializer, FundRepository, FundOptimizer}
+import com.pb.fundOptimizer.interfaces.{FundOptimizerResultPublishers, AbstractSerializer, FundRepository, FundOptimizer}
 import com.pb.fundOptimizer.funds.MbankFundRepository
 import java.io.{File, ObjectOutputStream, FileOutputStream}
 import com.pb.fundOptimizer.calculations.Params
@@ -23,7 +23,7 @@ class Model(
              val fundRepository: FundRepository
              ) extends Serializable {
 
-  def optimize(fundOptimizer: FundOptimizer, resultExporter: FundOptimizerResultExporter) = {
+  def optimize(fundOptimizer: FundOptimizer, resultExporter: FundOptimizerResultPublishers) = {
     experiments.foreach {
       case (name, experiment) => {
         logger.info("Starting experiment: " + name)
@@ -62,6 +62,6 @@ object Model {
     val initialFund = 0
     val initialValue = 1000
 
-    return new Experiment(funds, from, to, params, initialFund, initialValue)
+    return new Experiment("MBankExperiment", funds, from, to, params, initialFund, initialValue)
   }
 }

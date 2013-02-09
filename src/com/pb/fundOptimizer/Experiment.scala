@@ -3,7 +3,7 @@ package com.pb.fundOptimizer
 import _root_.funds.{ExtendedDate}
 import _root_.funds.funds.Fund
 import calculations.Params
-import interfaces.{FundOptimizerResultExporter, FundOptimizer}
+import interfaces.{FundOptimizerResultPublishers, FundOptimizer}
 import logging.logger
 import java.util.Date
 import collection.mutable
@@ -16,6 +16,7 @@ import collection.mutable
  * To change this template use File | Settings | File Templates.
  */
 class Experiment(
+                  val name: String,
                   val funds: Array[Fund],
                   val from: ExtendedDate,
                   val to: ExtendedDate,
@@ -26,18 +27,19 @@ class Experiment(
   val bestValues: mutable.LinkedHashMap[ExtendedDate, Double] = mutable.LinkedHashMap(new ExtendedDate() -> 0)
   var bestParams = initialParams
 
-  def optimize(fundOptimizer: FundOptimizer, resultSerializer: FundOptimizerResultExporter, initialCount: Int = 10) {
-    var bestValue: Double = bestValues.values.last
+  def optimize(fundOptimizer: FundOptimizer, resultSerializer: FundOptimizerResultPublishers, initialCount: Int = 1000) {
+    // @todo optimize
+    var bestValue: Double = bestValues.toSeq.sortBy(_._1.getTime).last._2
     logger.info("before optimizing. Best value: " + bestValue + ", Iteration count: " + initialCount + ", Params: " + bestParams)
     val result = fundOptimizer.optimize(funds, from, to, initialFund, bestParams, bestValue, initialValue, initialCount)
     bestValue = result.value
     bestParams = result.bestParams
     if (result.trace != null) {
-      resultSerializer.export(funds, result)
+      resultSerializer.export(funds, result, name)
       bestValues += (new ExtendedDate() -> bestValue)
     }
     logger.info("after optimizing. Best value: " + bestValue + ", Iteration count: " + initialCount + ", Params: " + bestParams)
-    val bestValuesHistory = bestValues.map{case(date, value) => "\n" + date.format("yyy-mm-dd") + " " + "%.2f" format value}.mkString
+    val bestValuesHistory = bestValues.toSeq.sortBy(_._1.getTime).map{case(date, value) => "\n" + date.format("yyy-MM-dd") + " " + "%.2f" format value}.mkString
     logger.info("bestValue history: " + bestValuesHistory)
   }
 }

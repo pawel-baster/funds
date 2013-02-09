@@ -10,6 +10,6 @@ import funds.funds.Fund
  * Time: 5:03 PM
  * To change this template use File | Settings | File Templates.
  */
-abstract class FundOptimizerResultExporter {
-  def export(funds: Array[Fund], result: FundOptimizerResult)
+abstract class FundOptimizerResultPublishers {
+  def export(funds: Array[Fund], result: FundOptimizerResult, filename: String)
 }
