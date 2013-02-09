@@ -16,6 +16,6 @@ class logger {
 
 object logger {
   def info(line: String) {
-    println(new ExtendedDate().format("yyyy-MM-dd H:m:s ") + line)
+    println(new ExtendedDate().format("yyyy-MM-dd H:mm:ss ") + line)
   }
 }

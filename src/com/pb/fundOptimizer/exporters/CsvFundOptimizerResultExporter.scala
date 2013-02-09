@@ -12,6 +12,7 @@ import com.pb.fundOptimizer.interfaces.{FundOptimizerResult, FundOptimizerResult
  * To change this template use File | Settings | File Templates.
  */
 class CsvFundOptimizerResultExporter extends FundOptimizerResultExporter {
+  // @todo rename to publishers
   def export(funds: Array[Fund], result: FundOptimizerResult) {
     result.trace.foreach {
       case (dayCount, entry) => {
