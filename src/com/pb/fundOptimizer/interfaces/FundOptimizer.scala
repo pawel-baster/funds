@@ -27,6 +27,6 @@ class FundOptimizerResult(
 }
 
 abstract class FundOptimizer {
-  def optimize(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, initialFund: Int, initialBestParams: Params, initialBestValue: Double, initialValue: Double, count: Int): FundOptimizerResult
+  def optimize(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, initialFund: Int, initialBestParams: Params, initialValue: Double, count: Int): FundOptimizerResult
 }
 
