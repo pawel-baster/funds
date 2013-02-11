@@ -9,15 +9,16 @@ import java.util.Date
 import collection.mutable
 import collection.mutable.ArrayBuffer
 
-class ExperimentTraceEntry(
+class ExperimentHistoryEntry(
   val bestValue: Double,
   val value: Double,
   val fundName: String,
-  val params: Params
-                            ) {
-  /*def toString {
-    return
-  }*/
+  val params: Params,
+  val date: ExtendedDate = new ExtendedDate
+                            ) extends Serializable {
+  override def toString: String = {
+    return date.format("yyy-mm-dd") + " bestValue= " + bestValue + ", value=" + value + ", fundName=" + ", params=" + params.toString()
+  }
 }
 
 /**
@@ -36,40 +37,31 @@ class Experiment(
                   val initialFund: Int,
                   val initialValue: Double
                   ) extends Serializable {
-  var bestValues: ArrayBuffer[(ExtendedDate, Double)] = ArrayBuffer((new ExtendedDate(), 0))
-  var valueAndFundHistory = Map[Int, (String, Double)]()
-  var bestParams = initialParams
+
+  var experimentHistory = ArrayBuffer[ExperimentHistoryEntry]()
 
   def optimize(fundOptimizer: FundOptimizer, resultSerializer: FundOptimizerResultPublishers, initialCount: Int = 100) {
 
-    var bestValue: Double = bestValues.last._2
-    logger.info("before optimizing. Recorded best value: " + bestValue + ", Iteration count: " + initialCount + ", Params: " + bestParams)
+    val lastHistoryEntry = experimentHistory.lastOption
 
-    val result = fundOptimizer.optimize(funds, from, to, initialFund, bestParams, initialValue, initialCount)
+    var params = Params.createRandom(funds.length)
 
-    bestValue = result.value
-    bestParams = result.bestParams
-    if (result.trace != null) {
-      // save new best value record if params have changed
-      resultSerializer.export(funds, result, name)
-      val valueRecord = (new ExtendedDate(), bestValue)
-      bestValues += valueRecord
+    if (lastHistoryEntry.isDefined) {
+      logger.info("before optimizing. Recorded best value: " + lastHistoryEntry.get.bestValue + ", Iteration count: " + initialCount + ", Params: " + lastHistoryEntry.get.params)
+      params = lastHistoryEntry.get.params
     }
-    logger.info("trying to retrieve fund from id: " + result.trace.last._2)
-    val fund = funds(result.trace.last._2.fundIdx)
-    val valueAndFundHistoryEntry = (new ExtendedDate().getDayCount() -> (fund.shortName, bestValue))
-    valueAndFundHistory += valueAndFundHistoryEntry
 
-    logger.info("after optimizing. Best value: " + bestValue + ", Iteration count: " + initialCount + ", Params: " + bestParams)
+    val result = fundOptimizer.optimize(funds, from, to, initialFund, params, initialValue, initialCount)
+    val fundName = funds(result.trace.last._2.fundIdx).shortName
+    // @todo calculate value
+    val value = 0.0
 
-    val bestValuesHistory = bestValues.map{
-      case(date, value) => date.format("yyy-MM-dd H:mm:ss") + " " + "%.2f" format value
-    } mkString("\n")
-    logger.info("bestValue history: " + bestValuesHistory)
+    experimentHistory += new ExperimentHistoryEntry(result.value, value, fundName, result.bestParams)
 
-    val fundsAndValues = valueAndFundHistory.map{
-      case (dayCount, entry) => ExtendedDate.createFromDays(dayCount).format("yyy-MM-dd") + entry._1 + " " + entry._2
-    } mkString ("\n")
-    logger.info("fund and value" + fundsAndValues)
+    // @todo ensure only one per day
+    val historyLog = experimentHistory.map{ _.toString }.mkString("\n")
+    logger.info(historyLog)
+
+    //resultSerializer.export(experimentHistory, name)
   }
 }
