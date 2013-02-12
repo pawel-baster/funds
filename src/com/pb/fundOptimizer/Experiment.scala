@@ -12,12 +12,13 @@ import collection.mutable.ArrayBuffer
 class ExperimentHistoryEntry(
   val bestValue: Double,
   val value: Double,
+  val fundIndex: Int,
   val fundName: String,
   val params: Params,
   val date: ExtendedDate = new ExtendedDate
                             ) extends Serializable {
   override def toString: String = {
-    return date.format("yyy-mm-dd") + " bestValue= " + bestValue + ", value=" + value + ", fundName=" + ", params=" + params.toString()
+    return date.format("yyy-mm-dd") + " bestValue= " + bestValue + ", value=" + value + ", fundName=" + fundName + ", params=" + params.toString()
   }
 }
 
@@ -52,13 +53,19 @@ class Experiment(
     }
 
     val result = fundOptimizer.optimize(funds, from, to, initialFund, params, initialValue, initialCount)
-    val fundName = funds(result.trace.last._2.fundIdx).shortName
-    // @todo calculate value
-    val value = 0.0
+    val newFundIndex = result.trace.last._2.fundIdx
+    val newFundName = funds(newFundIndex).shortName
 
-    experimentHistory += new ExperimentHistoryEntry(result.value, value, fundName, result.bestParams)
+    val value = if (lastHistoryEntry.isDefined) fundOptimizer.calculateValue(funds, lastHistoryEntry.get, newFundIndex) else initialValue
 
-    // @todo ensure only one per day
+    // ensure one entry per day
+    if (lastHistoryEntry.isDefined && lastHistoryEntry.get.date.getDayCount() == new ExtendedDate().getDayCount()) {
+      experimentHistory = experimentHistory.init // remove last element
+    }
+
+    val newHistoryEntry = new ExperimentHistoryEntry(result.value, value, newFundIndex, newFundName, result.bestParams)
+    experimentHistory += newHistoryEntry
+
     val historyLog = experimentHistory.map{ _.toString }.mkString("\n")
     logger.info(historyLog)
 

@@ -10,6 +10,7 @@ import scala.{Array, collection}
 import com.pb.fundOptimizer.interfaces.{FundOptimizerResult, CostCalculationEntry, FundOptimizer}
 import java.util
 import com.pb.fundOptimizer.logging.logger
+import com.pb.fundOptimizer.ExperimentHistoryEntry
 
 /**
  * Created with IntelliJ IDEA.
@@ -47,5 +48,9 @@ class MAFundOptimizer(
 
   def costFunction(result: collection.mutable.LinkedHashMap[Int, CostCalculationEntry], params: Params, to: ExtendedDate): Double = {
     return result.get(to.getDayCount() - 1).get.value - 0.001 * params.coefs.map(c => c * c).sum
+  }
+
+  def calculateValue(funds: Array[Fund], lastHistoryEntry: ExperimentHistoryEntry, newFundIndex: Int): Double = {
+    return costCalculator.calculateValue(funds, lastHistoryEntry, newFundIndex)
   }
 }

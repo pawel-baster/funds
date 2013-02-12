@@ -5,6 +5,7 @@ import funds.funds.Fund
 import java.util.Date
 import collection.mutable
 import com.pb.fundOptimizer.interfaces.CostCalculationEntry
+import com.pb.fundOptimizer.ExperimentHistoryEntry
 
 /**
  * Created with IntelliJ IDEA.
@@ -92,5 +93,24 @@ class CostCalculator(
     }
     // apply sell fee and income tax
     result.values.last.value = initialValue + (funds(fund).calculateSellFee(value) - initialValue) * 0.8
+  }
+
+  def calculateValue(funds: Array[Fund], lastHistoryEntry: ExperimentHistoryEntry, newFundIndex: Int): Double = {
+    require(newFundIndex < funds.length)
+    require(lastHistoryEntry.date.getDayCount < new ExtendedDate().getDayCount)
+
+    val oldFundIndex = lastHistoryEntry.fundIndex
+    var value = lastHistoryEntry.value
+    // @todo optimize
+    for (dayCount <- (lastHistoryEntry.date.getDayCount + 1) to new ExtendedDate().getDayCount) {
+      val currentDate = ExtendedDate.createFromDays(dayCount)
+      val previousDay = currentDate.addDays(-1)
+      value = funds(oldFundIndex).calculateDailyManagingFee(value * funds(oldFundIndex).getQuoteForDate(currentDate).get / funds(oldFundIndex).getQuoteForDate(previousDay).get)
+    }
+
+    if (oldFundIndex != newFundIndex) {
+      value = funds(oldFundIndex).calculateManipulationFee(value, funds(newFundIndex))
+    }
+    return value
   }
 }
