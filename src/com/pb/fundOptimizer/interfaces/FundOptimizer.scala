@@ -4,6 +4,7 @@ import funds.{ExtendedDate}
 import funds.funds.Fund
 import com.pb.fundOptimizer.calculations.Params
 import com.pb.fundOptimizer.ExperimentHistoryEntry
+import collection.mutable.ArrayBuffer
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,6 +30,6 @@ class FundOptimizerResult(
 
 abstract class FundOptimizer {
   def optimize(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, initialFund: Int, initialBestParams: Params, initialValue: Double, count: Int): FundOptimizerResult
-  def calculateValue(funds: Array[Fund], lastHistoryEntry: ExperimentHistoryEntry, newFundIndex: Int): Double
+  def updateExperimentHistoryValue(funds: Array[Fund], initialValue: Double, initialFundIndex: Int, experimentHistory: ArrayBuffer[ExperimentHistoryEntry])
 }
 

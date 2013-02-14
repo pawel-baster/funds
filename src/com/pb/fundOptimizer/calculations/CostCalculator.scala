@@ -6,6 +6,7 @@ import java.util.Date
 import collection.mutable
 import com.pb.fundOptimizer.interfaces.CostCalculationEntry
 import com.pb.fundOptimizer.ExperimentHistoryEntry
+import collection.mutable.ArrayBuffer
 
 /**
  * Created with IntelliJ IDEA.
@@ -69,17 +70,17 @@ class CostCalculator(
     return result
   }
 
-  def calculateValue(funds: Array[Fund], result: mutable.LinkedHashMap[Int, CostCalculationEntry], initialValue: Double, initialFund: Int) = {
+  def calculateValue(funds: Array[Fund], result: mutable.LinkedHashMap[Int, CostCalculationEntry], initialValue: Double, initialFundIndex: Int) = {
     //println("---")
     var value = initialValue
-    var fund = initialFund
+    var fund = initialFundIndex
     result.foreach {
       case (i: Int, entry: CostCalculationEntry) => {
         //println("I " + i + " " + value)
         val date = ExtendedDate.createFromDays(i)
         val previousDayQuoteOption = funds(fund).getQuoteForDate(date.addDays(-1))
         if (previousDayQuoteOption.isEmpty) {
-          throw new Exception("Missing quote for fund " + funds(fund).shortName + ", date: " + date.format("dd-mm-yyy"))
+          throw new Exception("Missing quote for fund " + funds(fund).shortName + ", date: " + date.addDays(-1).format("dd-mm-yyy") + ", dayCount: " + date.addDays(-1).getDayCount())
         }
         value = funds(fund).calculateDailyManagingFee(value * funds(fund).getQuoteForDate(date).get / previousDayQuoteOption.get)
         entry.value = value
@@ -95,22 +96,45 @@ class CostCalculator(
     result.values.last.value = initialValue + (funds(fund).calculateSellFee(value) - initialValue) * 0.8
   }
 
-  def calculateValue(funds: Array[Fund], lastHistoryEntry: ExperimentHistoryEntry, newFundIndex: Int): Double = {
-    require(newFundIndex < funds.length)
-    require(lastHistoryEntry.date.getDayCount < new ExtendedDate().getDayCount)
+  def updateExperimentHistoryValue(funds: Array[Fund], initialValue: Double, initialFundIndex: Int, experimentHistory: ArrayBuffer[ExperimentHistoryEntry]) {
+    require(initialFundIndex < funds.length)
+    require(experimentHistory.size > 0)
+    require(initialValue > 0)
 
-    val oldFundIndex = lastHistoryEntry.fundIndex
-    var value = lastHistoryEntry.value
-    // @todo optimize
-    for (dayCount <- (lastHistoryEntry.date.getDayCount + 1) to new ExtendedDate().getDayCount) {
-      val currentDate = ExtendedDate.createFromDays(dayCount)
-      val previousDay = currentDate.addDays(-1)
-      value = funds(oldFundIndex).calculateDailyManagingFee(value * funds(oldFundIndex).getQuoteForDate(currentDate).get / funds(oldFundIndex).getQuoteForDate(previousDay).get)
+    val ccEntries = translateToCcEntries(experimentHistory)
+    calculateValue(funds, ccEntries, initialValue, initialFundIndex)
+    println("after calculateValue")
+    ccEntries.foreach {
+      case (dayCount, entry) => println(dayCount + ": " + entry.fundIdx + ", value=" + entry.value)
+    }
+    experimentHistory.foreach{
+      entry => {
+        if (ccEntries.get(entry.date.getDayCount()).isDefined) {
+          entry.value = Option(ccEntries.get(entry.date.getDayCount()).get.value)
+        } else {
+          throw new RuntimeException("Missing entry for dayCount: " + entry.date.getDayCount())
+        }
+      }
+    }
+  }
+
+  def translateToCcEntries(experimentHistory: ArrayBuffer[ExperimentHistoryEntry]): mutable.LinkedHashMap[Int, CostCalculationEntry] = {
+    var result = new mutable.LinkedHashMap[Int, CostCalculationEntry];
+
+    (experimentHistory zip experimentHistory.tail).foreach {
+      case (entry1, entry2) => {
+        for (dayCount <- entry1.date.getDayCount() until entry2.date.getDayCount()) {
+          result += dayCount -> new CostCalculationEntry(0, entry1.fundIndex)
+        }
+      }
     }
 
-    if (oldFundIndex != newFundIndex) {
-      value = funds(oldFundIndex).calculateManipulationFee(value, funds(newFundIndex))
+    result += experimentHistory.last.date.getDayCount() -> new CostCalculationEntry(0, experimentHistory.last.fundIndex)
+
+    result.foreach {
+      case (dayCount, entry) => println(dayCount + ": " + entry.fundIdx + ", value=" + entry.value)
     }
-    return value
+
+    return result
   }
 }

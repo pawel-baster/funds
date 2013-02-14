@@ -8,10 +8,11 @@ import logging.logger
 import java.util.Date
 import collection.mutable
 import collection.mutable.ArrayBuffer
+import com.sun.corba.se.spi.transport.IIOPPrimaryToContactInfo
 
 class ExperimentHistoryEntry(
   val bestValue: Double,
-  val value: Double,
+  var value: Option[Double],
   val fundIndex: Int,
   val fundName: String,
   val params: Params,
@@ -56,15 +57,19 @@ class Experiment(
     val newFundIndex = result.trace.last._2.fundIdx
     val newFundName = funds(newFundIndex).shortName
 
-    val value = if (lastHistoryEntry.isDefined) fundOptimizer.calculateValue(funds, lastHistoryEntry.get, newFundIndex) else initialValue
-
     // ensure one entry per day
     if (lastHistoryEntry.isDefined && lastHistoryEntry.get.date.getDayCount() == new ExtendedDate().getDayCount()) {
       experimentHistory = experimentHistory.init // remove last element
     }
 
-    val newHistoryEntry = new ExperimentHistoryEntry(result.value, value, newFundIndex, newFundName, result.bestParams)
+    if (experimentHistory.headOption.isDefined) {
+      assert(experimentHistory.head.value.get == initialValue)
+    }
+
+    val newHistoryEntry = new ExperimentHistoryEntry(result.value / initialValue, None, newFundIndex, newFundName, result.bestParams)
     experimentHistory += newHistoryEntry
+
+    fundOptimizer.updateExperimentHistoryValue(funds, initialValue, initialFund, experimentHistory)
 
     val historyLog = experimentHistory.map{ _.toString }.mkString("\n")
     logger.info(historyLog)

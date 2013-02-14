@@ -7,6 +7,7 @@ import collection.parallel.mutable
 import collection.mutable
 import collection.parallel.mutable
 import scala.{Array, collection}
+import collection.mutable.ArrayBuffer
 import com.pb.fundOptimizer.interfaces.{FundOptimizerResult, CostCalculationEntry, FundOptimizer}
 import java.util
 import com.pb.fundOptimizer.logging.logger
@@ -50,7 +51,7 @@ class MAFundOptimizer(
     return result.get(to.getDayCount() - 1).get.value - 0.001 * params.coefs.map(c => c * c).sum
   }
 
-  def calculateValue(funds: Array[Fund], lastHistoryEntry: ExperimentHistoryEntry, newFundIndex: Int): Double = {
-    return costCalculator.calculateValue(funds, lastHistoryEntry, newFundIndex)
+  def updateExperimentHistoryValue(funds: Array[Fund], initialValue: Double, initialFundIndex: Int, experimentHistory: ArrayBuffer[ExperimentHistoryEntry]) {
+    costCalculator.updateExperimentHistoryValue(funds, initialValue, initialFundIndex, experimentHistory)
   }
 }

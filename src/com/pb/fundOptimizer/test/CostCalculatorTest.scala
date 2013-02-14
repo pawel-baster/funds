@@ -7,6 +7,8 @@ import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
 import util.Random
 import com.pb.fundOptimizer.calculations.{CostCalculator, Params, MovingAverageCalculator}
+import collection.mutable.ArrayBuffer
+import com.pb.fundOptimizer.ExperimentHistoryEntry
 
 /**
  * Created with IntelliJ IDEA.
@@ -47,6 +49,8 @@ class CostCalculatorTest extends FunSpec with ShouldMatchers {
     val to = ExtendedDate.createFromDays(4)
 
     val cc = new CostCalculator(new MovingAverageCalculator)
+
+    // test CostCalculator.calculate
     val ccResult = cc.calculate(funds, from, to, 100, initialFund, params)
     assert(ccResult.get(to.getDayCount()).isDefined)
     (ccResult.get(to.getDayCount()).get.value) should equal(expectedResult)
@@ -69,6 +73,58 @@ class CostCalculatorTest extends FunSpec with ShouldMatchers {
     val result = cc.calculate(funds, from, to, 1.0, 0, firstAlways)
     val finalValue = calculateTaxesAndFees(new MockFixedFund("mock", Array()), records.last / records.head, 1.0)
     finalValue should be(result.get(to.getDayCount()).get.value plusOrMinus 0.000001)
+  }
+
+  it ("should be able to update values in history correctly") {
+    val funds = Array[Fund](
+      new MockFixedFund("best", Array(1.0, 2.0, 4.0, 8.0, 16.0)),
+      new MockFixedFund("worst", Array(16.0, 8.0, 4.0, 2.0, 1.0)),
+      new MockFixedFund("medium", Array(1.0, 1.0, 1.0, 1.0, 1.0))
+    )
+
+    val from = ExtendedDate.createFromDays(1)
+    val to = ExtendedDate.createFromDays(4)
+
+    val cc = new CostCalculator(new MovingAverageCalculator)
+
+    val mockHistory = ArrayBuffer(
+      new ExperimentHistoryEntry(1, None, 0, "test", Params.createRandom(3), from)
+    )
+
+    val initialValue = 2
+    val initialFundIndex = 0
+    val finalValue = calculateTaxesAndFees(funds(initialFundIndex), initialValue, initialValue)
+
+    cc.updateExperimentHistoryValue(funds, initialValue, initialFundIndex, mockHistory)
+
+    (mockHistory.last.value) should equal (finalValue)
+  }
+
+  it ("should be able to update values in history correctly #2") {
+    val funds = Array[Fund](
+      new MockFixedFund("best", Array(1.0, 2.0, 4.0, 8.0, 16.0)),
+      new MockFixedFund("worst", Array(16.0, 8.0, 4.0, 2.0, 1.0)),
+      new MockFixedFund("medium", Array(1.0, 1.0, 1.0, 1.0, 1.0))
+    )
+
+    val from = ExtendedDate.createFromDays(1)
+    val to = ExtendedDate.createFromDays(4)
+
+    val cc = new CostCalculator(new MovingAverageCalculator)
+    val fundIndex = 0
+    val mockHistory = ArrayBuffer(
+      new ExperimentHistoryEntry(1, None, fundIndex, "test", Params.createRandom(3), from),
+      new ExperimentHistoryEntry(1, None, fundIndex, "test", Params.createRandom(3), to)
+    )
+
+    val initialValue = 2
+    val value = 16
+    val finalValue = calculateTaxesAndFees(funds(fundIndex), value, initialValue)
+
+    cc.updateExperimentHistoryValue(funds, initialValue, 0, mockHistory)
+
+    (mockHistory.head.value) should equal (initialValue)
+    (mockHistory.last.value) should equal (finalValue)
   }
 
   def calculateTaxesAndFees(fund: Fund, value: Double, initialValue: Double): Double = {
