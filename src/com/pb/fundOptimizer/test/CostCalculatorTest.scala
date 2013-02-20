@@ -91,13 +91,13 @@ class CostCalculatorTest extends FunSpec with ShouldMatchers {
       new ExperimentHistoryEntry(1, None, 0, "test", Params.createRandom(3), from)
     )
 
-    val initialValue = 2
+    val initialValue = 1
     val initialFundIndex = 0
-    val finalValue = calculateTaxesAndFees(funds(initialFundIndex), initialValue, initialValue)
+    val finalValue = calculateTaxesAndFees(funds(initialFundIndex), 2, initialValue)
 
     cc.updateExperimentHistoryValue(funds, initialValue, initialFundIndex, mockHistory)
 
-    (mockHistory.last.value) should equal (finalValue)
+    (mockHistory.last.value.get) should equal (finalValue)
   }
 
   it ("should be able to update values in history correctly #2") {
@@ -117,14 +117,14 @@ class CostCalculatorTest extends FunSpec with ShouldMatchers {
       new ExperimentHistoryEntry(1, None, fundIndex, "test", Params.createRandom(3), to)
     )
 
-    val initialValue = 2
+    val initialValue = 1
     val value = 16
     val finalValue = calculateTaxesAndFees(funds(fundIndex), value, initialValue)
 
     cc.updateExperimentHistoryValue(funds, initialValue, 0, mockHistory)
 
-    (mockHistory.head.value) should equal (initialValue)
-    (mockHistory.last.value) should equal (finalValue)
+    (mockHistory.head.value.get) should equal (2)
+    (mockHistory.last.value.get) should equal (finalValue)
   }
 
   def calculateTaxesAndFees(fund: Fund, value: Double, initialValue: Double): Double = {
