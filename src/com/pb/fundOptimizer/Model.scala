@@ -23,11 +23,12 @@ class Model(
              val fundRepository: FundRepository
              ) extends Serializable {
 
-  def optimize(fundOptimizer: FundOptimizer, resultExporter: FundOptimizerResultPublishers) = {
+  def optimize(fundOptimizer: FundOptimizer, resultPublisher: FundOptimizerResultPublishers) = {
     experiments.foreach {
       case (name, experiment) => {
         logger.info("Starting experiment: " + name)
-        experiment.optimize(fundOptimizer, resultExporter)
+        experiment.optimize(fundOptimizer)
+        resultPublisher.publish(experiment)
       }
     }
   }

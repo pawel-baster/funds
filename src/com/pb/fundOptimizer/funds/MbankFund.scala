@@ -35,9 +35,15 @@ class MbankFund(
     lastUpdate = new ExtendedDate
   }
 
-  def calculateDailyManagingFee(value: Double): Double = 0.999888165 * value // annual: 0.96
+  def calculateDailyManagingFee(value: Double): Double = {
+    if (shortName == "ALPI") {
+      return
+    } else {
+      return 0.999888165 * value  // annual: 0.96
+    }
+  }
 
-  def calculateSellFee(value: Double): Double = value
+  def calculateSellFee(value: Double): Double = 0.995 * value // prevent too common changes
 
   def calculateBuyFee(value: Double): Double = value
 }

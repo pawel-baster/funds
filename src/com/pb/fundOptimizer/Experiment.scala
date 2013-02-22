@@ -42,7 +42,7 @@ class Experiment(
 
   var experimentHistory = ArrayBuffer[ExperimentHistoryEntry]()
 
-  def optimize(fundOptimizer: FundOptimizer, resultSerializer: FundOptimizerResultPublishers, initialCount: Int = 100) {
+  def optimize(fundOptimizer: FundOptimizer, initialCount: Int = 10) {
 
     val lastHistoryEntry = experimentHistory.lastOption
 
@@ -57,13 +57,24 @@ class Experiment(
     val newFundIndex = result.trace.last._2.fundIdx
     val newFundName = funds(newFundIndex).shortName
 
+    result.trace.foreach{
+      case (dayCount, entry) => {
+        val date = ExtendedDate.createFromDays(dayCount);
+        var line = date.format("yyy-mm-dd ")
+        line += entry.value + " "
+        line += funds(entry.fundIdx).shortName + " "
+        line += funds(entry.fundIdx).getQuoteForDate(date).get + " "
+        println(line)
+      }
+    }
+
     // ensure one entry per day
     if (lastHistoryEntry.isDefined && lastHistoryEntry.get.date.getDayCount() == new ExtendedDate().getDayCount()) {
       experimentHistory = experimentHistory.init // remove last element
     }
 
     if (experimentHistory.headOption.isDefined) {
-      assert(experimentHistory.head.value.get == initialValue)
+      //assert(experimentHistory.head.value.get == initialValue, "head=" + experimentHistory.head.value.get + ", initial value=" + initialValue)
     }
 
     val newHistoryEntry = new ExperimentHistoryEntry(result.value / initialValue, None, newFundIndex, newFundName, result.bestParams)
@@ -73,7 +84,5 @@ class Experiment(
 
     val historyLog = experimentHistory.map{ _.toString }.mkString("\n")
     logger.info(historyLog)
-
-    //resultSerializer.export(experimentHistory, name)
   }
 }

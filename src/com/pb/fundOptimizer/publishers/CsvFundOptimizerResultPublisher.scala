@@ -5,6 +5,7 @@ import _root_.funds.funds.Fund
 import com.pb.fundOptimizer.interfaces.{FundOptimizerResult, FundOptimizerResultPublishers}
 import java.io.{File, FileWriter}
 import com.pb.fundOptimizer.logging.logger
+import com.pb.fundOptimizer.Experiment
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,6 +17,21 @@ import com.pb.fundOptimizer.logging.logger
 class CsvFundOptimizerResultPublisher(
                                        val dirPath: String
                                        ) extends FundOptimizerResultPublishers {
+  def publish(experiment: Experiment) {
+    val path = dirPath + File.separator + experiment.name + ".csv";
+    logger.info("Saving results to " + path)
+    val fw = new FileWriter(path)
+    experiment.experimentHistory.foreach{
+      entry => {
+        var line = "\"" + entry.date.format("yyyy-MM-dd") + "\";"
+        line = line + entry.value.get + ";"
+        line = line + entry.fundName + ";\n"
+        fw.write(line)
+      }
+    }
+    fw.close()
+  }
+/*
   def export(funds: Array[Fund], result: FundOptimizerResult, filename: String) {
     val path = dirPath + File.separator + filename
     val fw = new FileWriter(path)
@@ -29,5 +45,5 @@ class CsvFundOptimizerResultPublisher(
       }
     }
     fw.close()
-  }
+  }*/
 }

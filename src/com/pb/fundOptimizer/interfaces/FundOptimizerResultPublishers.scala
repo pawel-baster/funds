@@ -2,6 +2,7 @@ package com.pb.fundOptimizer.interfaces
 
 import funds.ExtendedDate
 import funds.funds.Fund
+import com.pb.fundOptimizer.Experiment
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,5 +12,5 @@ import funds.funds.Fund
  * To change this template use File | Settings | File Templates.
  */
 abstract class FundOptimizerResultPublishers {
-  def export(funds: Array[Fund], result: FundOptimizerResult, filename: String)
+  def publish(experiment: Experiment);
 }

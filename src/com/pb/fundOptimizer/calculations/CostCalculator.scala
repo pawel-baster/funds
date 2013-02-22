@@ -80,7 +80,7 @@ class CostCalculator(
         val date = ExtendedDate.createFromDays(i)
         val previousDayQuoteOption = funds(fund).getQuoteForDate(date.addDays(-1))
         if (previousDayQuoteOption.isEmpty) {
-          throw new Exception("Missing quote for fund " + funds(fund).shortName + ", date: " + date.addDays(-1).format("dd-mm-yyy") + ", dayCount: " + date.addDays(-1).getDayCount())
+          throw new Exception("Missing quote for fund " + funds(fund).shortName + ", date: " + date.addDays(-1).format("dd-MM-yyyy") + ", dayCount: " + date.addDays(-1).getDayCount())
         }
         value = funds(fund).calculateDailyManagingFee(value * funds(fund).getQuoteForDate(date).get / previousDayQuoteOption.get)
         entry.value = value
@@ -92,8 +92,6 @@ class CostCalculator(
         }
       }
     }
-    // apply sell fee and income tax
-    result.values.last.value = initialValue + (funds(fund).calculateSellFee(value) - initialValue) * 0.8
   }
 
   def updateExperimentHistoryValue(funds: Array[Fund], initialValue: Double, initialFundIndex: Int, experimentHistory: ArrayBuffer[ExperimentHistoryEntry]) {

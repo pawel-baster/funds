@@ -129,7 +129,6 @@ class CostCalculatorTest extends FunSpec with ShouldMatchers {
 
   def calculateTaxesAndFees(fund: Fund, value: Double, initialValue: Double): Double = {
     var valueAfterTaxes = fund.calculateSellFee(value)
-    valueAfterTaxes = (valueAfterTaxes - initialValue) * 0.8 + initialValue
     return valueAfterTaxes
   }
 }
