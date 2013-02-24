@@ -17,7 +17,8 @@ import com.pb.fundOptimizer.logging.logger
 class MbankFund(
                  override val downloader: Downloader,
                  override val shortName: String,
-                 val fundCode: String
+                 val fundCode: String,
+                 val annualManagingFee: Double = 0.04
                  ) extends UpdatableFund(shortName, new CurrencyPLN, downloader) {
   def update() = {
     logger.info("MbankFund " + fundCode + " starting update. Last Update: " + lastUpdate + ", minDate " + dateMin + ", maxDate: " + dateMax)
@@ -36,11 +37,7 @@ class MbankFund(
   }
 
   def calculateDailyManagingFee(value: Double): Double = {
-    if (shortName == "ALPI") {
-      return
-    } else {
-      return 0.999888165 * value  // annual: 0.96
-    }
+    return math.pow((1 - annualManagingFee), 1/365.0) * value
   }
 
   def calculateSellFee(value: Double): Double = 0.995 * value // prevent too common changes

@@ -32,8 +32,9 @@ object MainController {
     val model = if (file.exists()) modelSerializer.unserialize(file)
     else {
       // @todo: remember about updating end date
-      val experiment = Model.createMbankModel(fundRepo)
-      new Model(Map("MbankExperiment" -> experiment), fundRepo)
+      val experiment1 = Model.createMbankModel(fundRepo)
+      val experiment2 = Model.createMbankModelFull(fundRepo)
+      new Model(Map("MbankExperiment" -> experiment1, "MbankFullExperiment" -> experiment2), fundRepo)
     }
     val maCalculator = new MovingAverageCalculator()
     val costCalculator = new CostCalculator(maCalculator)

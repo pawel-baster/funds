@@ -44,7 +44,6 @@ class CostCalculator(
       val decisionVars = (p.coefs, MARow).zipped.map {
         case (a, b) => a * b
       }
-      //println("decisionVars:" + decisionVars.mkString(", "))
 
       assert(funds(fund).getQuoteForDate(date.addDays(-1)).isDefined, "asserting that quote is defined for fund " + funds(fund).shortName + " for date: " + date.addDays(-1))
 
@@ -63,6 +62,10 @@ class CostCalculator(
       }
       result += date.getDayCount() -> new CostCalculationEntry(0, fund)
       date = date.addDays(1)
+
+    /*  if (date.after(to)) {
+        println("decisionVars (" + funds.map{ _.shortName }.mkString(", ") + "):" + decisionVars.mkString(", "))
+      } */
     }
 
     calculateValue(funds, result, initialValue, initialFund)

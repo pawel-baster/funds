@@ -43,7 +43,6 @@ class Experiment(
   var experimentHistory = ArrayBuffer[ExperimentHistoryEntry]()
 
   def optimize(fundOptimizer: FundOptimizer, initialCount: Int = 10) {
-
     val lastHistoryEntry = experimentHistory.lastOption
 
     var params = Params.createRandom(funds.length)
