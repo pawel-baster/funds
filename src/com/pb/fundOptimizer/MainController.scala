@@ -34,7 +34,12 @@ object MainController {
       // @todo: remember about updating end date
       val experiment1 = Model.createMbankModel(fundRepo)
       val experiment2 = Model.createMbankModelFull(fundRepo)
-      new Model(Map("MbankExperiment" -> experiment1, "MbankFullExperiment" -> experiment2), fundRepo)
+      val experiment3 = Model.createBestRankedMbankModel(fundRepo)
+      new Model(Map(
+        "MbankExperiment" -> experiment1,
+        "BestRankedMbankExperiment" -> experiment3,
+        "MbankFullExperiment" -> experiment2),
+        fundRepo)
     }
     val maCalculator = new MovingAverageCalculator()
     val costCalculator = new CostCalculator(maCalculator)
