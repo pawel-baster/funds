@@ -2,10 +2,11 @@ package com.pb.fundOptimizer.publishers
 
 import _root_.funds.ExtendedDate
 import _root_.funds.funds.Fund
-import com.pb.fundOptimizer.interfaces.{FundOptimizerResult, FundOptimizerResultPublishers}
+import com.pb.fundOptimizer.interfaces.{FundRepository, FundOptimizerResult, FundOptimizerResultPublishers}
 import java.io.{File, FileWriter}
 import com.pb.fundOptimizer.logging.logger
-import com.pb.fundOptimizer.Experiment
+import com.pb.fundOptimizer.{ExperimentHistoryEntry, Experiment}
+import collection.mutable.ArrayBuffer
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,11 +18,18 @@ import com.pb.fundOptimizer.Experiment
 class CsvFundOptimizerResultPublisher(
                                        val dirPath: String
                                        ) extends FundOptimizerResultPublishers {
-  def publish(experiment: Experiment) {
-    val path = dirPath + File.separator + experiment.name + ".csv";
-    logger.info("Saving results to " + path)
-    val fw = new FileWriter(path)
-    experiment.experimentHistory.foreach{
+  def publish(experiment: Experiment, result: FundOptimizerResult) {
+    val filenamePrefix = dirPath + File.separator + experiment.name + "_";
+    logger.info("Saving results to " + filenamePrefix + "*")
+    publishExperimentHistory(experiment.experimentHistory, filenamePrefix)
+    publishLastBestParams(experiment, filenamePrefix)
+    publishOptimizedHistory(experiment.funds, result, filenamePrefix)
+  }
+
+  def publishExperimentHistory(experimentHistory: ArrayBuffer[ExperimentHistoryEntry], filenamePrefix: String) {
+    val filename = filenamePrefix + "experiment_history.csv"
+    val fw = new FileWriter(filename)
+    experimentHistory.foreach{
       entry => {
         var line = "\"" + entry.date.format("yyyy-MM-dd") + "\";"
         line = line + entry.value.get + ";"
@@ -31,19 +39,27 @@ class CsvFundOptimizerResultPublisher(
     }
     fw.close()
   }
-/*
-  def export(funds: Array[Fund], result: FundOptimizerResult, filename: String) {
-    val path = dirPath + File.separator + filename
-    val fw = new FileWriter(path)
-    logger.info("Saving results to " + path)
-    result.trace.foreach {
+
+  def publishLastBestParams(experiment: Experiment, filenamePrefix: String) {
+    val filename = filenamePrefix + "best_params.csv"
+    val fw = new FileWriter(filename)
+    fw.write(experiment.experimentHistory.last.params.toString())
+    fw.close()
+  }
+
+  def publishOptimizedHistory(experimentFunds: Array[Fund], result: FundOptimizerResult, filenamePrefix: String) {
+    val filename = filenamePrefix + "best_history.csv"
+    val fw = new FileWriter(filename)
+    result.trace.foreach{
       case (dayCount, entry) => {
-        var line = "\"" + ExtendedDate.createFromDays(dayCount).format("yyy-mm-dd") + "\";"
-        line = line + entry.value + ";"
-        line = line + funds(entry.fundIdx).shortName + ";"
+        val date = ExtendedDate.createFromDays(dayCount);
+        var line = date.format("yyy-mm-dd") + ";"
+        line += entry.value + ";"
+        line += experimentFunds(entry.fundIdx).shortName + ";"
+        line += experimentFunds(entry.fundIdx).getQuoteForDate(date).get + "\n"
         fw.write(line)
       }
     }
     fw.close()
-  }*/
+  }
 }

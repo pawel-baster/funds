@@ -27,8 +27,8 @@ class Model(
     experiments.foreach {
       case (name, experiment) => {
         logger.info("Starting experiment: " + name)
-        experiment.optimize(fundOptimizer)
-        resultPublisher.publish(experiment)
+        val result = experiment.optimize(fundOptimizer)
+        resultPublisher.publish(experiment, result)
       }
     }
   }

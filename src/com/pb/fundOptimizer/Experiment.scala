@@ -3,7 +3,7 @@ package com.pb.fundOptimizer
 import _root_.funds.{ExtendedDate}
 import _root_.funds.funds.Fund
 import calculations.Params
-import interfaces.{FundOptimizerResultPublishers, FundOptimizer}
+import interfaces.{FundOptimizerResult, FundOptimizerResultPublishers, FundOptimizer}
 import logging.logger
 import java.util.Date
 import collection.mutable
@@ -42,7 +42,8 @@ class Experiment(
 
   var experimentHistory = ArrayBuffer[ExperimentHistoryEntry]()
 
-  def optimize(fundOptimizer: FundOptimizer, initialCount: Int = 100) {
+  def optimize(fundOptimizer: FundOptimizer, initialCount: Int = 10): FundOptimizerResult = {
+
     val lastHistoryEntry = experimentHistory.lastOption
 
     var params = Params.createRandom(funds.length)
@@ -55,17 +56,6 @@ class Experiment(
     val result = fundOptimizer.optimize(funds, from, to, initialFund, params, initialValue, initialCount)
     val newFundIndex = result.trace.last._2.fundIdx
     val newFundName = funds(newFundIndex).shortName
-
-    /*result.trace.foreach{
-      case (dayCount, entry) => {
-        val date = ExtendedDate.createFromDays(dayCount);
-        var line = date.format("yyy-mm-dd ")
-        line += entry.value + " "
-        line += funds(entry.fundIdx).shortName + " "
-        line += funds(entry.fundIdx).getQuoteForDate(date).get + " "
-        println(line)
-      }
-    }*/
 
     // ensure one entry per day
     if (lastHistoryEntry.isDefined && lastHistoryEntry.get.date.getDayCount() == new ExtendedDate().getDayCount()) {
@@ -81,7 +71,6 @@ class Experiment(
 
     fundOptimizer.updateExperimentHistoryValue(funds, initialValue, initialFund, experimentHistory)
 
-    //val historyLog = experimentHistory.map{ _.toString }.mkString("\n")
-    //logger.info(historyLog)
+    return result
   }
 }

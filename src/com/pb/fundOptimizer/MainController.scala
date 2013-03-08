@@ -28,23 +28,24 @@ object MainController {
     val fundRepo = new MbankFundRepository(downloader)
     val file = new File("data/model.dat")
     val modelSerializer = new JavaSerializer[Model]
-    val resultExporter = new CsvFundOptimizerResultPublisher("data")
+    val resultPublisher = new CsvFundOptimizerResultPublisher("data")
     val model = if (file.exists()) modelSerializer.unserialize(file)
     else {
       // @todo: remember about updating end date
       val experiment1 = Model.createMbankModel(fundRepo)
-      val experiment2 = Model.createMbankModelFull(fundRepo)
-      val experiment3 = Model.createBestRankedMbankModel(fundRepo)
+      //val experiment2 = Model.createMbankModelFull(fundRepo)
+      //val experiment3 = Model.createBestRankedMbankModel(fundRepo)
       new Model(Map(
-        "MbankExperiment" -> experiment1,
-        "BestRankedMbankExperiment" -> experiment3,
-        "MbankFullExperiment" -> experiment2),
+        "MbankExperiment" -> experiment1
+        //"BestRankedMbankExperiment" -> experiment3,
+        //"MbankFullExperiment" -> experiment2
+        ),
         fundRepo)
     }
     val maCalculator = new MovingAverageCalculator()
     val costCalculator = new CostCalculator(maCalculator)
     val maFundOptimizer = new MAFundOptimizer(costCalculator)
-    model.optimize(maFundOptimizer, resultExporter)
+    model.optimize(maFundOptimizer, resultPublisher)
     modelSerializer.serialize(model, file)
   }
 }
