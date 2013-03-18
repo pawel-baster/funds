@@ -46,7 +46,7 @@ class Experiment(
 
     val lastHistoryEntry = experimentHistory.lastOption
 
-    var params = Params.createRandom(funds.length)
+    var params = initialParams
 
     if (lastHistoryEntry.isDefined) {
       logger.info("before optimizing. Recorded best value: " + lastHistoryEntry.get.bestValue + ", Iteration count: " + initialCount + ", Params: " + lastHistoryEntry.get.params)
