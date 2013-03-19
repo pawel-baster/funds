@@ -62,10 +62,6 @@ class Experiment(
       experimentHistory = experimentHistory.init // remove last element
     }
 
-    if (experimentHistory.headOption.isDefined) {
-      //assert(experimentHistory.head.value.get == initialValue, "head=" + experimentHistory.head.value.get + ", initial value=" + initialValue)
-    }
-
     val newHistoryEntry = new ExperimentHistoryEntry(result.value / initialValue, None, newFundIndex, newFundName, result.bestParams)
     experimentHistory += newHistoryEntry
 

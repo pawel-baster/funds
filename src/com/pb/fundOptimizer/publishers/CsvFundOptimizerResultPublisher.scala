@@ -53,11 +53,25 @@ class CsvFundOptimizerResultPublisher(
     result.trace.foreach{
       case (dayCount, entry) => {
         val date = ExtendedDate.createFromDays(dayCount);
-        var line = date.format("yyy-mm-dd") + ";"
+        var line = date.format("yyyy-MM-dd") + ";"
         line += entry.value + ";"
         line += experimentFunds(entry.fundIdx).shortName + ";"
         line += experimentFunds(entry.fundIdx).getQuoteForDate(date).get + "\n"
         fw.write(line)
+      }
+    }
+    fw.close()
+  }
+
+  def publishDigest(experiments: Map[String, Experiment]) {
+    val filename = dirPath + File.separator + "digest.txt"
+    val fw = new FileWriter(filename)
+    experiments.values.foreach {
+      experiment => {
+        val lastHistoryEntry = experiment.experimentHistory.last
+        val values = (experiment.name, lastHistoryEntry.fundName, lastHistoryEntry.value.getOrElse("N/A"), lastHistoryEntry.bestValue)
+        //fw.write(values.toString())
+        println(values.toString())
       }
     }
     fw.close()

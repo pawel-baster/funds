@@ -5,11 +5,12 @@ import _root_.funds.downloaders.Downloader
 import _root_.funds.funds.{Fund, FixedDepositFund}
 import _root_.funds.{ExtendedDate}
 import com.pb.fundOptimizer.Experiment
-import com.pb.fundOptimizer.interfaces.{FundOptimizerResultPublishers, AbstractSerializer, FundRepository, FundOptimizer}
+import com.pb.fundOptimizer.interfaces._
 import com.pb.fundOptimizer.funds.MbankFundRepository
 import java.io.{File, ObjectOutputStream, FileOutputStream}
 import com.pb.fundOptimizer.calculations.Params
 import com.pb.fundOptimizer.logging.logger
+import collection.mutable.ArrayBuffer
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,13 +25,16 @@ class Model(
              ) extends Serializable {
 
   def optimize(fundOptimizer: FundOptimizer, resultPublisher: FundOptimizerResultPublishers) = {
+    var results = ArrayBuffer[FundOptimizerResult]()
     experiments.foreach {
       case (name, experiment) => {
         logger.info("Starting experiment: " + name)
         val result = experiment.optimize(fundOptimizer)
+        results += result
         resultPublisher.publish(experiment, result)
       }
     }
+    resultPublisher.publishDigest(experiments)
   }
 }
 

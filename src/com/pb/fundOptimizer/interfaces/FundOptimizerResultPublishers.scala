@@ -12,5 +12,6 @@ import com.pb.fundOptimizer.Experiment
  * To change this template use File | Settings | File Templates.
  */
 abstract class FundOptimizerResultPublishers {
-  def publish(experiment: Experiment, result: FundOptimizerResult);
+  def publish(experiment: Experiment, result: FundOptimizerResult)
+  def publishDigest(experiments: Map[String, Experiment])
 }
