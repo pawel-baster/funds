@@ -42,7 +42,7 @@ class Experiment(
 
   var experimentHistory = ArrayBuffer[ExperimentHistoryEntry]()
 
-  def optimize(fundOptimizer: FundOptimizer, initialCount: Int = 10): FundOptimizerResult = {
+  def optimize(fundOptimizer: FundOptimizer, initialCount: Int = 100): FundOptimizerResult = {
 
     val lastHistoryEntry = experimentHistory.lastOption
 

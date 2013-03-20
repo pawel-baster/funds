@@ -33,12 +33,12 @@ object MainController {
     else {
       // @todo: remember about updating end date
       val experiment1 = Model.createMbankModel(fundRepo)
-      //val experiment2 = Model.createMbankModelFull(fundRepo)
-      //val experiment3 = Model.createBestRankedMbankModel(fundRepo)
+      val experiment2 = Model.createMbankModelFull(fundRepo)
+      val experiment3 = Model.createBestRankedMbankModel(fundRepo)
       new Model(Map(
-        "MbankExperiment" -> experiment1
-        //"BestRankedMbankExperiment" -> experiment3,
-        //"MbankFullExperiment" -> experiment2
+        "MbankExperiment" -> experiment1,
+        "BestRankedMbankExperiment" -> experiment3,
+        "MbankFullExperiment" -> experiment2
         ),
         fundRepo)
     }
