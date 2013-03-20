@@ -2,6 +2,7 @@ package com.pb.fundOptimizer.serializers
 
 import java.io._
 import com.pb.fundOptimizer.interfaces.AbstractSerializer
+import com.pb.fundOptimizer.logging.logger
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,7 +21,7 @@ class JavaSerializer[T] extends AbstractSerializer[T] {
   }
 
   def serialize(obj: T, file: File) = {
-	logger.info("serializing the model")
+..  logger.info("serializing the model")
     val tempFile = new File(file.getAbsolutePath + ".temp")
 
     //serialize:
