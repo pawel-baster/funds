@@ -20,9 +20,16 @@ class JavaSerializer[T] extends AbstractSerializer[T] {
   }
 
   def serialize(obj: T, file: File) = {
-    val fos = new FileOutputStream(file)
+	logger.info("serializing the model")
+    val tempFile = new File(file.getAbsolutePath + ".temp")
+
+    //serialize:
+    val fos = new FileOutputStream(tempFile)
     val oos = new ObjectOutputStream(fos)
     oos.writeObject(obj)
     oos.close
+
+    new File(file.getAbsolutePath) renameTo  new File(file.getAbsolutePath + ".bak")
+    tempFile.renameTo(file)
   }
 }

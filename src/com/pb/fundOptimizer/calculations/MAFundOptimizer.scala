@@ -42,6 +42,9 @@ class MAFundOptimizer(
         bestValue = value
         bestFunds = result
       }
+      if (i % 100 == 0) {
+        logger.info("#" + i)
+      }
     }
 
     return new FundOptimizerResult(bestParams, bestValue, bestFunds)

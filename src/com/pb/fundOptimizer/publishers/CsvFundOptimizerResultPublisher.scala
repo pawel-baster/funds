@@ -64,16 +64,18 @@ class CsvFundOptimizerResultPublisher(
   }
 
   def publishDigest(experiments: Map[String, Experiment]) {
-    val filename = dirPath + File.separator + "digest.txt"
+    val filename = dirPath + File.separator + "digest.html"
     val fw = new FileWriter(filename)
+    fw.write("<html><body><table>")
     experiments.values.foreach {
       experiment => {
         val lastHistoryEntry = experiment.experimentHistory.last
-        val values = (experiment.name, lastHistoryEntry.fundName, lastHistoryEntry.value.getOrElse("N/A"), lastHistoryEntry.bestValue)
-        //fw.write(values.toString())
-        println(values.toString())
+        val values = List(experiment.name, lastHistoryEntry.fundName, "%1.2f" format lastHistoryEntry.value.getOrElse(0), "%1.2f" format lastHistoryEntry.bestValue, lastHistoryEntry.date.format("yyyy-MM-dd"))
+        fw.write("<tr><td>" + values.mkString("</td><td>") + "</td><tr>")
+        println(values.mkString(", "))
       }
     }
+    fw.write("</table></body></html>")
     fw.close()
   }
 }

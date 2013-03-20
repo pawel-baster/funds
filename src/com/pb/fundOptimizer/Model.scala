@@ -87,7 +87,7 @@ object Model {
     val initialFund = 0
     val initialValue = 1000
 
-    return new Experiment("MBankExperiment", funds, from, to, params, initialFund, initialValue)
+    return new Experiment("BestRankedMbankExperiment", funds, from, to, params, initialFund, initialValue)
   }
 
   def createMbankModel(fundRepo: FundRepository): Experiment = {
