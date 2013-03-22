@@ -25,7 +25,6 @@ abstract class UpdatableFund(
   var lastUpdate = ExtendedDate.createFromString("1970-01-01", "dd-MM-yyy")
   var updateInterval = 24
 
-  // h
   def update()
 
   def getQuoteForDate(date: ExtendedDate): Option[Double] = {
