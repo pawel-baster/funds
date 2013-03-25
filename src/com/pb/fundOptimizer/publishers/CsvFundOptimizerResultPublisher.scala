@@ -70,7 +70,9 @@ class CsvFundOptimizerResultPublisher(
     experiments.values.foreach {
       experiment => {
         val lastHistoryEntry = experiment.experimentHistory.last
-        val values = List(experiment.name, lastHistoryEntry.fundName, "%1.2f" format lastHistoryEntry.value.getOrElse(0), "%1.2f" format lastHistoryEntry.bestValue, lastHistoryEntry.date.format("yyyy-MM-dd"))
+        val lastChange = experiment.experimentHistory.reverse.indexWhere( item => { item.fundName != lastHistoryEntry.fundName })
+        val lastChangeDescription = if (lastChange > 0) "(" + lastChange + ")" else "(b/z)"
+        val values = List(experiment.name, lastHistoryEntry.fundName, lastChangeDescription, "%1.2f" format lastHistoryEntry.value.getOrElse(0), "%1.2f" format lastHistoryEntry.bestValue, lastHistoryEntry.date.format("yyyy-MM-dd"))
         fw.write("<tr><td>" + values.mkString("</td><td>") + "</td><tr>")
         println(values.mkString(", "))
       }
