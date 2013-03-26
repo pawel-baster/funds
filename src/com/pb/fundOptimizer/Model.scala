@@ -20,7 +20,7 @@ import collection.mutable.ArrayBuffer
  * To change this template use File | Settings | File Templates.
  */
 class Model(
-             val experiments: Map[String, Experiment],
+             var experiments: Map[String, Experiment],
              val fundRepository: FundRepository
              ) extends Serializable {
 
@@ -81,7 +81,7 @@ object Model {
       fundRepo.getFund("UWIB")
     )
 
-    val from = ExtendedDate.createFromString("01-01-2000", "mm-dd-yyy")
+    val from = ExtendedDate.createFromString("01-01-2000", "dd-MM-yyy")
     val to = new ExtendedDate() //.addDays(-10)
     val params = new Params(76, 0.1, Array(0.3687201431198547,-3.20918306456685,0.6525564107076529,0.10643191210766312,3.9767948114633436,-0.7682500297395938,-3.3227446073825395,-7.527374301090256,0.5039036530374144,-5.9869070290353905,2.892913956002425,-4.5321394027715876,-1.9709947831531203,-2.3624068780010905,-0.09468799644347281,-2.168556934495691,7.454066909318624,-1.3185168495221564,3.5955626904618385,-5.972280259516975,-2.769516930661795,5.822494716894997,-1.0605215673406847,5.964487890891162,-6.886443506353013,-4.963806617178026,1.3914675863495047,2.8385282807270515,2.3594515808831034,-2.7517589222892402,4.041158023682059,-0.32842471022403164,-0.7801016614364793,1.3149866021521703))
     val initialFund = 0
@@ -111,13 +111,37 @@ object Model {
       //fundRepo.getFund("SSAK")
     )
 
-    val from = ExtendedDate.createFromString("01-01-2000", "mm-dd-yyy")
+    val from = ExtendedDate.createFromString("01-01-2000", "dd-MM-yyy")
     val to = new ExtendedDate() //.addDays(-10)
     val params = new Params(262, 0.1, Array(-0.1858522093664584,0.8730949913874132,-7.742155714992641,4.578019670902693,6.6824129369706355,-0.7687299614350103,-2.2995632905554606,-3.5353168692081,-0.38200028396527785,-6.681302326506522))
     val initialFund = 0
     val initialValue = 1000
 
     return new Experiment("MBankExperiment", funds, from, to, params, initialFund, initialValue)
+  }
+
+  def createWardMbankModel(fundRepo: FundRepository): Experiment = {
+
+    val pln = new CurrencyPLN
+
+    val funds: Array[Fund] = Array(
+      new FixedDepositFund(pln, "deposit 3%", 0.03),
+      fundRepo.getFund("UNIO"),
+      fundRepo.getFund("INGO"),
+      fundRepo.getFund("UNIZ"),
+      fundRepo.getFund("KHSE"),
+      fundRepo.getFund("UNIA"),
+      fundRepo.getFund("INGZ"),
+      fundRepo.getFund("KH2A")
+    )
+
+    val from = ExtendedDate.createFromString("01-01-2000", "dd-MM-yyy")
+    val to = new ExtendedDate() //.addDays(-10)
+    val params = Params.createRandom(funds.length)
+    val initialFund = 0
+    val initialValue = 1000
+
+    return new Experiment("WardMBankExperiment", funds, from, to, params, initialFund, initialValue)
   }
 
   def createMbankModelFull(fundRepo: FundRepository): Experiment = {
@@ -382,7 +406,7 @@ object Model {
       fundRepo.getFund("PIBG")
     )
 
-    val from = ExtendedDate.createFromString("01-01-2000", "mm-dd-yyy")
+    val from = ExtendedDate.createFromString("01-01-2000", "dd-MM-yyy")
     val to = new ExtendedDate()
     val params = new Params(143, 0.1, Array(0.8683821956484502,-4.2771709370940885,-4.647341207846134,1.1465299675711471,6.668209250324887,1.9053013033792507,-2.23825835441779,-2.5343348298180444,-3.5679213529796994,4.686259812087139,-1.1827421460505643,-0.78733102950893,-2.803814689182628,2.2716147868139536,3.13103234450677,-2.2999335053941117,-5.329262870579411,-0.07050703922398371,-2.5549840486865407,4.694922983796607,-0.657679834745228,-4.529515013417168,-4.413423320643688,-2.752629481155971,-2.2849047199404335,-0.482899527047854,-5.060051156672945,2.641038788744086,0.7000581814735674,3.739524496554221,-3.361652944655636,5.926311143100099,1.4488418926918243,1.3542788006843074,1.9353233370896685,-4.650879086904806,-0.6255561310886328,2.9106388853302856,4.967591751928438,5.813799358631487,-3.2032796509615578,-6.018985087289633,-2.643993185925945,4.85507586494518,3.6917266827008834,
       1.7642763812326758,2.447218558835616,-0.12403806874045012,1.4767697091263152,-6.695035383940957,-3.6202491553940193,3.3580797729171517,2.025338428328512,-4.275553124913953,0.15166631744646214,-4.572418757173967,-6.03397587165469,-5.607547326194866,8.368691283964793,-4.2746472006559975,0.5040502876382896,-5.171645164810753,-12.038942423997751,-4.953309490002816,2.7192629437239413,-5.364891931700071,-1.9245667709334635,7.884305929774983,-1.0535484301541043,1.7985622927598812,0.3232548013390493,5.402659453144313,-1.2298392170254364,2.646959042830067,0.1800967491049128,5.885260308286708,1.2344952122471446,5.390720315625123,4.384998760941398,7.976860502040969,2.756105031312941,-2.607148847797849,5.444512991449321,-1.5964630065936207,-3.6521941461007588,-1.7272600015141375,9.08738110282223,-4.257730565739873,-3.727955793498589,-6.911337694779171,4.961608968447537,3.627726727634851,3.0456644733534746,5.790461255836021,6.1287675101379415,-8.603253037299746,-4.130726845701307,-5.157664496126326,-3.554960546599189,
@@ -393,29 +417,5 @@ object Model {
     val initialValue = 1000
 
     return new Experiment("MBankFullExperiment", funds, from, to, params, initialFund, initialValue)
-  }
-
-  def createWardMbankModel(fundRepo: FundRepository): Experiment = {
-
-    val pln = new CurrencyPLN
-
-    val funds: Array[Fund] = Array(
-      new FixedDepositFund(pln, "deposit 3%", 0.03),
-      //new FixedDepositFund(pln, "deposit 2%", 0.02),
-      fundRepo.getFund("BOBG"),
-      fundRepo.getFund("CAZR"),
-      fundRepo.getFund("UNIA"),
-      fundRepo.getFund("KH2A"),
-      fundRepo.getFund("INGS"),
-      fundRepo.getFund("UNIZ")
-    )
-
-    val from = ExtendedDate.createFromString("01-01-2000", "MM-dd-yyy")
-    val to = new ExtendedDate() //.addDays(-10)
-    val params = Params.createRandom(funds.length)
-    val initialFund = 0
-    val initialValue = 1000
-
-    return new Experiment("WardMBankExperiment", funds, from, to, params, initialFund, initialValue)
   }
 }

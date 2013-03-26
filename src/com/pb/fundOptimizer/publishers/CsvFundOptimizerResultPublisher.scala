@@ -23,7 +23,7 @@ class CsvFundOptimizerResultPublisher(
     logger.info("Saving results to " + filenamePrefix + "*")
     publishExperimentHistory(experiment.experimentHistory, filenamePrefix)
     publishLastBestParams(experiment, filenamePrefix)
-    publishOptimizedHistory(experiment.funds, result, filenamePrefix)
+    publishOptimizedHistory(experiment.funds, result, experiment.experimentHistory, filenamePrefix)
   }
 
   def publishExperimentHistory(experimentHistory: ArrayBuffer[ExperimentHistoryEntry], filenamePrefix: String) {
@@ -47,16 +47,20 @@ class CsvFundOptimizerResultPublisher(
     fw.close()
   }
 
-  def publishOptimizedHistory(experimentFunds: Array[Fund], result: FundOptimizerResult, filenamePrefix: String) {
+  def publishOptimizedHistory(experimentFunds: Array[Fund], result: FundOptimizerResult, experimentHistory: ArrayBuffer[ExperimentHistoryEntry], filenamePrefix: String) {
     val filename = filenamePrefix + "best_history.csv"
     val fw = new FileWriter(filename)
+    val experimentHistoryMap = experimentHistory.map{ entry => (entry.date.getDayCount(), entry.value)} toMap
+
     result.trace.foreach{
       case (dayCount, entry) => {
-        val date = ExtendedDate.createFromDays(dayCount);
+        val date = ExtendedDate.createFromDays(dayCount)
         var line = date.format("yyyy-MM-dd") + ";"
         line += entry.value + ";"
         line += experimentFunds(entry.fundIdx).shortName + ";"
-        line += experimentFunds(entry.fundIdx).getQuoteForDate(date).get + "\n"
+        line += experimentFunds(entry.fundIdx).getQuoteForDate(date).get + ";"
+        line += experimentHistoryMap.getOrElse(dayCount, "") + "\n"
+
         fw.write(line)
       }
     }
