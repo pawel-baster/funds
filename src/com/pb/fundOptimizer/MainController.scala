@@ -35,10 +35,12 @@ object MainController {
       val experiment1 = Model.createMbankModel(fundRepo)
       val experiment2 = Model.createMbankModelFull(fundRepo)
       val experiment3 = Model.createBestRankedMbankModel(fundRepo)
+      val experiment4 = Model.createWardMbankModel(fundRepo)
       new Model(Map(
         "MbankExperiment" -> experiment1,
         "BestRankedMbankExperiment" -> experiment3,
-        "MbankFullExperiment" -> experiment2
+        "MbankFullExperiment" -> experiment2,
+        "MBankWardModel" -> experiment4
         ),
         fundRepo)
     }

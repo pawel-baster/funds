@@ -394,4 +394,28 @@ object Model {
 
     return new Experiment("MBankFullExperiment", funds, from, to, params, initialFund, initialValue)
   }
+
+  def createWardMbankModel(fundRepo: FundRepository): Experiment = {
+
+    val pln = new CurrencyPLN
+
+    val funds: Array[Fund] = Array(
+      new FixedDepositFund(pln, "deposit 3%", 0.03),
+      //new FixedDepositFund(pln, "deposit 2%", 0.02),
+      fundRepo.getFund("BOBG"),
+      fundRepo.getFund("CAZR"),
+      fundRepo.getFund("UNIA"),
+      fundRepo.getFund("KH2A"),
+      fundRepo.getFund("INGS"),
+      fundRepo.getFund("UNIZ")
+    )
+
+    val from = ExtendedDate.createFromString("01-01-2000", "MM-dd-yyy")
+    val to = new ExtendedDate() //.addDays(-10)
+    val params = Params.createRandom(funds.length)
+    val initialFund = 0
+    val initialValue = 1000
+
+    return new Experiment("WardMBankExperiment", funds, from, to, params, initialFund, initialValue)
+  }
 }
