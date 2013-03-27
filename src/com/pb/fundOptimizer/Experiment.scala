@@ -41,6 +41,7 @@ class Experiment(
                   ) extends Serializable {
 
   var experimentHistory = ArrayBuffer[ExperimentHistoryEntry]()
+  var deviation = 1.0
 
   def optimize(fundOptimizer: FundOptimizer, initialCount: Int = 100): FundOptimizerResult = {
 
@@ -49,11 +50,12 @@ class Experiment(
     var params = initialParams
 
     if (lastHistoryEntry.isDefined) {
-      logger.info("before optimizing. Recorded best value: " + lastHistoryEntry.get.bestValue + ", Iteration count: " + initialCount + ", Params: " + lastHistoryEntry.get.params)
+      logger.info("before optimizing. Recorded best value: " + lastHistoryEntry.get.bestValue + ", Iteration count: " + initialCount + ", Params: " + lastHistoryEntry.get.params + ", deviation: " + deviation)
       params = lastHistoryEntry.get.params
     }
 
-    val result = fundOptimizer.optimize(funds, from, to, initialFund, params, initialValue, initialCount)
+    deviation += 1/deviation
+    val result = fundOptimizer.optimize(funds, from, to, initialFund, params, initialValue, initialCount, deviation)
     val newFundIndex = result.trace.last._2.fundIdx
     val newFundName = funds(newFundIndex).shortName
 

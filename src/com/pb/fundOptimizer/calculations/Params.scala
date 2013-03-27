@@ -14,12 +14,12 @@ class Params(
               val smoothFactor: Double,
               val coefs: Array[Double]
               ) extends Serializable {
-  def createRandomFromNormal(maxWindow: Int): Params = {
+  def createRandomFromNormal(maxWindow: Int, deviation: Double = 1.0): Params = {
     var newWindow = math.round(window + Random.nextGaussian - 1).toInt
     if (newWindow < 1) newWindow = 1
     if (newWindow > maxWindow) newWindow = maxWindow
     //val newSmoothFactor = math.abs(smoothFactor + Random.nextGaussian / 10.0)
-    val newCoefs = coefs.map(coef => coef + Random.nextGaussian())
+    val newCoefs = coefs.map(coef => coef + deviation * Random.nextGaussian())
     return new Params(newWindow, smoothFactor, newCoefs)
   }
 

@@ -24,14 +24,14 @@ import com.pb.fundOptimizer.ExperimentHistoryEntry
 class MAFundOptimizer(
                        val costCalculator: CostCalculator
                        ) extends FundOptimizer {
-  def optimize(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, initialFund: Int, initialBestParams: Params, initialValue: Double, count: Int): FundOptimizerResult = {
+  def optimize(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, initialFund: Int, initialBestParams: Params, initialValue: Double, count: Int, deviation: Double = 1.0): FundOptimizerResult = {
 
     var bestFunds = costCalculator.calculate(funds, from, to, initialValue, initialFund, initialBestParams)
     var bestValue = costFunction(bestFunds, initialBestParams, to)
     var bestParams = initialBestParams
     for (i <- 1 to count) {
       //println("maxWindow = " + to.getDayCount() + " - " + from.getDayCount() + " - 1")
-      val params = bestParams.createRandomFromNormal(to.getDayCount() - from.getDayCount() - 1)
+      val params = bestParams.createRandomFromNormal(to.getDayCount() - from.getDayCount() - 1, deviation)
       val result = costCalculator.calculate(funds, from, to, initialValue, initialFund, params)
       //val value = result.get(to.getDayCount() - 1).get.value - 0.001 * params.coefs.map(c => c * c).sum
       val value = costFunction(result, params, to)
