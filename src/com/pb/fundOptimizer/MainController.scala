@@ -53,5 +53,6 @@ object MainController {
     val maFundOptimizer = new MAFundOptimizer(costCalculator)
     model.optimize(maFundOptimizer, resultPublisher)
     modelSerializer.serialize(model, file)
+    logger.info("MainController::main - done")
   }
 }
