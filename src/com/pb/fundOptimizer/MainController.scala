@@ -8,7 +8,7 @@ import com.pb.fundOptimizer.serializers.JavaSerializer
 import java.io.File
 import scala.Array
 import com.pb.fundOptimizer.publishers.CsvFundOptimizerResultPublisher
-import com.pb.fundOptimizer.calculations.{CostCalculator, MovingAverageCalculator, MAFundOptimizer}
+import com.pb.fundOptimizer.calculations.{AlternatingMAFundOptimizer, CostCalculator, MovingAverageCalculator, MAFundOptimizer}
 
 /**
  * Created with IntelliJ IDEA.
@@ -50,7 +50,7 @@ object MainController {
 
     val maCalculator = new MovingAverageCalculator()
     val costCalculator = new CostCalculator(maCalculator)
-    val maFundOptimizer = new MAFundOptimizer(costCalculator)
+    val maFundOptimizer = new AlternatingMAFundOptimizer(costCalculator)
     model.optimize(maFundOptimizer, resultPublisher)
     modelSerializer.serialize(model, file)
     logger.info("MainController::main - done")

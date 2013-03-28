@@ -3,8 +3,7 @@ history.full <- read.table("../data/MBankFullExperiment_best_history.csv", sep="
 history.ward <- read.table("../data/WardMBankExperiment_best_history.csv", sep=";", quote="\"")
 history.basic <- read.table("../data/MBankExperiment_best_history.csv", sep=";", quote="\"")
 
-maxy = max(c(history.best.ranked[,2], history.full[,2], #history.ward[,2], 
-             history.basic[,2]))
+maxy = max(c(history.best.ranked[,2], history.full[,2], history.ward[,2], history.basic[,2]))
 
 period = 1:nrow(history.full)
 

@@ -5,3 +5,4 @@ lib
 .idea
 src/com/pb/fundOptimizer/test/fixtures/javaSerializer.dat
 data/*
+r/.R*
