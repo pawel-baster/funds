@@ -16,6 +16,7 @@ class ExperimentHistoryEntry(
   val fundIndex: Int,
   val fundName: String,
   val params: Params,
+  val iterationCount: Int,
   val date: ExtendedDate = new ExtendedDate
                             ) extends Serializable {
   override def toString: String = {
@@ -43,32 +44,34 @@ class Experiment(
   var experimentHistory = ArrayBuffer[ExperimentHistoryEntry]()
   var deviation = 1.0
 
-  def optimize(fundOptimizer: FundOptimizer, initialCount: Int = 100): FundOptimizerResult = {
+  def optimize(fundOptimizer: FundOptimizer, iterationCount: Int): FundOptimizerResult = {
 
     val lastHistoryEntry = experimentHistory.lastOption
 
     var params = initialParams
 
     if (lastHistoryEntry.isDefined) {
-      logger.info("before optimizing. Recorded best value: " + lastHistoryEntry.get.bestValue + ", Iteration count: " + initialCount + ", Params: " + lastHistoryEntry.get.params + ", deviation: " + deviation)
+      logger.info("before optimizing. Recorded best value: " + lastHistoryEntry.get.bestValue + ", Iteration count: " + iterationCount + ", Params: " + lastHistoryEntry.get.params + ", deviation: " + deviation)
       params = lastHistoryEntry.get.params
     }
 
     deviation += 1/deviation
-    val result = fundOptimizer.optimize(funds, from, to, initialFund, params, initialValue, initialCount, deviation)
+    val result = fundOptimizer.optimize(funds, from, to, initialFund, params, initialValue, iterationCount, deviation)
     val newFundIndex = result.trace.last._2.fundIdx
     val newFundName = funds(newFundIndex).shortName
+
+    var newIterationCount = iterationCount
 
     // ensure one entry per day
     if (lastHistoryEntry.isDefined && lastHistoryEntry.get.date.getDayCount() == new ExtendedDate().getDayCount()) {
       experimentHistory = experimentHistory.init // remove last element
+      newIterationCount += lastHistoryEntry.get.iterationCount
     }
 
-    val newHistoryEntry = new ExperimentHistoryEntry(result.value / initialValue, None, newFundIndex, newFundName, result.bestParams)
+    val newHistoryEntry = new ExperimentHistoryEntry(result.value / initialValue, None, newFundIndex, newFundName, result.bestParams, newIterationCount)
     experimentHistory += newHistoryEntry
 
     fundOptimizer.updateExperimentHistoryValue(funds, initialValue, initialFund, experimentHistory)
-
     return result
   }
 }

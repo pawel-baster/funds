@@ -51,7 +51,9 @@ object MainController {
     val maCalculator = new MovingAverageCalculator()
     val costCalculator = new CostCalculator(maCalculator)
     val maFundOptimizer = new AlternatingMAFundOptimizer(costCalculator)
-    model.optimize(maFundOptimizer, resultPublisher)
+
+    val iterationCount = if (args.length == 1) args(0).toInt else 10
+    model.optimize(maFundOptimizer, resultPublisher, iterationCount)
     modelSerializer.serialize(model, file)
     logger.info("MainController::main - done")
   }

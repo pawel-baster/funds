@@ -32,9 +32,11 @@ class CsvFundOptimizerResultPublisher(
     experimentHistory.foreach{
       entry => {
         var line = "\"" + entry.date.format("yyyy-MM-dd") + "\";"
-        line = line + entry.value.get + ";"
-        line = line + entry.fundName + ";\n"
-        fw.write(line)
+        line += entry.value.get + ";"
+        line += entry.fundName + ";"
+        line += entry.bestValue + ";"
+        line += entry.iterationCount + ";"
+        fw.write(line + "\n")
       }
     }
     fw.close()
@@ -81,7 +83,7 @@ class CsvFundOptimizerResultPublisher(
         println(values.mkString(", "))
       }
     }
-    fw.write("</table></body></html>")
+    fw.write("</table><a href=\"best_history.svg\"><img src=\"best_history.svg\" width=640 /></a>\n<a href=\"experiment_history.svg\"><img src=\"experiment_history.svg\" width=640 /></a></body></html>")
     fw.close()
   }
 }

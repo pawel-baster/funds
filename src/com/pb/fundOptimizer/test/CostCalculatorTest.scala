@@ -19,23 +19,23 @@ import com.pb.fundOptimizer.ExperimentHistoryEntry
  */
 class CostCalculatorTest extends FunSpec with ShouldMatchers {
   it("should return correct result for best params") {
-    runTest(new Params(2, 0, Array(1.0, 0, 0)), calculateTaxesAndFees(new MockFixedFund("mock", Array()), 800, 100), 0)
+    runTest(new Params(2, 0, Array(1.0, 0, 0)), 800, 0) //calculateTaxesAndFees(new MockFixedFund("mock", Array()), 800, 100), 0)
   }
 
   it("should return correct result for worst params") {
-    runTest(new Params(2, 0, Array(0, 1.0, 0)), calculateTaxesAndFees(new MockFixedFund("mock", Array()), 100 / 8.0, 100), 1)
+    runTest(new Params(2, 0, Array(0, 1.0, 0)), 100/8.0, 1)
   }
 
   it("should return correct result for constant params") {
-    runTest(new Params(2, 0, Array(0, 0, 1.0)), calculateTaxesAndFees(new MockFixedFund("mock", Array()), 100, 100), 2)
+    runTest(new Params(2, 0, Array(0, 0, 1.0)), 100, 2)
   }
 
   it("should change the fund and apply fees on fund change") {
-    runTest(new Params(1, 0, Array(1.0, 0, 0)), calculateTaxesAndFees(new MockFixedFund("mock", Array()), 342, 100), 1)
+    runTest(new Params(1, 0, Array(1.0, 0, 0)), 342, 1)
   }
 
   it("should not change fund if smoothFactor is big enough") {
-    runTest(new Params(2, 20, Array(0, 1.0, 0)), calculateTaxesAndFees(new MockFixedFund("mock", Array()), 100 / 8.0, 100), 1)
+    runTest(new Params(2, 20, Array(0, 1.0, 0)), 100 / 8.0, 1)
   }
 
   def runTest(params: Params, expectedResult: Double, initialFund: Int) {
@@ -83,12 +83,11 @@ class CostCalculatorTest extends FunSpec with ShouldMatchers {
     )
 
     val from = ExtendedDate.createFromDays(1)
-    val to = ExtendedDate.createFromDays(4)
 
     val cc = new CostCalculator(new MovingAverageCalculator)
 
     val mockHistory = ArrayBuffer(
-      new ExperimentHistoryEntry(1, None, 0, "test", Params.createRandom(3), from)
+      new ExperimentHistoryEntry(1, None, 0, "test", Params.createRandom(3), 0, from)
     )
 
     val initialValue = 1
@@ -113,8 +112,8 @@ class CostCalculatorTest extends FunSpec with ShouldMatchers {
     val cc = new CostCalculator(new MovingAverageCalculator)
     val fundIndex = 0
     val mockHistory = ArrayBuffer(
-      new ExperimentHistoryEntry(1, None, fundIndex, "test", Params.createRandom(3), from),
-      new ExperimentHistoryEntry(1, None, fundIndex, "test", Params.createRandom(3), to)
+      new ExperimentHistoryEntry(1, None, fundIndex, "test", Params.createRandom(3), 0, from),
+      new ExperimentHistoryEntry(1, None, fundIndex, "test", Params.createRandom(3), 0, to)
     )
 
     val initialValue = 1

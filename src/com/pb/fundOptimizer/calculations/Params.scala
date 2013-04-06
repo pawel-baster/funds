@@ -15,10 +15,7 @@ class Params(
               val coefs: Array[Double]
               ) extends Serializable {
   def createRandomFromNormal(maxWindow: Int, deviation: Double = 1.0): Params = {
-    var newWindow = math.round(window + Random.nextGaussian - 1).toInt
-    if (newWindow < 1) newWindow = 1
-    if (newWindow > maxWindow) newWindow = maxWindow
-
+    var newWindow = Params.generateNewWindow(window, maxWindow)
     val newCoefs = coefs.map(coef => coef + deviation * Random.nextGaussian())
     return new Params(newWindow, smoothFactor, newCoefs)
   }
@@ -30,8 +27,21 @@ class Params(
     return new Params(window, smoothFactor, newCoefs)
   }
 
+  def createRandomFromNormalModifyWindow(maxWindow: Int): Params = {
+    var newCoefs = coefs.clone()
+    var newWindow = Params.generateNewWindow(window, maxWindow)
+    return new Params(newWindow, smoothFactor, newCoefs)
+  }
+
+  def createRandomZeroRandomDimension: Params = {
+    var newCoefs = coefs.clone()
+    val randomDimension = Random.nextInt(newCoefs.length)
+    newCoefs(randomDimension) = if (newCoefs(randomDimension) != 0) 0 else Random.nextGaussian()
+    return new Params(window, smoothFactor, newCoefs)
+  }
+
   override def toString(): String = {
-    return "params: window=" + window + ", smoothFactor=" + smoothFactor + ", coefs: [" + coefs.mkString(",") + "]"
+    return "params: window=" + window + ", smoothFactor=" + smoothFactor + ", coefs: [" + coefs.mkString(", ") + "]"
   }
 }
 
@@ -46,5 +56,12 @@ object Params {
       coefs
     )
     return params
+  }
+
+  def generateNewWindow(window: Int, maxWindow: Int): Int = {
+    var newWindow = math.round(window + Random.nextGaussian - 1).toInt
+    if (newWindow < 1) newWindow = 1
+    if (newWindow > maxWindow) newWindow = maxWindow
+    return newWindow
   }
 }

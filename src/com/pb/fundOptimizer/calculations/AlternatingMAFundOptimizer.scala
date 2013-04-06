@@ -1,6 +1,7 @@
 package com.pb.fundOptimizer.calculations
 
 import com.pb.fundOptimizer.interfaces.FundOptimizer
+import util.Random
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,11 +15,14 @@ class AlternatingMAFundOptimizer (
                                   ) extends MAFundOptimizer(costCalculator) {
 
   override def pickNextParams(currentParams: Params, maxWindow: Int, deviation: Double, i: Int): Params = {
-    if (i  % 2 == 0)
-      return currentParams.createRandomFromNormal(maxWindow, deviation)
-    else
+    val decision = Random.nextInt(10)
+    if (decision < 5)
       return currentParams.createRandomFromNormalModifyOneDimension
+    else if (decision < 7)
+      return currentParams.createRandomFromNormal(maxWindow, deviation)
+    else if (decision == 8)
+      return currentParams.createRandomFromNormalModifyWindow(maxWindow)
+    else // if (decision == 9)
+      return currentParams.createRandomZeroRandomDimension
   }
-
-
 }
