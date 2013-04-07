@@ -9,6 +9,7 @@ import util.Random
  * Time: 7:39 AM
  * To change this template use File | Settings | File Templates.
  */
+@SerialVersionUID(625097364780589551l)
 class Params(
               val window: Int,
               val smoothFactor: Double,
@@ -33,10 +34,10 @@ class Params(
     return new Params(newWindow, smoothFactor, newCoefs)
   }
 
-  def createRandomZeroRandomDimension: Params = {
+  def createRandomZeroRandomDimension(deviation: Double): Params = {
     var newCoefs = coefs.clone()
     val randomDimension = Random.nextInt(newCoefs.length)
-    newCoefs(randomDimension) = if (newCoefs(randomDimension) != 0) 0 else Random.nextGaussian()
+    newCoefs(randomDimension) = if (newCoefs(randomDimension) != 0) 0 else Random.nextGaussian() * deviation
     return new Params(window, smoothFactor, newCoefs)
   }
 

@@ -23,6 +23,6 @@ class AlternatingMAFundOptimizer (
     else if (decision == 8)
       return currentParams.createRandomFromNormalModifyWindow(maxWindow)
     else // if (decision == 9)
-      return currentParams.createRandomZeroRandomDimension
+      return currentParams.createRandomZeroRandomDimension(deviation)
   }
 }

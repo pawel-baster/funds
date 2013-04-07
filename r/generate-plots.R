@@ -1,3 +1,5 @@
+#!/usr/bin/Rscript
+
 colors = rainbow(4)
 
 plot_best_history <- function() {
@@ -10,7 +12,11 @@ plot_best_history <- function() {
   
   period = 1:nrow(history.full)
   
-  plot(history.best.ranked[period,2], type="l", col=colors[1], ylim=c(0,maxy))
+  plot(history.best.ranked[period,2], type="l", col=colors[1], ylim=c(0,maxy))#, xaxt = "n")
+  #labels=history.best.ranked[,1]
+  
+  #axis(1, at=1:length(history.best.ranked[,1]), labels=history.best.ranked[,1], las=2)
+  
   lines(history.full[period,2], type="l", col=colors[2])
   lines(history.ward[period,2], type="l", col=colors[3])
   lines(history.basic[period,2], type="l", col=colors[4])
@@ -38,22 +44,22 @@ plot_experiment_history <- function() {
     ymax = max(ymax, max(sets[[i]][, c(2,4)]))
   }
   
-  plot(function (x) { 1.03 ^ (x/365) }, type="l", col="black", ylim=c(ymin, ymax), xlim=c(0,length(sets[[i]][,2])), ylab="")
-  
+  plot(function (x) { 1.03 ^ (x/365) }, type="l", col="black", ylim=c(ymin, ymax), xlim=c(1,length(sets[[i]][,2])), ylab="", xlab="", xaxt = "n")
+  axis(1, at=1:length(sets[[i]][,1]), labels=sets[[i]][,1], las=2)
+    
   for (i in 1:length(sets)) {
-    lines(sets[[i]][,2], col=colors[i], ylim=c(ymin, ymax))
+    lines(sets[[i]][,2], col=colors[i], ylim=c(ymin, ymax), lwd=2)
     lines(sets[[i]][,4], col=colors[i], ylim=c(ymin, ymax), lty=2)
   }
 }
 
 width = 12
 height = 7
-bg = "white"
 
-svg(file="data/best_history.png", width=width, height=height)
+svg(file="data/best_history.svg", width=width, height=height)
 plot_best_history()
 dev.off()
 
-svg(file="data/experiment_history.png", width=width, height=height)
+svg(file="data/experiment_history.svg", width=width, height=height)
 plot_experiment_history()
 dev.off()
