@@ -18,9 +18,9 @@ class FixedDepositFund(
                         ) extends Fund(currency, shortName) {
   def getQuoteForDate(date: ExtendedDate): Option[Double] = Option(100 * math.pow(1 + rate, date.getDayCount() / 365.0))
 
-  def calculateBuyFee(value: Double): Double = value * 0.99
+  def calculateBuyFee(value: Double): Double = value * 0.995
 
-  def calculateSellFee(value: Double): Double = value * 0.98
+  def calculateSellFee(value: Double): Double = value * 0.995
 
   def calculateDailyManagingFee(value: Double) = value
 }
