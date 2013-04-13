@@ -66,7 +66,24 @@ class Model(
       ),
 
       // joint funds:
-      Model.createGenericMbankModel(fundRepo, "MBank-alianz", List("ALAK", "AMIS", "ALAP", "ALAA", "ALOB", "ALPI", "ALWA", "ALBD", "ALSW"))
+      Model.createGenericMbankModel(fundRepo, "MBank-alianz", List("ALAK", "AMIS", "ALAP", "ALAA", "ALOB", "ALPI", "ALWA", "ALBD", "ALSW")),
+      Model.createGenericMbankModel(fundRepo, "MBank-amplicoB", List("APZS", "APCH", "APZO", "APNE", "APAK", "APRW", "APPI", "APOB", "APOS", "APSW", "APZA", "APAS")),
+      Model.createGenericMbankModel(fundRepo, "MBank-amplicoG", List("AIFO", "AIFA", "AIMS", "AIOZ", "AIRP", "AISW", "AINE")),
+      Model.createGenericMbankModel(fundRepo, "MBank-axa", List("AXA2", "AXA1", "AXA8", "AXA7", "AXA6", "AXA5", "AXA4", "AXA3")),
+      Model.createGenericMbankModel(fundRepo, "MBank-bph", List("BGZS", "CARS", "CAAM", "CAEU", "BAGL", "CAZR", "CAEZ", "CADP", "BOBG", "BOCH", "CASK", "CASW", "CADZ")),
+      Model.createGenericMbankModel(fundRepo, "MBank-hsbc", List("HAJE", "HAJC", "HAJD", "HBRB", "HBRE", "HBEE", "HBRI", "HBME", "HCHE", "HSCC", "HCCC", "HEYB", "HERA", "HSEE", "HESC", "HEUG", "0422", "HGEE", "HGCP", "HEMB", "0424", "HEME", "HGEP", "HMLD", "HGLE", "HHGM", "HHKE", "HINE", "HJPE", "HKOE", "HLAE", "HLAF", "HRUS", "HSGE", "HTWE", "HTHE", "HSTR", "HUKE", "HCPB", "HUSE")),
+      Model.createGenericMbankModel(fundRepo, "MBank-ing1", List("ISAL", "IESD", "IGDK", "IGSD", "INGM", "ISJL", "ISNA", "IPRW", "ILSE", "ILRW", "ISDU")),
+      Model.createGenericMbankModel(fundRepo, "MBank-ing2", List("INGZ", "INGA", "ICHI", "INGG", "INGO", "IMOK", "IROS", "ISSP", "IBNP", "ISFP", "ISSW", "INGS", "ISMS")),
+      Model.createGenericMbankModel(fundRepo, "MBank-investor", List("DAGR", "DALA", "BRIC", "DGOL", "DWSG", "DIIC", "DSII", "DSNB", "DROS", "DTUR", "DWZK", "DZRW")),
+      Model.createGenericMbankModel(fundRepo, "MBank-legg", List("KH1A", "KH2A", "KH3A", "KH4A")),
+      Model.createGenericMbankModel(fundRepo, "MBank-noble", List("NOAM", "NOAK", "NOGR", "NOMI", "NOSK", "NOST", "NOTM")),
+      Model.createGenericMbankModel(fundRepo, "MBank-pko1", List("PERA", "PRWS", "PJRA", "PARA", "PMSJ", "PPDU", "PPDE")),
+      Model.createGenericMbankModel(fundRepo, "MBank-pko2", List("0420", "PSAP", "PBIG", "PDLG", "PIBG", "PPDP", "0421", "PSTP", "PSSG", "PZRP")),
+      Model.createGenericMbankModel(fundRepo, "MBank-pzu1", List("PZUP", "PZBI", "PZUK", "PZMS", "PZNE", "PFOA", "PZUG", "PZUM", "PZUZ")),
+      Model.createGenericMbankModel(fundRepo, "MBank-pzu2", List("PSSW", "PSZZ", "PSAZ")),
+      Model.createGenericMbankModel(fundRepo, "MBank-skarbiec", List("SKAA", "SANE", "SAKA", "SKAZ", "SKDE", "SKAF", "SKAK", "SKAO", "SFNE", "SKAW", "SKOR", "SRSU", "SKSN", "SOOP", "SKMS", "SKAD")),
+      Model.createGenericMbankModel(fundRepo, "MBank-uni", List("UMSS", "UAME", "UANE", "USPP", "UDOL", "UNIA", "UNIO", "UNIP", "UNIZ", "0428", "UONE", "UNSW")),
+      Model.createGenericMbankModel(fundRepo, "MBank-woif", List("WAPF", "WCHI", "WCRB", "WGCB", "WEEB", "CISB", "WIPF", "WMEP", "WPPF", "WROB", "WSEA"))
     )
 
     initialExperiments.foreach {
@@ -80,59 +97,6 @@ class Model(
 }
 
 object Model {
-
-
-
-  def createBestRankedMbankModel(fundRepo: FundRepository): Experiment = {
-
-    val pln = new CurrencyPLN
-
-    val funds: Array[Fund] = Array(
-      new FixedDepositFund(pln, "deposit 3%", 0.03),
-      fundRepo.getFund("BSFI"),
-      fundRepo.getFund("CARS"),
-      fundRepo.getFund("BOBG"),
-      fundRepo.getFund("HHGM"),
-      fundRepo.getFund("HHKE"),
-      fundRepo.getFund("HINE"),
-      fundRepo.getFund("IAKC"),
-      fundRepo.getFund("IKAS"),
-      fundRepo.getFund("IWAG"),
-      fundRepo.getFund("INGZ"),
-      fundRepo.getFund("INGA"),
-      fundRepo.getFund("INGS"),
-      fundRepo.getFund("DWAK"),
-      fundRepo.getFund("DWZR"),
-      fundRepo.getFund("KHSE"),
-      fundRepo.getFund("KH2A"),
-      fundRepo.getFund("KH1A"),
-      fundRepo.getFund("PKCA"),
-      fundRepo.getFund("PKRP"),
-      fundRepo.getFund("PKCS"),
-      fundRepo.getFund("PERA"),
-      fundRepo.getFund("PJRA"),
-      fundRepo.getFund("PRWS"),
-      fundRepo.getFund("PARA"),
-      fundRepo.getFund("PMSJ"),
-      fundRepo.getFund("PPDU"),
-      fundRepo.getFund("PPDE"),
-      fundRepo.getFund("SKAA"),
-      fundRepo.getFund("SKAK"),
-      fundRepo.getFund("SKAW"),
-      fundRepo.getFund("UNIO"),
-      fundRepo.getFund("UNIZ"),
-      fundRepo.getFund("UWIB")
-    )
-
-    val from = ExtendedDate.createFromString("01-01-2000", "dd-MM-yyy")
-    val to = new ExtendedDate()
-
-    val params = new Params(76, 0.1, Array(0.3687201431198547, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -5.0864052614660675, 0.0, 0.0, 0.0, 0.0, 7.454066909318624, 0.0, 3.035904254932817, 0.0, 0.0, 0.0, -9.157166577390598, 0.0, -6.935023404309045, -4.963806617178026, -14.59418113591456, 0.0, 0.0, 0.0, 3.183523631990695, 0.0, 0.0, 0.0))
-    val initialFund = 0
-    val initialValue = 1000
-
-    return new Experiment("BestRankedMbankExperiment", funds, from, to, params, initialFund, initialValue)
-  }
 
   def createGenericMbankModel(fundRepo: FundRepository, name: String, fundNames: List[String], params: Option[Params] = None) : Experiment = {
     val pln = new CurrencyPLN
