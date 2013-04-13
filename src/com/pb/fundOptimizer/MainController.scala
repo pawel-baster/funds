@@ -9,6 +9,7 @@ import java.io.File
 import scala.Array
 import com.pb.fundOptimizer.publishers.CsvFundOptimizerResultPublisher
 import com.pb.fundOptimizer.calculations.{AlternatingMAFundOptimizer, CostCalculator, MovingAverageCalculator, MAFundOptimizer}
+import com.pb.fundOptimizer.interfaces.FundRepository
 
 /**
  * Created with IntelliJ IDEA.
@@ -30,7 +31,7 @@ object MainController {
     val modelSerializer = new JavaSerializer[Model]
     val resultPublisher = new CsvFundOptimizerResultPublisher("data")
     val model = if (file.exists()) modelSerializer.unserialize(file)
-    else new Model(Map(), fundRepo)
+    else new Model(Map())
 
     model.addMissingExperiments(fundRepo)
 

@@ -31,7 +31,7 @@ object UtilityController {
       throw new Exception("File does not exist")
     }
     val model = modelSerializer.unserialize(file)
-
+   /*
     val funds = model.fundRepository.asInstanceOf[MbankFundRepository].funds
 
     val minDate = funds.values.map( fund => fund.asInstanceOf[UpdatableFund].dateMin.getOrElse(new ExtendedDate).getDayCount() ).min
@@ -41,6 +41,6 @@ object UtilityController {
     for (day <- minDate to maxDate) {
       val date = ExtendedDate.createFromDays(day)
       println(date.format("yyyy-MM-dd") + "," + funds.values.map(fund => fund.getQuoteForDate(date).getOrElse("NaN")).mkString(","))
-    }
+    }*/
   }
 }

@@ -37,14 +37,22 @@ class MbankFundRepository(
 
   val fundAnnualManageFees = Map("ALPI" -> 0.01)
 
-  val funds: Map[String, Fund] = fundCodes.map {
+  val funds: Map[String, MbankFund] = fundCodes.map {
     code => (code, new MbankFund(downloader, code, code, fundAnnualManageFees.getOrElse(code, 0.04)))
   }.toMap
 
-  def getFund(fundName: String): Fund = {
+  def getFund(fundName: String): MbankFund = {
     if (funds.get(fundName).isEmpty) {
       throw new RuntimeException("Not registered mbank fund: " + fundName)
     }
     return funds.get(fundName).get
+  }
+
+  def needsSaving(): Boolean = {
+    return funds.values.exists(_.getNeedsSaving())
+  }
+
+  def markAsSaved() {
+    funds.values.foreach(_.setNeedsSaving(false))
   }
 }

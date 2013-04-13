@@ -1,62 +1,60 @@
 #!/usr/bin/Rscript
 
-colors = rainbow(4)
+models = c("Mbank-basic", "Mbank-ward", "Mbank-bestRanked", "Mbank-full", "MBank-alianz", "MBank-amplicoB", "MBank-amplicoG", "MBank-axa", "MBank-bph", "MBank-hsbc", "MBank-ing1", "MBank-ing2", "MBank-investor", "MBank-legg", "MBank-noble", "MBank-pko1", "MBank-pko2", "MBank-pzu1", "MBank-pzu2", "MBank-skarbiec", "MBank-uni", "MBank-woif")
+#colors = rainbow(4)
 
 plot_best_history <- function() {
-  history.best.ranked <- read.table("data/BestRankedMbankExperiment_best_history.csv", sep=";", quote="\"")
-  history.full <- read.table("data/MBankFullExperiment_best_history.csv", sep=";", quote="\"")
-  history.ward <- read.table("data/WardMBankExperiment_best_history.csv", sep=";", quote="\"")
-  history.basic <- read.table("data/MBankExperiment_best_history.csv", sep=";", quote="\"")
   
-  maxy = max(c(history.best.ranked[,2], history.full[,2], history.ward[,2], history.basic[,2]))
+  datasets = list()
   
-  period = 1:nrow(history.full)
+  ymax = 0
   
-  plot(history.best.ranked[period,2], type="l", col=colors[1], ylim=c(0,maxy))#, xaxt = "n")
-  #labels=history.best.ranked[,1]
+  for (i in 1:length(models)) {
+    datasets[[i]] = read.table(sprintf("data/%s_best_history.csv", models[i])    , sep=";", quote="\"")
+    ymax = max(ymax, datasets[[i]][,2])
+  }
   
-  #axis(1, at=1:length(history.best.ranked[,1]), labels=history.best.ranked[,1], las=2)
+  period = 1:nrow(datasets[[1]])
   
-  lines(history.full[period,2], type="l", col=colors[2])
-  lines(history.ward[period,2], type="l", col=colors[3])
-  lines(history.basic[period,2], type="l", col=colors[4])
+  colors = rainbow(length(models))
   
-  legend("topleft", c("best ranked", "full", "ward", "basic"), col=colors, lty=1)
+  plot(function (x) { 1.02 ^ (x/365) }, type="l", col="black", ylim=c(0, ymax), xlim=c(1,length(datasets[[i]][,2])), ylab="", xlab="", xaxt = "n")
+  legend("topleft", models, col=colors, lty=1)
+  
+  for (i in 1:length(models)) {
+    lines(datasets[[i]][period,2], type="l", col=colors[i])
+  }  
 }
 
 plot_experiment_history <- function(includeBestHistory) {
     
-  history.best.ranked <- read.table("data/BestRankedMbankExperiment_experiment_history.csv", sep=";", quote="\"")
-  history.full <- read.table("data/MBankFullExperiment_experiment_history.csv", sep=";", quote="\"")
-  history.ward <- read.table("data/WardMBankExperiment_experiment_history.csv", sep=";", quote="\"")
-  history.basic <- read.table("data/MBankExperiment_experiment_history.csv", sep=";", quote="\"")
+  datasets = list()
   
-  sets = list(history.best.ranked, history.full, history.ward, history.basic)
-  
-  ymin = 2
   ymax = 0
-    
-  for (i in 1:length(sets)) {
-    sets[[i]][, 2] = sets[[i]][, 2]/sets[[i]][1, 2]
-    ymin = min(ymin, min(sets[[i]][,2]))
-    ymax = max(ymax, max(sets[[i]][,2]))
-    
+  ymin = 2
+  
+  for (i in 1:length(models)) {
+    datasets[[i]] = read.table(sprintf("data/%s_experiment_history.csv", models[i])    , sep=";", quote="\"")
+    ymax = max(ymax, datasets[[i]][,2])
+    ymin = min(ymin, datasets[[i]][,2])
     if (includeBestHistory) {
-      sets[[i]][, 4] = sets[[i]][, 4]/sets[[i]][1, 4]
-    
-      ymin = min(ymin, min(sets[[i]][,4]))
-      ymax = max(ymax, max(sets[[i]][,4]))
+      datasets[[i]][, 4] = datasets[[i]][, 4]/datasets[[i]][1, 4]
+      
+      ymin = min(ymin, min(datasets[[i]][,4]))
+      ymax = max(ymax, max(datasets[[i]][,4]))
     } 
   }
+
+  colors = rainbow(length(models))
   
-  plot(function (x) { 1.02 ^ (x/365) }, type="l", col="black", ylim=c(ymin, ymax), xlim=c(1,length(sets[[i]][,2])), ylab="", xlab="", xaxt = "n")
-  axis(1, at=1:length(sets[[i]][,1]), labels=sets[[i]][,1], las=2)
-  legend("bottomleft", c("best ranked", "full", "ward", "basic"), col=colors, lty=1)
+  plot(function (x) { 1.02 ^ (x/365) }, type="l", col="black", ylim=c(ymin, ymax), xlim=c(1,length(datasets[[i]][,2])), ylab="", xlab="", xaxt = "n")
+  axis(1, at=1:length(datasets[[i]][,1]), labels=datasets[[i]][,1], las=2)
+  legend("bottomleft", models, col=colors, lty=1)
     
-  for (i in 1:length(sets)) {
-    lines(sets[[i]][,2], col=colors[i], ylim=c(ymin, ymax), lwd=2)
+  for (i in 1:length(datasets)) {
+    lines(datasets[[i]][,2], col=colors[i], ylim=c(ymin, ymax), lwd=2)
     if (includeBestHistory)
-      lines(sets[[i]][,4], col=colors[i], ylim=c(ymin, ymax), lty=2)
+      lines(datasets[[i]][,4], col=colors[i], ylim=c(ymin, ymax), lty=2)
   }
 }
 

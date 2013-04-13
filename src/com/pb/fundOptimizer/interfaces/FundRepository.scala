@@ -11,4 +11,6 @@ import funds.funds.Fund
  */
 abstract class FundRepository extends Serializable {
   def getFund(name: String): Fund
+  def needsSaving(): Boolean
+  def markAsSaved()
 }

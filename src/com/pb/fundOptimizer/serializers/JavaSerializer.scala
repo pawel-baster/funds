@@ -21,7 +21,7 @@ class JavaSerializer[T] extends AbstractSerializer[T] {
   }
 
   def serialize(obj: T, file: File) {
-    logger.info("serializing the model")
+    logger.info("serializing " + obj.getClass.getName + "...")
     val tempFile = new File(file.getAbsolutePath + ".temp")
 
     //serialize:

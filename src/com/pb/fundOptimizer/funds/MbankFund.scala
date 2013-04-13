@@ -34,6 +34,7 @@ class MbankFund(
     })
     logger.info("MbankFund " + fundCode + " update finished. Last Update: " + lastUpdate + ", minDate " + dateMin + ", maxDate: " + dateMax)
     lastUpdate = new ExtendedDate
+    setNeedsSaving(true)
   }
 
   def calculateDailyManagingFee(value: Double): Double = {

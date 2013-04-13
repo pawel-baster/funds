@@ -9,7 +9,6 @@ import util.Random
  * Time: 7:39 AM
  * To change this template use File | Settings | File Templates.
  */
-@SerialVersionUID(625097364780589551l)
 class Params(
               val window: Int,
               val smoothFactor: Double,

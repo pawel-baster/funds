@@ -20,10 +20,8 @@ import scala.Array
  * Time: 20:16
  * To change this template use File | Settings | File Templates.
  */
-@SerialVersionUID(-308204942811692548l)
 class Model(
-             var experiments: Map[String, Experiment],
-             val fundRepository: FundRepository
+             var experiments: Map[String, Experiment]
              ) extends Serializable {
 
   def optimize(fundOptimizer: FundOptimizer, resultPublisher: FundOptimizerResultPublishers, iterationCount: Int) = {

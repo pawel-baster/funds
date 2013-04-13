@@ -24,8 +24,14 @@ abstract class UpdatableFund(
   var dateMax: Option[ExtendedDate] = None
   var lastUpdate = ExtendedDate.createFromString("1970-01-01", "dd-MM-yyy")
   var updateInterval = 24
+  var needsSaving = false
 
   def update()
+
+  def getNeedsSaving(): Boolean = needsSaving
+  def setNeedsSaving(value: Boolean) {
+    needsSaving = value
+  }
 
   def getQuoteForDate(date: ExtendedDate): Option[Double] = {
     if (dateMax.isEmpty || (date after dateMax.get)) {
