@@ -20,7 +20,7 @@ class FixedDepositFund(
 
   def calculateBuyFee(value: Double): Double = value * 0.995
 
-  def calculateSellFee(value: Double): Double = value * 0.995
+  def calculateSellFee(value: Double): Double = value
 
   def calculateDailyManagingFee(value: Double) = value
 }

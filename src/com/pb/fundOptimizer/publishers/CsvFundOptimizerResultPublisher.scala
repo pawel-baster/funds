@@ -45,7 +45,8 @@ class CsvFundOptimizerResultPublisher(
   def publishLastBestParams(experiment: Experiment, filenamePrefix: String) {
     val filename = filenamePrefix + "best_params.csv"
     val fw = new FileWriter(filename)
-    fw.write(experiment.experimentHistory.last.params.toString())
+    fw.write(experiment.experimentHistory.last.params.toString + "\n")
+    fw.write(experiment.experimentHistory.last.bestValue.toString)
     fw.close()
   }
 
@@ -83,7 +84,14 @@ class CsvFundOptimizerResultPublisher(
         println(values.mkString(", "))
       }
     }
-    fw.write("</table><a href=\"best_history.svg\"><img src=\"best_history.svg\" width=640 /></a>\n<a href=\"experiment_history.svg\"><img src=\"experiment_history.svg\" width=640 /></a></body></html>")
+    fw.write("</table>")
+
+    List("best_history.svg", "experiment_history.svg", "experiment_history_with_best.svg").foreach{
+      imageName => fw.write("<a href='" + imageName + "'><img src='" + imageName + "' width=640 /></a><br>")
+    }
+
+    fw.write("<p>generated at " + new ExtendedDate().format("yyyy-MM-dd HH:mm:ss") + "</p>")
+    fw.write("</body></html>")
     fw.close()
   }
 }

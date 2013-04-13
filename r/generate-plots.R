@@ -24,7 +24,7 @@ plot_best_history <- function() {
   legend("topleft", c("best ranked", "full", "ward", "basic"), col=colors, lty=1)
 }
 
-plot_experiment_history <- function() {
+plot_experiment_history <- function(includeBestHistory) {
     
   history.best.ranked <- read.table("data/BestRankedMbankExperiment_experiment_history.csv", sep=";", quote="\"")
   history.full <- read.table("data/MBankFullExperiment_experiment_history.csv", sep=";", quote="\"")
@@ -35,21 +35,28 @@ plot_experiment_history <- function() {
   
   ymin = 2
   ymax = 0
-  
+    
   for (i in 1:length(sets)) {
     sets[[i]][, 2] = sets[[i]][, 2]/sets[[i]][1, 2]
-    sets[[i]][, 4] = sets[[i]][, 4]/sets[[i]][1, 4]
+    ymin = min(ymin, min(sets[[i]][,2]))
+    ymax = max(ymax, max(sets[[i]][,2]))
     
-    ymin = min(ymin, min(sets[[i]][, c(2,4)]))
-    ymax = max(ymax, max(sets[[i]][, c(2,4)]))
+    if (includeBestHistory) {
+      sets[[i]][, 4] = sets[[i]][, 4]/sets[[i]][1, 4]
+    
+      ymin = min(ymin, min(sets[[i]][,4]))
+      ymax = max(ymax, max(sets[[i]][,4]))
+    } 
   }
   
-  plot(function (x) { 1.03 ^ (x/365) }, type="l", col="black", ylim=c(ymin, ymax), xlim=c(1,length(sets[[i]][,2])), ylab="", xlab="", xaxt = "n")
+  plot(function (x) { 1.02 ^ (x/365) }, type="l", col="black", ylim=c(ymin, ymax), xlim=c(1,length(sets[[i]][,2])), ylab="", xlab="", xaxt = "n")
   axis(1, at=1:length(sets[[i]][,1]), labels=sets[[i]][,1], las=2)
+  legend("bottomleft", c("best ranked", "full", "ward", "basic"), col=colors, lty=1)
     
   for (i in 1:length(sets)) {
     lines(sets[[i]][,2], col=colors[i], ylim=c(ymin, ymax), lwd=2)
-    lines(sets[[i]][,4], col=colors[i], ylim=c(ymin, ymax), lty=2)
+    if (includeBestHistory)
+      lines(sets[[i]][,4], col=colors[i], ylim=c(ymin, ymax), lty=2)
   }
 }
 
@@ -61,5 +68,9 @@ plot_best_history()
 dev.off()
 
 svg(file="data/experiment_history.svg", width=width, height=height)
-plot_experiment_history()
+plot_experiment_history(F)
+dev.off()
+
+svg(file="data/experiment_history_with_best.svg", width=width, height=height)
+plot_experiment_history(T)
 dev.off()

@@ -48,6 +48,10 @@ object MainController {
       model.experiments += "MBankWardModel" -> Model.createWardMbankModel(fundRepo)
     }
 
+    if (!model.experiments.contains("MBankAlianz")) {
+      model.experiments += "MBankAlianz" -> Model.createAlianzModel(fundRepo)
+    }
+
     val maCalculator = new MovingAverageCalculator()
     val costCalculator = new CostCalculator(maCalculator)
     val maFundOptimizer = new AlternatingMAFundOptimizer(costCalculator)

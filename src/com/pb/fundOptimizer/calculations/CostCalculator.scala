@@ -104,10 +104,7 @@ class CostCalculator(
 
     val ccEntries = translateToCcEntries(experimentHistory)
     calculateValue(funds, ccEntries, initialValue, initialFundIndex)
-    println("after calculateValue")
-    ccEntries.foreach {
-      case (dayCount, entry) => println(dayCount + ": " + entry.fundIdx + ", value=" + entry.value)
-    }
+
     experimentHistory.foreach{
       entry => {
         if (ccEntries.get(entry.date.getDayCount()).isDefined) {
@@ -131,10 +128,6 @@ class CostCalculator(
     }
 
     result += experimentHistory.last.date.getDayCount() -> new CostCalculationEntry(0, experimentHistory.last.fundIndex)
-
-    result.foreach {
-      case (dayCount, entry) => println(dayCount + ": " + entry.fundIdx + ", value=" + entry.value)
-    }
 
     return result
   }
