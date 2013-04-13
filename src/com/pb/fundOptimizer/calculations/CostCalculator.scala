@@ -22,7 +22,7 @@ class CostCalculator(
   def calculate(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, initialValue: Double, initialFund: Int, p: Params): mutable.LinkedHashMap[Int, CostCalculationEntry] = {
     require(initialFund < funds.length)
     require(initialFund >= 0)
-    require(p.coefs.length == funds.length)
+    require(p.coefs.length == funds.length, "number of coeficients (" + p.coefs.length + ") is different than the number of funds (" + funds.length + ")")
     require(from.before(to))
 
     val avgs = ma.calculate(funds, from.addDays(1 - p.window), to, p.window) //dates are inconsistent and that's causing bugs

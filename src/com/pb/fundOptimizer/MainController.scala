@@ -32,25 +32,7 @@ object MainController {
     val model = if (file.exists()) modelSerializer.unserialize(file)
     else new Model(Map(), fundRepo)
 
-    if (!model.experiments.contains("MbankExperiment")) {
-      model.experiments += "MbankExperiment" -> Model.createMbankModel(fundRepo)
-    }
-
-    if (!model.experiments.contains("BestRankedMbankExperiment")) {
-      model.experiments += "BestRankedMbankExperiment" -> Model.createBestRankedMbankModel(fundRepo)
-    }
-
-    if (!model.experiments.contains("MbankFullExperiment")) {
-      model.experiments += "MbankFullExperiment" -> Model.createMbankModelFull(fundRepo)
-    }
-
-    if (!model.experiments.contains("MBankWardModel")) {
-      model.experiments += "MBankWardModel" -> Model.createWardMbankModel(fundRepo)
-    }
-
-    if (!model.experiments.contains("MBankAlianz")) {
-      model.experiments += "MBankAlianz" -> Model.createAlianzModel(fundRepo)
-    }
+    model.addMissingExperiments(fundRepo)
 
     val maCalculator = new MovingAverageCalculator()
     val costCalculator = new CostCalculator(maCalculator)
