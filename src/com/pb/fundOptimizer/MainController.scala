@@ -10,6 +10,7 @@ import scala.Array
 import com.pb.fundOptimizer.publishers.CsvFundOptimizerResultPublisher
 import com.pb.fundOptimizer.calculations.{AlternatingMAFundOptimizer, CostCalculator, MovingAverageCalculator, MAFundOptimizer}
 import com.pb.fundOptimizer.interfaces.FundRepository
+import com.pb.fundOptimizer.SimpleLock
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,23 +26,32 @@ class MainController {
 object MainController {
   def main(args: Array[String]): Unit = {
     logger.info("MainController::main - start")
-    val downloader = new RemoteDownloader
-    val fundRepo = new MbankFundRepository(downloader)
-    val file = new File("data/model.dat")
-    val modelSerializer = new JavaSerializer[Model]
-    val resultPublisher = new CsvFundOptimizerResultPublisher("data")
-    val model = if (file.exists()) modelSerializer.unserialize(file)
-    else new Model(Map())
+    val lock = new SimpleLock(new File("data/lock"))
+    if (lock.acquire()) {
+      try {
+        val downloader = new RemoteDownloader
+        val fundRepo = new MbankFundRepository(downloader)
+        val file = new File("data/model.dat")
+        val modelSerializer = new JavaSerializer[Model]
+        val resultPublisher = new CsvFundOptimizerResultPublisher("data")
+        val model = if (file.exists()) modelSerializer.unserialize(file)
+        else new Model(Map())
 
-    model.addMissingExperiments(fundRepo)
+        model.addMissingExperiments(fundRepo)
 
-    val maCalculator = new MovingAverageCalculator()
-    val costCalculator = new CostCalculator(maCalculator)
-    val maFundOptimizer = new AlternatingMAFundOptimizer(costCalculator)
+        val maCalculator = new MovingAverageCalculator()
+        val costCalculator = new CostCalculator(maCalculator)
+        val maFundOptimizer = new AlternatingMAFundOptimizer(costCalculator)
 
-    val iterationCount = if (args.length == 1) args(0).toInt else 10
-    model.optimize(maFundOptimizer, resultPublisher, iterationCount)
-    modelSerializer.serialize(model, file)
-    logger.info("MainController::main - done")
+        val iterationCount = if (args.length == 1) args(0).toInt else 10
+        model.optimize(maFundOptimizer, resultPublisher, iterationCount)
+        modelSerializer.serialize(model, file)
+        logger.info("MainController::main - done")
+      } finally {
+        lock.release()
+      }
+    } else {
+      logger.info("Lock not acquired. Exitting...")
+    }
   }
 }

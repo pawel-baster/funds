@@ -12,6 +12,7 @@ import com.pb.fundOptimizer.calculations.Params
 import com.pb.fundOptimizer.logging.logger
 import collection.mutable.ArrayBuffer
 import scala.Array
+import com.pb.fundOptimizer.serializers.JavaSerializer
 
 /**
  * Created with IntelliJ IDEA.
@@ -107,7 +108,16 @@ object Model {
 
     val from = ExtendedDate.createFromString("01-01-2000", "dd-MM-yyy")
     val to = new ExtendedDate()
-    val initialParams = params.getOrElse(Params.createRandom(funds.length));
+    val paramsFile = new File("data/" + name + "_best_params.dat")
+    var initialParams : Params = null
+    if (paramsFile.exists) {
+      val paramSerializer = new JavaSerializer[Params]
+      initialParams = paramSerializer.unserialize(paramsFile)
+    } else if (params.isDefined) {
+      initialParams = params.get
+    } else {
+      initialParams = Params.createRandom(funds.length)
+    }
     val initialFund = 0
     val initialValue = 1000
     return new Experiment(name, funds.toArray, from, to, initialParams, initialFund, initialValue)
