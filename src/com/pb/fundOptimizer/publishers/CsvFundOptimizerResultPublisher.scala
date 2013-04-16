@@ -21,13 +21,14 @@ class CsvFundOptimizerResultPublisher(
   def publish(experiment: Experiment, result: FundOptimizerResult) {
     val filenamePrefix = dirPath + File.separator + experiment.name + "_";
     logger.info("Saving results to " + filenamePrefix + "*")
-    publishExperimentHistory(experiment.experimentHistory, filenamePrefix)
+    publishDailyExperimentHistory(experiment.experimentHistory, filenamePrefix)
+    publishExperimentHistory(experiment.experimentHistory.last, filenamePrefix)
     publishLastBestParams(experiment, filenamePrefix)
     publishOptimizedHistory(experiment.funds, result, experiment.experimentHistory, filenamePrefix)
   }
 
-  def publishExperimentHistory(experimentHistory: ArrayBuffer[ExperimentHistoryEntry], filenamePrefix: String) {
-    val filename = filenamePrefix + "experiment_history.csv"
+  def publishDailyExperimentHistory(experimentHistory: ArrayBuffer[ExperimentHistoryEntry], filenamePrefix: String) {
+    val filename = filenamePrefix + "experiment_history_daily.csv"
     val fw = new FileWriter(filename)
     experimentHistory.foreach{
       entry => {
@@ -39,6 +40,15 @@ class CsvFundOptimizerResultPublisher(
         fw.write(line + "\n")
       }
     }
+    fw.close()
+  }
+
+  def publishExperimentHistory(lastEntry: ExperimentHistoryEntry, filenamePrefix: String) {
+    val filename = filenamePrefix + "experiment_history.csv"
+    // TODO: append
+    val fw = new FileWriter(filename)
+    val line = List("\"" + lastEntry.date.format("yyyy-MM-dd"), lastEntry.value.get, lastEntry.fundName, lastEntry.bestValue, lastEntry.iterationCount).mkString(",")
+    fw.write(line + "\n")
     fw.close()
   }
 
@@ -86,7 +96,7 @@ class CsvFundOptimizerResultPublisher(
     }
     fw.write("</table>")
 
-    List("best_history.svg", "experiment_history.svg", "experiment_history_with_best.svg").foreach{
+    List("best_history.svg", "experiment_history_daily.svg", "experiment_history_with_best_daily.svg").foreach{
       imageName => fw.write("<a href='" + imageName + "'><img src='" + imageName + "' width=640 /></a><br>")
     }
 

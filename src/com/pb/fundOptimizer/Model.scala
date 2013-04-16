@@ -13,6 +13,7 @@ import com.pb.fundOptimizer.logging.logger
 import collection.mutable.ArrayBuffer
 import scala.Array
 import com.pb.fundOptimizer.serializers.JavaSerializer
+import com.pb.fundOptimizer.exceptions.ZeroQuoteException
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,11 +30,17 @@ class Model(
     var results = ArrayBuffer[FundOptimizerResult]()
     experiments.foreach {
       case (name, experiment) => {
-        logger.info("Starting experiment: " + name)
-        val result = experiment.optimize(fundOptimizer, iterationCount)
-        results += result
-        resultPublisher.publish(experiment, result)
-        logger.info("Finished experiment: " + name + "\n")
+       // try {
+          logger.info("Starting experiment: " + name)
+          val result = experiment.optimize(fundOptimizer, iterationCount)
+          results += result
+          resultPublisher.publish(experiment, result)
+          logger.info("Finished experiment: " + name + "\n")
+        //} catch {
+        //  e: ZeroQuoteException => {
+        //    logger.info("Cought an exception: " + e.getMessage())
+        //  }
+        //}
       }
     }
     resultPublisher.publishDigest(experiments)
