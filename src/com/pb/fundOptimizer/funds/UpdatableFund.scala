@@ -6,6 +6,7 @@ import funds.ExtendedDate
 import collection.immutable.HashMap
 import java.util.Date
 import java.text.SimpleDateFormat
+import com.pb.fundOptimizer.exceptions.ZeroQuoteException
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,6 +35,7 @@ abstract class UpdatableFund(
   }
 
   def getQuoteForDate(date: ExtendedDate): Option[Double] = {
+
     if (dateMax.isEmpty || (date after dateMax.get)) {
       if (new Date().getTime - lastUpdate.getTime > updateInterval * 3600 * 1000) {
         update()
@@ -50,7 +52,13 @@ abstract class UpdatableFund(
       val dayBefore = date.addDays(-1)
       return getQuoteForDate(dayBefore)
     }
-    return quotes.get(dayCount)
+
+    val result = quotes.get(dayCount)
+    if (result.getOrElse(1.0) > 0.0) {
+      return result
+    } else {
+      throw new ZeroQuoteException("0 value for fund: " + shortName + ", day: " + date.toString)
+    }
   }
 
   protected def addQuote(date: ExtendedDate, value: Double) {

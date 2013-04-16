@@ -7,6 +7,7 @@ import collection.mutable
 import com.pb.fundOptimizer.interfaces.CostCalculationEntry
 import com.pb.fundOptimizer.ExperimentHistoryEntry
 import collection.mutable.ArrayBuffer
+import com.pb.fundOptimizer.exceptions.MissingQuoteException
 
 /**
  * Created with IntelliJ IDEA.
@@ -83,7 +84,7 @@ class CostCalculator(
         val date = ExtendedDate.createFromDays(i)
         val previousDayQuoteOption = funds(fund).getQuoteForDate(date.addDays(-1))
         if (previousDayQuoteOption.isEmpty) {
-          throw new Exception("Missing quote for fund " + funds(fund).shortName + ", date: " + date.addDays(-1).format("dd-MM-yyyy") + ", dayCount: " + date.addDays(-1).getDayCount())
+          throw new MissingQuoteException("Missing quote for fund " + funds(fund).shortName + ", date: " + date.addDays(-1).format("dd-MM-yyyy") + ", dayCount: " + date.addDays(-1).getDayCount())
         }
         value = funds(fund).calculateDailyManagingFee(value * funds(fund).getQuoteForDate(date).get / previousDayQuoteOption.get)
         entry.value = value

@@ -36,6 +36,7 @@ class MAFundOptimizer(
     var bestParams = initialBestParams
     val maxWindow = to.getDayCount - from.getDayCount - 1
     for (i <- 1 to count) {
+      //try {
       val params = pickNextParams(bestParams, maxWindow, deviation, i)
       val result = costCalculator.calculate(funds, from, to, initialValue, initialFund, params)
       //val value = result.get(to.getDayCount() - 1).get.value - 0.001 * params.coefs.map(c => c * c).sum
@@ -50,6 +51,14 @@ class MAFundOptimizer(
       if (i % 100 == 0) {
         logger.info("#" + i)
       }
+      //} catch {
+      //  e: ZeroQuoteException => {
+      //    logger.info("Cought an exception: " + e.getMessage())
+      //  }
+		// MissingQuoteException => {
+      //    logger.info("Cought an exception: " + e.getMessage())
+      //  }
+
     }
 
     return new FundOptimizerResult(bestParams, bestValue, bestFunds)

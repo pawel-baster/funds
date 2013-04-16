@@ -28,7 +28,7 @@ class MbankFund(
       + startDate.format("yyyy-MM-dd") + "&datdo=2100-01-01")
     val datFile = downloader.download(url)
     datFile.getLines.foreach(l => {
-      val date = ExtendedDate.createFromString(l.substring(0, 10), "yyy-MM-dd");
+      val date = ExtendedDate.createFromString(l.substring(0, 10), "yyy-MM-dd")
       val value = l.substring(10).toDouble
       addQuote(date, value)
     })

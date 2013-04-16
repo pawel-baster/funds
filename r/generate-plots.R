@@ -34,7 +34,7 @@ plot_experiment_history <- function(includeBestHistory) {
   ymin = 2
   
   for (i in 1:length(models)) {
-    datasets[[i]] = read.table(sprintf("data/%s_experiment_history.csv", models[i])    , sep=";", quote="\"")
+    datasets[[i]] = read.table(sprintf("data/%s_experiment_history_daily.csv", models[i])    , sep=";", quote="\"")
     ymax = max(ymax, datasets[[i]][,2])
     ymin = min(ymin, datasets[[i]][,2])
     if (includeBestHistory) {
@@ -65,10 +65,10 @@ svg(file="data/best_history.svg", width=width, height=height)
 plot_best_history()
 dev.off()
 
-svg(file="data/experiment_history.svg", width=width, height=height)
+svg(file="data/experiment_history_daily.svg", width=width, height=height)
 plot_experiment_history(F)
 dev.off()
 
-svg(file="data/experiment_history_with_best.svg", width=width, height=height)
+svg(file="data/experiment_history_with_best_daily.svg", width=width, height=height)
 plot_experiment_history(T)
 dev.off()
