@@ -2,7 +2,7 @@ package com.pb.fundOptimizer.publishers
 
 import _root_.funds.ExtendedDate
 import _root_.funds.funds.Fund
-import com.pb.fundOptimizer.interfaces.{FundRepository, FundOptimizerResult, FundOptimizerResultPublishers}
+import com.pb.fundOptimizer.interfaces.{FundRepository, FundOptimizerResult, FundOptimizerResultPublisher}
 import java.io.{File, FileWriter}
 import com.pb.fundOptimizer.logging.logger
 import com.pb.fundOptimizer.{ExperimentHistoryEntry, Experiment}
@@ -17,7 +17,7 @@ import collection.mutable.ArrayBuffer
  */
 class CsvFundOptimizerResultPublisher(
                                        val dirPath: String
-                                       ) extends FundOptimizerResultPublishers {
+                                       ) extends FundOptimizerResultPublisher {
   def publish(experiment: Experiment, result: FundOptimizerResult) {
     val filenamePrefix = dirPath + File.separator + experiment.name + "_";
     logger.info("Saving results to " + filenamePrefix + "*")
@@ -46,7 +46,7 @@ class CsvFundOptimizerResultPublisher(
   def publishExperimentHistory(lastEntry: ExperimentHistoryEntry, filenamePrefix: String) {
     val filename = filenamePrefix + "experiment_history.csv"
     // TODO: append
-    val fw = new FileWriter(filename)
+    val fw = new FileWriter(filename, true)
     val line = List("\"" + lastEntry.date.format("yyyy-MM-dd"), lastEntry.value.get, lastEntry.fundName, lastEntry.bestValue, lastEntry.iterationCount).mkString(",")
     fw.write(line + "\n")
     fw.close()
@@ -84,7 +84,7 @@ class CsvFundOptimizerResultPublisher(
     val filename = dirPath + File.separator + "digest.html"
     val fw = new FileWriter(filename)
     fw.write("<html><body><table>")
-    experiments.values.foreach {
+    experiments.values.toSeq.sortBy(-_.experimentHistory.last.bestValue).foreach {
       experiment => {
         val lastHistoryEntry = experiment.experimentHistory.last
         val lastChange = experiment.experimentHistory.reverse.indexWhere( item => { item.fundName != lastHistoryEntry.fundName })

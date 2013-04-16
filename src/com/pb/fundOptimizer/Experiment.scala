@@ -3,7 +3,7 @@ package com.pb.fundOptimizer
 import _root_.funds.{ExtendedDate}
 import _root_.funds.funds.Fund
 import calculations.Params
-import interfaces.{FundOptimizerResult, FundOptimizerResultPublishers, FundOptimizer}
+import interfaces.{FundOptimizerResult, FundOptimizerResultPublisher, FundOptimizer}
 import logging.logger
 import java.util.Date
 import collection.mutable

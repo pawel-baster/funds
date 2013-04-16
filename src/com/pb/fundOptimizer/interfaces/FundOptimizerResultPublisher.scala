@@ -11,7 +11,7 @@ import com.pb.fundOptimizer.Experiment
  * Time: 5:03 PM
  * To change this template use File | Settings | File Templates.
  */
-abstract class FundOptimizerResultPublishers {
+abstract class FundOptimizerResultPublisher {
   def publish(experiment: Experiment, result: FundOptimizerResult)
   def publishDigest(experiments: Map[String, Experiment])
 }

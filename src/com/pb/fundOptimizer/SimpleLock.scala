@@ -2,6 +2,7 @@ package com.pb.fundOptimizer
 
 import _root_.funds.ExtendedDate
 import java.io.{FileReader, FileWriter, File}
+import io.Source
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,21 +14,22 @@ import java.io.{FileReader, FileWriter, File}
 class SimpleLock (
   val file: File
 ) {
-  val autobreakInterval = 3600 // 1 hour
+  val autobreakInterval = 3600 * 1000// 1 hour
+  val dateFormat = "yyyy-MM-dd HH:mm"
 
   def acquire(): Boolean = {
     if (file.exists()) {
-      val fr = new FileReader(file)
-
-      fr.read(cbuf)
-      fr.close()
-      return false
-    } else {
-      val fw = new FileWriter(file)
-      fw.write(new ExtendedDate().format("yyyy-MM-dd HH:mm"))
-      fw.close()
-      return true
+      val content = Source.fromFile(file).mkString
+      val lockDate = ExtendedDate.createFromString(content, dateFormat)
+      if (lockDate.getTime + autobreakInterval > new ExtendedDate().getTime) {
+        return false
+      }
     }
+
+    val fw = new FileWriter(file)
+    fw.write(new ExtendedDate().format(dateFormat))
+    fw.close()
+    return true
   }
 
   def release() {

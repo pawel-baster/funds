@@ -12,6 +12,7 @@ import com.pb.fundOptimizer.interfaces.{FundOptimizerResult, CostCalculationEntr
 import java.util
 import com.pb.fundOptimizer.logging.logger
 import com.pb.fundOptimizer.ExperimentHistoryEntry
+import com.pb.fundOptimizer.exceptions.BadIterationException
 
 /**
  * Created with IntelliJ IDEA.
@@ -30,35 +31,35 @@ class MAFundOptimizer(
   }
 
   def optimize(funds: Array[Fund], from: ExtendedDate, to: ExtendedDate, initialFund: Int, initialBestParams: Params, initialValue: Double, count: Int, deviation: Double = 1.0): FundOptimizerResult = {
-
+    //try
     var bestFunds = costCalculator.calculate(funds, from, to, initialValue, initialFund, initialBestParams)
     var bestValue = costFunction(bestFunds, initialBestParams, to)
     var bestParams = initialBestParams
     val maxWindow = to.getDayCount - from.getDayCount - 1
-    for (i <- 1 to count) {
-      //try {
-      val params = pickNextParams(bestParams, maxWindow, deviation, i)
-      val result = costCalculator.calculate(funds, from, to, initialValue, initialFund, params)
-      //val value = result.get(to.getDayCount() - 1).get.value - 0.001 * params.coefs.map(c => c * c).sum
-      val value = costFunction(result, params, to)
-      //println(">> result = " + value + ", best: " + bestValue)
-      if (value > bestValue) {
-        println("#" + i + " better params: " + value + " > " + bestValue)
-        bestParams = params
-        bestValue = value
-        bestFunds = result
-      }
-      if (i % 100 == 0) {
-        logger.info("#" + i)
-      }
-      //} catch {
-      //  e: ZeroQuoteException => {
-      //    logger.info("Cought an exception: " + e.getMessage())
-      //  }
-		// MissingQuoteException => {
-      //    logger.info("Cought an exception: " + e.getMessage())
-      //  }
-
+    var i = 0
+    var afterLastImprove = 0
+    while (afterLastImprove < count) {
+      try {
+        val params = pickNextParams(bestParams, maxWindow, deviation, i)
+        val result = costCalculator.calculate(funds, from, to, initialValue, initialFund, params)
+        val value = costFunction(result, params, to)
+        if (value > bestValue) {
+          println("#" + i + " better params: " + value + " > " + bestValue)
+          bestParams = params
+          bestValue = value
+          bestFunds = result
+          afterLastImprove = 0
+        }
+        if (i % 100 == 0) {
+          logger.info("#" + i)
+        }
+      } catch {
+        case e: BadIterationException => {
+          logger.info("Caught an exception: " + e.getMessage())
+        }
+		  }
+      i += 1
+      afterLastImprove += 1
     }
 
     return new FundOptimizerResult(bestParams, bestValue, bestFunds)

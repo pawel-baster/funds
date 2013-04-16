@@ -1,7 +1,6 @@
 #!/usr/bin/Rscript
 
 models = c("Mbank-basic", "Mbank-ward", "Mbank-bestRanked", "Mbank-full", "MBank-alianz", "MBank-amplicoB", "MBank-amplicoG", "MBank-axa", "MBank-bph", "MBank-hsbc", "MBank-ing1", "MBank-ing2", "MBank-investor", "MBank-legg", "MBank-noble", "MBank-pko1", "MBank-pko2", "MBank-pzu1", "MBank-pzu2", "MBank-skarbiec", "MBank-uni", "MBank-woif")
-#colors = rainbow(4)
 
 plot_best_history <- function() {
   
@@ -35,19 +34,21 @@ plot_experiment_history <- function(includeBestHistory) {
   
   for (i in 1:length(models)) {
     datasets[[i]] = read.table(sprintf("data/%s_experiment_history_daily.csv", models[i])    , sep=";", quote="\"")
+    datasets[[i]][, 2] = datasets[[i]][, 2]/datasets[[i]][1, 2]
+
     ymax = max(ymax, datasets[[i]][,2])
     ymin = min(ymin, datasets[[i]][,2])
+    
     if (includeBestHistory) {
       datasets[[i]][, 4] = datasets[[i]][, 4]/datasets[[i]][1, 4]
-      
-      ymin = min(ymin, min(datasets[[i]][,4]))
+      ymin = min(ymin, min(datasets[[i]][,4]))      
       ymax = max(ymax, max(datasets[[i]][,4]))
     } 
   }
 
   colors = rainbow(length(models))
   
-  plot(function (x) { 1.02 ^ (x/365) }, type="l", col="black", ylim=c(ymin, ymax), xlim=c(1,length(datasets[[i]][,2])), ylab="", xlab="", xaxt = "n")
+  plot(function (x) { 1.02 ^ ((x-1)/365) }, type="l", col="black", ylim=c(ymin, ymax), xlim=c(1,length(datasets[[i]][,2])), ylab="", xlab="", xaxt = "n")
   axis(1, at=1:length(datasets[[i]][,1]), labels=datasets[[i]][,1], las=2)
   legend("bottomleft", models, col=colors, lty=1)
     

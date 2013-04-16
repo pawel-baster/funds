@@ -7,7 +7,7 @@ import com.pb.fundOptimizer.logging.logger
 import com.pb.fundOptimizer.serializers.JavaSerializer
 import java.io.File
 import scala.Array
-import com.pb.fundOptimizer.publishers.CsvFundOptimizerResultPublisher
+import com.pb.fundOptimizer.publishers.{ParamPublisher, CsvFundOptimizerResultPublisher}
 import com.pb.fundOptimizer.calculations.{AlternatingMAFundOptimizer, CostCalculator, MovingAverageCalculator, MAFundOptimizer}
 import com.pb.fundOptimizer.interfaces.FundRepository
 import com.pb.fundOptimizer.SimpleLock
@@ -33,7 +33,7 @@ object MainController {
         val fundRepo = new MbankFundRepository(downloader)
         val file = new File("data/model.dat")
         val modelSerializer = new JavaSerializer[Model]
-        val resultPublisher = new CsvFundOptimizerResultPublisher("data")
+        val resultPublishers = List(new CsvFundOptimizerResultPublisher("data"), new ParamPublisher("data"))
         val model = if (file.exists()) modelSerializer.unserialize(file)
         else new Model(Map())
 
@@ -44,14 +44,14 @@ object MainController {
         val maFundOptimizer = new AlternatingMAFundOptimizer(costCalculator)
 
         val iterationCount = if (args.length == 1) args(0).toInt else 10
-        model.optimize(maFundOptimizer, resultPublisher, iterationCount)
+        model.optimize(maFundOptimizer, resultPublishers, iterationCount)
         modelSerializer.serialize(model, file)
         logger.info("MainController::main - done")
       } finally {
         lock.release()
       }
     } else {
-      logger.info("Lock not acquired. Exitting...")
+      logger.info("Lock not acquired. Exiting...")
     }
   }
 }

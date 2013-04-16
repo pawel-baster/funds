@@ -8,7 +8,7 @@ package com.pb.fundOptimizer.exceptions
  * To change this template use File | Settings | File Templates.
  */
 class ZeroQuoteException (
-  val message: String
-) extends RuntimeException(message) {
+  override val message: String
+) extends BadIterationException(message) {
 
 }

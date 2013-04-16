@@ -25,18 +25,18 @@ class Model(
              var experiments: Map[String, Experiment]
              ) extends Serializable {
 
-  def optimize(fundOptimizer: FundOptimizer, resultPublisher: FundOptimizerResultPublishers, iterationCount: Int) = {
+  def optimize(fundOptimizer: FundOptimizer, resultPublishers: List[FundOptimizerResultPublisher], iterationCount: Int) = {
     var results = ArrayBuffer[FundOptimizerResult]()
     experiments.foreach {
       case (name, experiment) => {
         logger.info("Starting experiment: " + name)
         val result = experiment.optimize(fundOptimizer, iterationCount)
         results += result
-        resultPublisher.publish(experiment, result)
+        resultPublishers.foreach(_.publish(experiment, result))
         logger.info("Finished experiment: " + name + "\n")
       }
     }
-    resultPublisher.publishDigest(experiments)
+    resultPublishers.foreach(_.publishDigest(experiments))
   }
 
   def addMissingExperiments(fundRepo: FundRepository) {
@@ -58,9 +58,9 @@ class Model(
 
       Model.createGenericMbankModel(fundRepo, "Mbank-full",  // 8.749365507026244
         List("0422", "HSTR", "HTHE", "DTUR", "ISNR", "SKSN", "ISFP", "UTTD", "ISJL", "NOTM", "ISSW", "0425", "IGDK", "HAJC", "HEYB", "IANE", "SANE", "KH2A", "UONE", "WAPF", "NOMI", "HSCC", "IGSD", "HESC", "BOCH", "APAS", "0424", "I3FL", "SKAF", "PZUZ", "HCCC", "PSSW", "IWAG", "SKAW", "ISDU", "KH3A", "IAKC", "SKAA", "UAME", "PZUP", "HGEE", "IESD", "INGA", "ILOK", "SOOP", "HEMB", "UNIO", "INGZ", "IOBL", "SKAO", "INGO", "INGS", "HUKE", "DAGR", "IDEP", "SKDE", "NOAK", "AXA5", "NOST", "ALWA", "HUSE", "AIFO", "AXA8", "HEUG", "UNIZ", "PZUM", "AXA4", "HSEE", "PKCO", "PKCE", "0420", "WSEA", "DWDP", "UNSW", "PKCP", "HAJD", "PZMS", "PPDP", "IAGR", "MAGR", "0426", "AISW", "DWEM", "KHSE", "ISTA", "MSTA", "DWZR", "0427", "APOB", "AXA7", "PKCA", "AIRP", "APZA", "UNIA", "HHKE", "HSGE", "HGLE", "NOAM", "PMIS", "AXA3", "PSTP", "INGM", "IAAL", "SAKA", "PZNE", "CARS", "WPPF", "CAEU", "0428", "PFOA", "PZBI", "PKCZ", "PSAP", "ALPI", "WGCB", "DWAK", "PZRP", "PZUK", "DWA+", "ALOB", "KH4A", "IPRW", "BOBG", "D25M", "PMSJ", "0421", "MINB", "CAAM",
-          "NOGR", "APSW", "PZUG", "PKCS", "AXA2", "UNIP", "INGG", "CADP", "PKRP", "AXA6", "CASW", "KH1A", "IKAS", "SKAK", "APPI", "DWSP", "CASK", "ISEL", "SFNE", "CAZR", "NOSK", "ISNA", "CADZ", "MIND", "HMLD", "AIOZ", "UMSS", "DWSG", "UNTT", "AINE", "IMOK", "AXA1", "PRWS", "DW50", "PSAL", "PBIG", "ISOK", "SKOR", "DSNB", "APOS", "BAGL", "PSAZ", "WEEB", "UANE", "USPP", "IMSP", "SKMS", "PPDU", "APAK", "PDLG", "UDOL", "DZRW", "SALT", "HCPB", "PARA", "WMEP", "IZGR", "SKAD", "HCHE", "HTWE", "HGCP", "ALSW", "AIFA", "ALAK", "PJRA", "CISB", "HJPE", "WCRB", "PANE", "AIMS", "HHGM", "DSII", "IBNP", "ALAA", "IROS", "APCH", "APNE", "APRW", "ICHI", "HKOE", "DIIC", "PSZZ", "HINE", "ALAP", "HAJE", "DALA", "ILRW", "PERA", "UWIB", "HGEP", "APZS", "WIPF", "HLAF", "HEME", "HERA", "BSFI", "HLAE", "PSSG", "DWZK", "ISMS", "CAEZ", "HBME", "WCHI", "AMIS", "DROS", "WROB", "HBRB", "HRUS", "BGZS", "IEUR", "SKAZ", "BRIC", "ISSR", "SRSU", "ISSP", "ILSE", "ISAL", "HBRI", "APZO", "HBEE", "ALBD", "NOAF", "HBRE", "PPDE", "DGOL", "PIBG"),
+          "NOGR", "APSW", "PZUG", "PKCS", "AXA2", "UNIP", "INGG", "CADP", "PKRP", "AXA6", "CASW", "KH1A", "IKAS", "SKAK", "APPI", "DWSP", "CASK", "ISEL", "SFNE", "CAZR", "NOSK", "ISNA", "CADZ", "MIND", "HMLD", "AIOZ", "UMSS", "DWSG", "UNTT", "AINE", "IMOK", "AXA1", "PRWS", "DW50", "PSAL", "PBIG", "ISOK", "SKOR", "DSNB", "APOS", "BAGL", "PSAZ", "WEEB", "UANE", "USPP", "IMSP", "SKMS", "PPDU", "APAK", "PDLG", "UDOL", "DZRW", "SALT", "HCPB", "PARA", "WMEP", "IZGR", "SKAD", "HCHE", "HTWE", "HGCP", "ALSW", "AIFA", "ALAK", "PJRA", "CISB", "HJPE", "WCRB", "PANE", "AIMS", "HHGM", "DSII", "IBNP", "ALAA", "IROS", "APCH", "APNE", "APRW", "ICHI", "HKOE", "DIIC", "PSZZ", "HINE", "ALAP", "HAJE", "DALA", "ILRW", "PERA", "UWIB", "HGEP", "APZS", "WIPF", "HLAF", "HEME", "BSFI", "HLAE", "PSSG", "DWZK", "ISMS", "CAEZ", "HBME", "WCHI", "AMIS", "DROS", "WROB", "HBRB", "HRUS", "BGZS", "IEUR", "SKAZ", "BRIC", "ISSR", "SRSU", "ISSP", "ILSE", "ISAL", "HBRI", "APZO", "HBEE", "ALBD", "NOAF", "HBRE", "PPDE", "DGOL", "PIBG"),
         Option(new Params(147, 0.1, Array(0.8683821956484502, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.957067512977513, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -6.10247499976872, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -3.032178315071362, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -15.242629518230887, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -11.737968496661695,
-          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -6.360311055258882, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
+          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -6.360311055258882, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
         )
       ),
 
@@ -70,7 +70,7 @@ class Model(
       Model.createGenericMbankModel(fundRepo, "MBank-amplicoG", List("AIFO", "AIFA", "AIMS", "AIOZ", "AIRP", "AISW", "AINE")),
       Model.createGenericMbankModel(fundRepo, "MBank-axa", List("AXA2", "AXA1", "AXA8", "AXA7", "AXA6", "AXA5", "AXA4", "AXA3")),
       Model.createGenericMbankModel(fundRepo, "MBank-bph", List("BGZS", "CARS", "CAAM", "CAEU", "BAGL", "CAZR", "CAEZ", "CADP", "BOBG", "BOCH", "CASK", "CASW", "CADZ")),
-      Model.createGenericMbankModel(fundRepo, "MBank-hsbc", List("HAJE", "HAJC", "HAJD", "HBRB", "HBRE", "HBEE", "HBRI", "HBME", "HCHE", "HSCC", "HCCC", "HEYB", "HERA", "HSEE", "HESC", "HEUG", "0422", "HGEE", "HGCP", "HEMB", "0424", "HEME", "HGEP", "HMLD", "HGLE", "HHGM", "HHKE", "HINE", "HJPE", "HKOE", "HLAE", "HLAF", "HRUS", "HSGE", "HTWE", "HTHE", "HSTR", "HUKE", "HCPB", "HUSE")),
+      Model.createGenericMbankModel(fundRepo, "MBank-hsbc", List("HAJE", "HAJC", "HAJD", "HBRB", "HBRE", "HBEE", "HBRI", "HBME", "HCHE", "HSCC", "HCCC", "HEYB", "HSEE", "HESC", "HEUG", "0422", "HGEE", "HGCP", "HEMB", "0424", "HEME", "HGEP", "HMLD", "HGLE", "HHGM", "HHKE", "HINE", "HJPE", "HKOE", "HLAE", "HLAF", "HRUS", "HSGE", "HTWE", "HTHE", "HSTR", "HUKE", "HCPB", "HUSE")),
       Model.createGenericMbankModel(fundRepo, "MBank-ing1", List("ISAL", "IESD", "IGDK", "IGSD", "INGM", "ISJL", "ISNA", "IPRW", "ILSE", "ILRW", "ISDU")),
       Model.createGenericMbankModel(fundRepo, "MBank-ing2", List("INGZ", "INGA", "ICHI", "INGG", "INGO", "IMOK", "IROS", "ISSP", "IBNP", "ISFP", "ISSW", "INGS", "ISMS")),
       Model.createGenericMbankModel(fundRepo, "MBank-investor", List("DAGR", "DALA", "BRIC", "DGOL", "DWSG", "DIIC", "DSII", "DSNB", "DROS", "DTUR", "DWZK", "DZRW")),
@@ -88,6 +88,7 @@ class Model(
     initialExperiments.foreach {
       experiment => {
         if (!experiments.contains(experiment.name)) {
+          logger.info("Receating experiment: " + experiment.name)
           experiments += experiment.name -> experiment
         }
       }
