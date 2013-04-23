@@ -26,7 +26,7 @@ class MAFundOptimizer(
                        val costCalculator: CostCalculator
                        ) extends FundOptimizer {
 
-  def pickNextParams(currentParams: Params, maxWindow: Int, deviation: Double, i: Int): Params = {
+  def pickNextParams(currentParams: Params, maxWindow: Int, deviation: Double, i: Int, funds: Array[Fund]): Params = {
     return currentParams.createRandomFromNormal(maxWindow, deviation)
   }
 
@@ -40,7 +40,7 @@ class MAFundOptimizer(
     var afterLastImprove = 0
     while (afterLastImprove < count) {
       try {
-        val params = pickNextParams(bestParams, maxWindow, deviation, i)
+        val params = pickNextParams(bestParams, maxWindow, deviation, i, funds)
         val result = costCalculator.calculate(funds, from, to, initialValue, initialFund, params)
         val value = costFunction(result, params, to)
         if (value > bestValue) {

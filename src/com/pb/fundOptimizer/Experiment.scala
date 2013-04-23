@@ -74,4 +74,13 @@ class Experiment(
     fundOptimizer.updateExperimentHistoryValue(funds, initialValue, initialFund, experimentHistory)
     return result
   }
+
+  def extractParamsMap(): Map[String, Double] = {
+    require(funds.length == initialParams.coefs.length)
+    val fundNames = funds.map(_.shortName)
+    val map = (fundNames zip initialParams.coefs).toMap
+    //map.foreach{ case(name, coef) => print(name + " -> " + coef + "\n") }
+    //throw new Exception()
+    return map
+  }
 }

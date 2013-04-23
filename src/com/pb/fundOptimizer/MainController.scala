@@ -8,7 +8,7 @@ import com.pb.fundOptimizer.serializers.JavaSerializer
 import java.io.File
 import scala.Array
 import com.pb.fundOptimizer.publishers.{ParamPublisher, CsvFundOptimizerResultPublisher}
-import com.pb.fundOptimizer.calculations.{AlternatingMAFundOptimizer, CostCalculator, MovingAverageCalculator, MAFundOptimizer}
+import com.pb.fundOptimizer.calculations._
 import com.pb.fundOptimizer.interfaces.FundRepository
 import com.pb.fundOptimizer.SimpleLock
 
@@ -38,7 +38,8 @@ object MainController {
         else new Model(Map())
 
         model.addMissingExperiments(fundRepo)
-
+        val bestExperimentParams = Option(model.experiments.get("Mbank-full").get.extractParamsMap)
+        Params.setBestExprimentParams(bestExperimentParams)
         val maCalculator = new MovingAverageCalculator()
         val costCalculator = new CostCalculator(maCalculator)
         val maFundOptimizer = new AlternatingMAFundOptimizer(costCalculator)

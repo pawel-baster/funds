@@ -1,6 +1,10 @@
 package com.pb.fundOptimizer.calculations
 
+import funds.funds.Fund
 import util.Random
+import java.io.File
+import com.pb.fundOptimizer.serializers.JavaSerializer
+import scala.Predef._
 
 /**
  * Created with IntelliJ IDEA.
@@ -43,10 +47,24 @@ class Params(
   override def toString(): String = {
     return "params: window=" + window + ", smoothFactor=" + smoothFactor + ", coefs: [" + coefs.mkString(", ") + "]"
   }
+
+  def readFromBestExperimentParams(funds: Array[Fund]): Params = {
+    if (Params.paramMap.isDefined) {
+      val newCoefs : Array[Double] = funds.map{
+        fund => {
+          Params.paramMap.get.getOrElse(fund.shortName, 0.0)
+        }
+      }
+      return new Params(window, smoothFactor, newCoefs)
+    } else {
+      return createRandomFromNormalModifyOneDimension
+    }
+  }
 }
 
 object Params {
   val maxWindow = 300
+  var paramMap: Option[Map[String, Double]] = None
 
   def createRandom(coefCount: Int): Params = {
     val coefs: Array[Double] = (1 to coefCount).toArray.map(_ => Random.nextGaussian())
@@ -63,5 +81,9 @@ object Params {
     if (newWindow < 1) newWindow = 1
     if (newWindow > maxWindow) newWindow = maxWindow
     return newWindow
+  }
+
+  def setBestExprimentParams(_paramMap: Option[Map[String, Double]]) {
+    paramMap = _paramMap
   }
 }
