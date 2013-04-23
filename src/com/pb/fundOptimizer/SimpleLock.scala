@@ -14,7 +14,7 @@ import io.Source
 class SimpleLock (
   val file: File
 ) {
-  val autobreakInterval = 3600 * 1000// 1 hour
+  val autobreakInterval = 5 * 3600 * 1000// 1 hour
   val dateFormat = "yyyy-MM-dd HH:mm"
 
   def acquire(): Boolean = {

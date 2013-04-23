@@ -22,7 +22,7 @@ class MbankFund(
                  ) extends UpdatableFund(shortName, new CurrencyPLN, downloader) {
   def update() = {
     logger.info("MbankFund " + fundCode + " starting update. Last Update: " + lastUpdate + ", minDate " + dateMin + ", maxDate: " + dateMax)
-    val startDate = if (dateMin.isDefined) dateMin.get else ExtendedDate.createFromString("2000-01-01", "yyy-MM-dd")
+    val startDate = if (dateMin.isDefined) dateMin.get.addDays(-10) else ExtendedDate.createFromString("2000-01-01", "yyy-MM-dd")
 
     val url = ("http://www.mbank.pl/inwestycje/centrum-inwestora/fundusze/getdata.pl?fund=" + fundCode + "&datod="
       + startDate.format("yyyy-MM-dd") + "&datdo=2100-01-01")

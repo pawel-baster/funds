@@ -9,6 +9,7 @@ import java.util.Date
 import collection.mutable
 import collection.mutable.ArrayBuffer
 import com.sun.corba.se.spi.transport.IIOPPrimaryToContactInfo
+import util.Random
 
 class ExperimentHistoryEntry(
   val bestValue: Double,
@@ -31,6 +32,7 @@ class ExperimentHistoryEntry(
  * Time: 15:18
  * To change this template use File | Settings | File Templates.
  */
+@SerialVersionUID(-5184925708783380462l)
 class Experiment(
                   val name: String,
                   val funds: Array[Fund],
@@ -50,13 +52,15 @@ class Experiment(
 
     var params = initialParams
 
+    deviation += 1/deviation
+    val randomDeviation = Random.nextDouble() * deviation
+
     if (lastHistoryEntry.isDefined) {
-      logger.info("before optimizing. Recorded best value: " + lastHistoryEntry.get.bestValue + ", Iteration count: " + iterationCount + ", Params: " + lastHistoryEntry.get.params + ", deviation: " + deviation)
+      logger.info("before optimizing. Recorded best value: " + lastHistoryEntry.get.bestValue + ", Iteration count: " + iterationCount + ", Params: " + lastHistoryEntry.get.params + ", deviation used: " + randomDeviation)
       params = lastHistoryEntry.get.params
     }
 
-    deviation += 1/deviation
-    val result = fundOptimizer.optimize(funds, from, to, initialFund, params, initialValue, iterationCount, deviation)
+    val result = fundOptimizer.optimize(funds, from, to, initialFund, params, initialValue, iterationCount, randomDeviation)
     val newFundIndex = result.trace.last._2.fundIdx
     val newFundName = funds(newFundIndex).shortName
 

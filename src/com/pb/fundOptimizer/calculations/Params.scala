@@ -13,6 +13,7 @@ import scala.Predef._
  * Time: 7:39 AM
  * To change this template use File | Settings | File Templates.
  */
+@SerialVersionUID(-7927840279720103588l)
 class Params(
               val window: Int,
               val smoothFactor: Double,

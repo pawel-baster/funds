@@ -17,7 +17,7 @@ plot_best_history <- function() {
   
   colors = rainbow(length(models))
   
-  plot(function (x) { 1.02 ^ (x/365) }, type="l", col="black", ylim=c(0, ymax), xlim=c(1,length(datasets[[i]][,2])), ylab="", xlab="", xaxt = "n")
+  plot(function (x) { 1000 * 1.02 ^ (x/365) }, type="l", col="black", ylim=c(0, ymax), xlim=c(1,length(datasets[[i]][,2])), ylab="", xlab="", xaxt = "n")
   legend("topleft", models, col=colors, lty=1)
   
   for (i in 1:length(models)) {
