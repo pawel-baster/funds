@@ -38,8 +38,6 @@ object MainController {
         else new Model(Map())
 
         model.addMissingExperiments(fundRepo)
-        val bestExperimentParams = Option(model.experiments.get("Mbank-full").get.extractParamsMap)
-        Params.setBestExprimentParams(bestExperimentParams)
         val maCalculator = new MovingAverageCalculator()
         val costCalculator = new CostCalculator(maCalculator)
         val maFundOptimizer = new AlternatingMAFundOptimizer(costCalculator)

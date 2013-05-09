@@ -20,4 +20,6 @@ class MockIncrementFund(
   def calculateBuyFee(value: Double): Double = 0.99
 
   def calculateSellFee(value: Double): Double = 0.99
+
+  def calculateDailyManagingFee(value: Double): Double = value
 }

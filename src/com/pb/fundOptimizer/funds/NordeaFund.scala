@@ -54,4 +54,6 @@ class NordeaFund(
   def calculateSellFee(value: Double): Double = value
 
   def calculateBuyFee(value: Double): Double = value
+
+  def calculateDailyManagingFee(value: Double): Double = value
 }
