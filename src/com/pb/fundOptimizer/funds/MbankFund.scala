@@ -24,14 +24,39 @@ class MbankFund(
     logger.info("MbankFund " + fundCode + " starting update. Last Update: " + lastUpdate + ", minDate " + dateMin + ", maxDate: " + dateMax)
     val startDate = if (dateMin.isDefined) dateMin.get.addDays(-10) else ExtendedDate.createFromString("2000-01-01", "yyy-MM-dd")
 
-    val url = ("http://www.mbank.pl/inwestycje/centrum-inwestora/fundusze/getdata.pl?fund=" + fundCode + "&datod="
-      + startDate.format("yyyy-MM-dd") + "&datdo=2100-01-01")
-    val datFile = downloader.download(url)
-    datFile.getLines.foreach(l => {
-      val date = ExtendedDate.createFromString(l.substring(0, 10), "yyy-MM-dd")
-      val value = l.substring(10).toDouble
-      addQuote(date, value)
-    })
+    val url = ("http://www.mbank.pl/ajax/SFI/drawChart/?curr=&ror=0&date_from=" + startDate.format("yyyy-MM-dd") + "&date_to=2100-01-01&funds[]=" + fundCode)
+    val dataFile = downloader.download(url)
+
+    val dataPattern = """(?<=series: \[\{"data":\[\[).*(?=\]\],"name")""".r
+    //val dataPattern = """series: \[\{"data":\[(\[\d+,\d+\.\d+)+\],"name"""".r
+    val dataString = dataFile.getLines.mkString(" ")
+    println(dataString)
+    val matched = {
+      dataPattern findFirstIn dataString
+    }
+
+    if (matched.isDefined) {
+      val data = matched.get
+      data.split("""\],\[""").foreach {
+        pair => {
+          val tokens = pair.split(',')
+          require(tokens.length == 2)
+          val date = new ExtendedDate
+          date.setTime(tokens(0).toLong)
+          val value = tokens(1)
+          addQuote(date, value.toDouble)
+          println("Adding: " + tokens(0).toLong/1000 + " = " + date.format("yyyy-MM-dd") + ", value: " + value)
+        }
+      }
+    } else {
+      throw new Exception("Could not parse imported data")
+    }
+
+//    datFile.getLines.foreach(l => {
+//      val date = ExtendedDate.createFromString(l.substring(0, 10), "yyy-MM-dd")
+//      val value = l.substring(10).toDouble
+//      addQuote(date, value)
+//    })
     logger.info("MbankFund " + fundCode + " update finished. Last Update: " + lastUpdate + ", minDate " + dateMin + ", maxDate: " + dateMax)
     lastUpdate = new ExtendedDate
     setNeedsSaving(true)
