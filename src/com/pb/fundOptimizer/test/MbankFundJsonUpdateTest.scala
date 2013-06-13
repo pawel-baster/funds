@@ -16,23 +16,23 @@ import org.scalatest.matchers.ShouldMatchers
 class MbankFundJsonUpdateTest extends FunSpec with ShouldMatchers {
   describe("An MBank Fund") {
     it("should return None for dates before available history") {
-      commonTest("02-03-2010", None)
+      commonTest("02-03-2013", None)
     }
 
     it("should return 122.56 for the first date in the history") {
-      commonTest("03-03-2010", Option(122.56))
+      commonTest("03-03-2013", Option(122.56))
     }
 
     it("should return 122.76 for the second date in the history") {
-      commonTest("04-03-2010", Option(122.76))
+      commonTest("04-03-2013", Option(122.76))
     }
 
     it("should return 135.90 for a random date in the history") {
-      commonTest("30-05-2010", Option(135.90))
+      commonTest("30-05-2013", Option(135.90))
     }
 
     it("should return the quote from previous day(s) in case there's no quote for this day") {
-      commonTest("01-06-2010", Option(135.90))
+      commonTest("01-06-2013", Option(135.90))
     }
 
     it("should return 128.77 for the latest quote") {
@@ -51,6 +51,7 @@ class MbankFundJsonUpdateTest extends FunSpec with ShouldMatchers {
   def commonTest(dateStr: String, expectedResult: Option[Double]) {
     val fund1 = new MbankFund(new MockDownloader("src/com/pb/fundOptimizer/test/fixtures/mbank.json"), "test1", "test1")
     val date1 = ExtendedDate.createFromString(dateStr, "dd-MM-yyy")
+    println("testing for data: " + date1 + " (derived from " + dateStr)
     assert(fund1.getQuoteForDate(date1) === expectedResult)
   }
 }

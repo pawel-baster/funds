@@ -28,9 +28,7 @@ class MbankFund(
     val dataFile = downloader.download(url)
 
     val dataPattern = """(?<=series: \[\{"data":\[\[).*(?=\]\],"name")""".r
-    //val dataPattern = """series: \[\{"data":\[(\[\d+,\d+\.\d+)+\],"name"""".r
     val dataString = dataFile.getLines.mkString(" ")
-    println(dataString)
     val matched = {
       dataPattern findFirstIn dataString
     }
@@ -42,21 +40,15 @@ class MbankFund(
           val tokens = pair.split(',')
           require(tokens.length == 2)
           val date = new ExtendedDate
-          date.setTime(tokens(0).toLong)
+          date.setTime(tokens(0).toLong - 24 * 3600 * 1000)
           val value = tokens(1)
           addQuote(date, value.toDouble)
-          println("Adding: " + tokens(0).toLong/1000 + " = " + date.format("yyyy-MM-dd") + ", value: " + value)
         }
       }
     } else {
       throw new Exception("Could not parse imported data")
     }
 
-//    datFile.getLines.foreach(l => {
-//      val date = ExtendedDate.createFromString(l.substring(0, 10), "yyy-MM-dd")
-//      val value = l.substring(10).toDouble
-//      addQuote(date, value)
-//    })
     logger.info("MbankFund " + fundCode + " update finished. Last Update: " + lastUpdate + ", minDate " + dateMin + ", maxDate: " + dateMax)
     lastUpdate = new ExtendedDate
     setNeedsSaving(true)
