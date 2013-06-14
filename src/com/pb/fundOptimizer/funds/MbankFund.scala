@@ -25,6 +25,7 @@ class MbankFund(
     val startDate = if (dateMin.isDefined) dateMin.get.addDays(-10) else ExtendedDate.createFromString("2000-01-01", "yyy-MM-dd")
 
     val url = ("http://www.mbank.pl/ajax/SFI/drawChart/?curr=&ror=0&date_from=" + startDate.format("yyyy-MM-dd") + "&date_to=2100-01-01&funds[]=" + fundCode)
+    logger.info("Downloading: " + url)
     val dataFile = downloader.download(url)
 
     val dataPattern = """(?<=series: \[\{"data":\[\[).*(?=\]\],"name")""".r
@@ -46,7 +47,7 @@ class MbankFund(
         }
       }
     } else {
-      throw new Exception("Could not parse imported data")
+      throw new Exception("Could not parse imported data: " + dataString)
     }
 
     logger.info("MbankFund " + fundCode + " update finished. Last Update: " + lastUpdate + ", minDate " + dateMin + ", maxDate: " + dateMax)

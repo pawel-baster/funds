@@ -1,6 +1,6 @@
 #!/usr/bin/Rscript
 
-models = c("Mbank-basic", "Mbank-ward", "Mbank-bestRanked", "Mbank-full", "MBank-alianz", "MBank-amplicoB", "MBank-amplicoG", "MBank-axa", "MBank-bph", "MBank-hsbc", "MBank-ing1", "MBank-ing2", "MBank-investor", "MBank-legg", "MBank-noble", "MBank-pko1", "MBank-pko2", "MBank-pzu1", "MBank-pzu2", "MBank-skarbiec", "MBank-uni", "MBank-woif")
+models = c("Mbank-basic", "Mbank-bestRanked-no-woif-no-hsbc", "Mbank-full-no-woif-no-hsbc", "MBank-alianz", "MBank-amplicoB", "MBank-amplicoG", "MBank-axa", "MBank-bph", "MBank-ing1", "MBank-ing2", "MBank-investor", "MBank-legg", "MBank-noble", "MBank-pko1", "MBank-pko2", "MBank-pzu1", "MBank-pzu2", "MBank-skarbiec", "MBank-uni")
 
 plot_best_history <- function() {
   
