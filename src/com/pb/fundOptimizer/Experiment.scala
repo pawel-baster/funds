@@ -61,6 +61,7 @@ class Experiment(
     }
 
     val result = fundOptimizer.optimize(funds, from, to, initialFund, params, initialValue, iterationCount, randomDeviation)
+    logger.info("fundOptimizer returned value: " + result.value)
     val newFundIndex = result.trace.last._2.fundIdx
     val newFundName = funds(newFundIndex).shortName
 
