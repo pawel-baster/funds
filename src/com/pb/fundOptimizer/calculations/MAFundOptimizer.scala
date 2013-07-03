@@ -50,14 +50,14 @@ class MAFundOptimizer(
           bestFunds = result
           afterLastImprove = 0
         }
-        if (i % 100 == 0) {
-          logger.info("#" + i)
-        }
       } catch {
         case e: BadIterationException => {
           logger.info("Caught an exception: " + e.getMessage())
         }
 		  }
+      if (i % 100 == 0) {
+        logger.info("#" + i)
+      }
       i += 1
       afterLastImprove += 1
     }
