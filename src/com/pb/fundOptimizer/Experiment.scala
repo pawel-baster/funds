@@ -77,6 +77,7 @@ class Experiment(
     experimentHistory += newHistoryEntry
 
     fundOptimizer.updateExperimentHistoryValue(funds, initialValue, initialFund, experimentHistory)
+    logger.info("after optimizing. Recorded best value: " + experimentHistory.last.bestValue + ", Params: " + experimentHistory.last.params)
     return result
   }
 

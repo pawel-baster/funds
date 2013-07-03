@@ -34,6 +34,9 @@ class MAFundOptimizer(
     //try
     var bestFunds = costCalculator.calculate(funds, from, to, initialValue, initialFund, initialBestParams)
     var bestValue = costFunction(bestFunds, initialBestParams, to)
+    logger.info("Value for best params and new fund quotas: " + bestValue/1000.0)
+    logger.info("Params: " + initialBestParams)
+    logger.info("dates: " + from + " - " + to)
     var bestParams = initialBestParams
     val maxWindow = to.getDayCount - from.getDayCount - 1
     var i = 0
