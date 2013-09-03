@@ -7,6 +7,7 @@ import collection.immutable.HashMap
 import java.util.Date
 import java.text.SimpleDateFormat
 import com.pb.fundOptimizer.exceptions.ZeroQuoteException
+import com.pb.fundOptimizer.logging.logger
 
 /**
  * Created with IntelliJ IDEA.
@@ -63,6 +64,11 @@ abstract class UpdatableFund(
 
   protected def addQuote(date: ExtendedDate, value: Double) {
     val dayCount = date.getDayCount()
+    if (quotes.contains(dayCount)) {
+      logger.info("Updating value for " + date.format("yyy-MM-dd") + " from " + quotes.get(dayCount) + " to " + value)
+    } else {
+      logger.info("Inserting value for " + date.format("yyy-MM-dd") + ": " + value)
+    }
     quotes += (dayCount -> value)
     if (dateMax.isEmpty || (date after dateMax.get)) {
       dateMax = Option(date)
