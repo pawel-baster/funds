@@ -8,12 +8,10 @@ import funds.currencies.CurrencyPLN
 import com.pb.fundOptimizer.logging.logger
 
 /**
- * Created with IntelliJ IDEA.
- * User: pb
+  * User: pb
  * Date: 27.01.13
  * Time: 13:43
- * To change this template use File | Settings | File Templates.
- */
+  */
 class MbankFund(
                  override val downloader: Downloader,
                  override val shortName: String,
@@ -22,7 +20,7 @@ class MbankFund(
                  ) extends UpdatableFund(shortName, new CurrencyPLN, downloader) {
   def update() = {
     logger.info("MbankFund " + fundCode + " starting update. Last Update: " + lastUpdate + ", minDate " + dateMin + ", maxDate: " + dateMax)
-    val startDate = if (dateMin.isDefined) dateMin.get.addDays(-10) else ExtendedDate.createFromString("2000-01-01", "yyy-MM-dd")
+    val startDate = if (dateMax.isDefined) dateMax.get.addDays(-10) else ExtendedDate.createFromString("2000-01-01", "yyy-MM-dd")
 
     val url = ("http://www.mbank.pl/ajax/SFI/drawChart/?curr=&ror=0&date_from=" + startDate.format("yyyy-MM-dd") + "&date_to=2100-01-01&funds[]=" + fundCode)
     logger.info("Downloading: " + url)

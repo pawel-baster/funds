@@ -64,11 +64,12 @@ abstract class UpdatableFund(
 
   protected def addQuote(date: ExtendedDate, value: Double) {
     val dayCount = date.getDayCount()
-    if (quotes.contains(dayCount)) {
-      logger.info("Updating value for " + date.format("yyy-MM-dd") + " from " + quotes.get(dayCount) + " to " + value)
-    } else {
+    if (!quotes.contains(dayCount)) {
       logger.info("Inserting value for " + date.format("yyy-MM-dd") + ": " + value)
+    } else if (quotes.get(dayCount) != Some(value)) {
+      logger.info("Updating value for " + date.format("yyy-MM-dd") + " from " + quotes.get(dayCount).get + " to " + value)
     }
+
     quotes += (dayCount -> value)
     if (dateMax.isEmpty || (date after dateMax.get)) {
       dateMax = Option(date)
